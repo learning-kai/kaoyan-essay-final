@@ -1,4 +1,5 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { SyncManager } from './components/SyncManager';
 import { DrillsPage } from './pages/Drills';
 import { ExamPage } from './pages/Exam';
 import { LearnPage } from './pages/Learn';
@@ -12,6 +13,7 @@ import { TodayPage } from './pages/Today';
 export function App() {
   return (
     <HashRouter>
+      <SyncManager />
       <Routes>
         <Route path="/" element={<Navigate to="/today" replace />} />
         <Route path="/today" element={<TodayPage />} />

@@ -1,5 +1,6 @@
 import { Download, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { CloudSyncCard } from '../components/CloudSyncCard';
 import { Layout } from '../components/Layout';
 import { parseBackup, serializeBackup } from '../core/backup';
 import { formatLocalDateKey } from '../core/mistakes';
@@ -41,6 +42,12 @@ export function SettingsPage() {
         theme: settings.theme,
         unlockAllLessons: settings.unlockAllLessons,
         bodyFontSize: settings.bodyFontSize,
+      },
+      new Date(),
+      {
+        updatedAt: progress.updatedAt,
+        settingsUpdatedAt: settings.updatedAt,
+        resetAt: progress.lastResetAt,
       }
     );
 
@@ -64,14 +71,17 @@ export function SettingsPage() {
         setBackupMsg({ type: 'err', text: parsed.error });
         return;
       }
+      const nowIso = new Date().toISOString();
       useProgress.setState({
         cards: parsed.data.progress.cards,
         reviews: parsed.data.progress.reviews,
         dailyLearnedCount: parsed.data.progress.dailyLearnedCount,
         examRecords: parsed.data.progress.examRecords,
         idRecords: parsed.data.progress.idRecords,
+        updatedAt: nowIso,
+        lastResetAt: parsed.data.resetAt ?? null,
       });
-      settings.updateSettings(parsed.data.settings);
+      settings.updateSettings(parsed.data.settings, nowIso);
       setBackupMsg({
         type: 'ok',
         text: `恢复成功：已导入 ${Object.keys(parsed.data.progress.cards).length} 张卡片与全部记录。`,
@@ -96,11 +106,13 @@ export function SettingsPage() {
       <header className="page-header">
         <div>
           <h1 className="page-title">设置</h1>
-          <p className="page-sub">学习计划、输入方式、外观与数据备份</p>
+          <p className="page-sub">多端云同步、学习计划、输入方式、外观与数据备份</p>
         </div>
       </header>
 
       <div className="settings-stack">
+        <CloudSyncCard />
+
         <section className="card-surface settings-card">
           <h2 className="section-small-title">学习与调度</h2>
 

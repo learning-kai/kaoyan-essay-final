@@ -61,6 +61,8 @@ export interface ProgressState {
   dailyLearnedCount: Record<string, number>;
   examRecords: ExamRecord[];
   idRecords: IdentificationRecord[];
+  updatedAt: string | null;
+  lastResetAt: string | null;
   completeNewSentence: (sentenceId: string, options?: SchedulerOptions) => void;
   recordReview: (
     sentenceId: string,
@@ -91,6 +93,8 @@ export const useProgress = create<ProgressState>()(
       dailyLearnedCount: {},
       examRecords: [],
       idRecords: [],
+      updatedAt: null,
+      lastResetAt: null,
 
       completeNewSentence: (sentenceId, options) => {
         const now = new Date();
@@ -98,6 +102,7 @@ export const useProgress = create<ProgressState>()(
         const baseCard = existing ? deserializeCard(existing) : createInitialCard(now);
         const nextCard = reviewCard(baseCard, Rating.Good, now, options);
         const dateKey = formatLocalDateKey(now);
+        const iso = now.toISOString();
 
         set((state) => ({
           cards: {
@@ -110,13 +115,14 @@ export const useProgress = create<ProgressState>()(
               sentenceId,
               rating: Rating.Good,
               accuracy: 1,
-              timestamp: now.toISOString(),
+              timestamp: iso,
             },
           ],
           dailyLearnedCount: {
             ...state.dailyLearnedCount,
             [dateKey]: (state.dailyLearnedCount[dateKey] ?? 0) + (existing ? 0 : 1),
           },
+          updatedAt: iso,
         }));
       },
 
@@ -134,6 +140,7 @@ export const useProgress = create<ProgressState>()(
         const updatedCard = writeToFsrs
           ? reviewCard(baseCard, rating, now, options)
           : baseCard;
+        const iso = now.toISOString();
 
         set((state) => ({
           cards: writeToFsrs
@@ -148,28 +155,32 @@ export const useProgress = create<ProgressState>()(
               sentenceId,
               rating,
               accuracy,
-              timestamp: now.toISOString(),
+              timestamp: iso,
               wordMistakes: wordMistakes && wordMistakes.length > 0 ? wordMistakes : undefined,
             },
           ],
+          updatedAt: iso,
         }));
       },
 
       recordExam: (record) => {
         const now = new Date();
+        const iso = now.toISOString();
         set((state) => ({
           examRecords: [
             ...state.examRecords,
             {
               ...record,
               id: `exam-${now.getTime()}`,
-              timestamp: now.toISOString(),
+              timestamp: iso,
             },
           ],
+          updatedAt: iso,
         }));
       },
 
       recordIdentification: (promptId, expected, chosen) => {
+        const iso = new Date().toISOString();
         set((state) => ({
           idRecords: [
             ...state.idRecords,
@@ -178,9 +189,10 @@ export const useProgress = create<ProgressState>()(
               expected,
               chosen,
               correct: expected === chosen,
-              timestamp: new Date().toISOString(),
+              timestamp: iso,
             },
           ],
+          updatedAt: iso,
         }));
       },
 
@@ -201,14 +213,18 @@ export const useProgress = create<ProgressState>()(
         return get().dailyLearnedCount[formatLocalDateKey(now)] ?? 0;
       },
 
-      resetAll: () =>
+      resetAll: () => {
+        const iso = new Date().toISOString();
         set({
           cards: {},
           reviews: [],
           dailyLearnedCount: {},
           examRecords: [],
           idRecords: [],
-        }),
+          updatedAt: iso,
+          lastResetAt: iso,
+        });
+      },
     }),
     {
       name: 'kaoyan-essay-progress',
@@ -223,6 +239,8 @@ export const useProgress = create<ProgressState>()(
           dailyLearnedCount: data.dailyLearnedCount ?? {},
           examRecords: data.examRecords ?? [],
           idRecords: data.idRecords ?? [],
+          updatedAt: data.updatedAt ?? null,
+          lastResetAt: data.lastResetAt ?? null,
         } as ProgressState;
       },
     }

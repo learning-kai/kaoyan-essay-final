@@ -17,8 +17,10 @@ export interface SettingsState {
   theme: ThemeMode;
   unlockAllLessons: boolean;
   bodyFontSize: number;
+  updatedAt: string | null;
   updateSettings: (
-    partial: Partial<Omit<SettingsState, 'updateSettings' | 'schemaVersion'>>
+    partial: Partial<Omit<SettingsState, 'updateSettings' | 'schemaVersion' | 'updatedAt'>>,
+    explicitUpdatedAt?: string | null
   ) => void;
 }
 
@@ -35,7 +37,16 @@ export const useSettings = create<SettingsState>()(
       theme: 'light',
       unlockAllLessons: false,
       bodyFontSize: 19,
-      updateSettings: (partial) => set((state) => ({ ...state, ...partial })),
+      updatedAt: null,
+      updateSettings: (partial, explicitUpdatedAt) =>
+        set((state) => ({
+          ...state,
+          ...partial,
+          updatedAt:
+            explicitUpdatedAt !== undefined
+              ? explicitUpdatedAt
+              : new Date().toISOString(),
+        })),
     }),
     {
       name: 'kaoyan-essay-settings',
@@ -54,6 +65,7 @@ export const useSettings = create<SettingsState>()(
           theme: data.theme ?? 'light',
           unlockAllLessons: data.unlockAllLessons ?? false,
           bodyFontSize: data.bodyFontSize ?? 19,
+          updatedAt: data.updatedAt ?? null,
         } as SettingsState;
       },
     }

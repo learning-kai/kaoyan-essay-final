@@ -810,3 +810,40 @@
   color: var(--ink-muted);
   text-align: right;
 }
+
+/* ========== Cloud Sync Sidebar & Mobile ========== */
+@keyframes syncSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-icon {
+  animation: syncSpin 900ms linear infinite;
+}
+
+.sync-sidebar-btn {
+  color: var(--ok);
+}
+
+.sync-sidebar-err {
+  color: var(--err);
+}
+
+.sync-sidebar-link {
+  text-decoration: none;
+  color: var(--ink-muted);
+}
+
+.mobile-sync-btn {
+  width: 100%;
+  border: none;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-weight: 500;
+  text-align: left;
+}
+

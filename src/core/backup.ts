@@ -7,6 +7,9 @@ export interface BackupPayload {
   app: 'kaoyan-essay';
   schemaVersion: number;
   exportedAt: string;
+  updatedAt?: string | null;
+  settingsUpdatedAt?: string | null;
+  resetAt?: string | null;
   progress: {
     cards: Record<string, SerializedCard>;
     reviews: ReviewRecord[];
@@ -27,19 +30,37 @@ export interface BackupPayload {
   };
 }
 
-export function serializeBackup(
+export interface BackupMeta {
+  updatedAt?: string | null;
+  settingsUpdatedAt?: string | null;
+  resetAt?: string | null;
+}
+
+export function buildBackupPayload(
   progress: BackupPayload['progress'],
   settings: BackupPayload['settings'],
-  now = new Date()
-): string {
-  const payload: BackupPayload = {
+  now = new Date(),
+  meta?: BackupMeta
+): BackupPayload {
+  return {
     app: 'kaoyan-essay',
     schemaVersion: 3,
     exportedAt: now.toISOString(),
+    updatedAt: meta?.updatedAt ?? null,
+    settingsUpdatedAt: meta?.settingsUpdatedAt ?? null,
+    resetAt: meta?.resetAt ?? null,
     progress,
     settings,
   };
-  return JSON.stringify(payload, null, 2);
+}
+
+export function serializeBackup(
+  progress: BackupPayload['progress'],
+  settings: BackupPayload['settings'],
+  now = new Date(),
+  meta?: BackupMeta
+): string {
+  return JSON.stringify(buildBackupPayload(progress, settings, now, meta), null, 2);
 }
 
 export function parseBackup(jsonText: string): { ok: true; data: BackupPayload } | { ok: false; error: string } {
@@ -57,6 +78,9 @@ export function parseBackup(jsonText: string): { ok: true; data: BackupPayload }
         app: 'kaoyan-essay',
         schemaVersion: raw.schemaVersion ?? 3,
         exportedAt: raw.exportedAt ?? new Date().toISOString(),
+        updatedAt: raw.updatedAt ?? null,
+        settingsUpdatedAt: raw.settingsUpdatedAt ?? null,
+        resetAt: raw.resetAt ?? null,
         progress: {
           cards: raw.progress.cards ?? {},
           reviews: Array.isArray(raw.progress.reviews) ? raw.progress.reviews : [],

@@ -3,12 +3,15 @@ import {
   BarChart3,
   BookOpen,
   CalendarDays,
+  Cloud,
+  CloudOff,
   GraduationCap,
   Layers,
   Monitor,
   Moon,
   MoreHorizontal,
   PenLine,
+  RefreshCw,
   RotateCcw,
   Settings,
   Sun,
@@ -19,8 +22,21 @@ import { collectMistakes } from '../core/mistakes';
 import { STUDYABLE_SENTENCE_IDS } from '../data/templates';
 import { useProgress } from '../store/useProgress';
 import { useSettings, type ThemeMode } from '../store/useSettings';
+import { useSync } from '../store/useSync';
 import { ShortcutsModal } from './ShortcutsModal';
 import './components.css';
+
+function formatSyncTimeShort(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (diffSec < 60) return '刚刚';
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分钟前`;
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
 
 interface LayoutProps {
   children: ReactNode;
@@ -46,6 +62,12 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
   const theme = useSettings((s) => s.theme);
   const bodyFontSize = useSettings((s) => s.bodyFontSize);
   const updateSettings = useSettings((s) => s.updateSettings);
+
+  const syncToken = useSync((s) => s.token);
+  const syncStatus = useSync((s) => s.status);
+  const lastSyncedAt = useSync((s) => s.lastSyncedAt);
+  const syncNow = useSync((s) => s.syncNow);
+  const syncConnected = Boolean(syncToken);
 
   useEffect(() => {
     const applyTheme = () => {
@@ -182,9 +204,43 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
         </nav>
 
         <div className="sidebar-footer">
+          {syncConnected ? (
+            <button
+              type="button"
+              className={`btn-ghost theme-toggle-btn sync-sidebar-btn ${syncStatus === 'error' ? 'sync-sidebar-err' : ''}`}
+              onClick={() => void syncNow('merge')}
+              disabled={syncStatus === 'syncing'}
+              title="点击立即双向同步云端进度"
+            >
+              {syncStatus === 'syncing' ? (
+                <RefreshCw size={15} strokeWidth={1.5} className="spin-icon" />
+              ) : (
+                <Cloud size={15} strokeWidth={1.5} />
+              )}
+              <span>
+                {syncStatus === 'syncing'
+                  ? '同步中…'
+                  : syncStatus === 'error'
+                    ? '同步失败，点此重试'
+                    : lastSyncedAt
+                      ? `已同步 · ${formatSyncTimeShort(lastSyncedAt)}`
+                      : '点击同步云端'}
+              </span>
+            </button>
+          ) : (
+            <NavLink
+              to="/settings"
+              className="btn-ghost theme-toggle-btn sync-sidebar-link"
+              title="配置 GitHub 私有 Gist 多端同步"
+            >
+              <CloudOff size={15} strokeWidth={1.5} />
+              <span>开启多端同步</span>
+            </NavLink>
+          )}
           <button
             type="button"
             className="btn-ghost theme-toggle-btn"
+            style={{ marginTop: 4 }}
             onClick={cycleTheme}
             title="切换浅色 / 深色 / 跟随系统"
           >
@@ -265,6 +321,31 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             className="card-surface mobile-more-sheet"
             onClick={(e) => e.stopPropagation()}
           >
+            {syncConnected && (
+              <button
+                type="button"
+                className="mobile-more-link mobile-sync-btn"
+                disabled={syncStatus === 'syncing'}
+                onClick={() => {
+                  void syncNow('merge');
+                }}
+              >
+                {syncStatus === 'syncing' ? (
+                  <RefreshCw size={16} strokeWidth={1.5} className="spin-icon" />
+                ) : (
+                  <Cloud size={16} strokeWidth={1.5} />
+                )}
+                <span>
+                  {syncStatus === 'syncing'
+                    ? '云端同步中…'
+                    : syncStatus === 'error'
+                      ? '云同步失败，点此重试'
+                      : lastSyncedAt
+                        ? `立即同步（上次 ${formatSyncTimeShort(lastSyncedAt)}）`
+                        : '立即同步云端'}
+                </span>
+              </button>
+            )}
             <NavLink to="/drills" onClick={() => setMoreOpen(false)} className="mobile-more-link">
               <Layers size={16} strokeWidth={1.5} /> 专项卡片
             </NavLink>
@@ -278,7 +359,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
               <BookOpen size={16} strokeWidth={1.5} /> 模板库
             </NavLink>
             <NavLink to="/settings" onClick={() => setMoreOpen(false)} className="mobile-more-link">
-              <Settings size={16} strokeWidth={1.5} /> 设置
+              <Settings size={16} strokeWidth={1.5} /> 设置与多端同步
             </NavLink>
           </div>
         </div>
