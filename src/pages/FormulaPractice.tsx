@@ -14,7 +14,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Rating, type Grade } from 'ts-fsrs';
 import { GradeBar } from '../components/GradeBar';
 import { Layout } from '../components/Layout';
-import { MathText } from '../components/MathText';
+import { MathText, stripLatexForPlainText } from '../components/MathText';
 import {
   collectFormulaMistakes,
   getDueFormulaIds,
@@ -178,7 +178,7 @@ export function FormulaPracticePage() {
 
   useEffect(() => {
     document.title = sessionActive
-      ? `${sessionTitle || '公式默写'} · 公式默写`
+      ? `${stripLatexForPlainText(sessionTitle) || '公式默写'} · 公式默写`
       : '默写复习 · 公式默写';
   }, [sessionActive, sessionTitle]);
 
@@ -426,7 +426,7 @@ export function FormulaPracticePage() {
               本轮公式默写完成
             </h1>
             <p className="page-sub" style={{ marginTop: 6 }}>
-              {sessionTitle} · FSRS 评分 {stats.graded} 次 · 直接标熟记 {stats.directMastered} 题
+              <MathText text={sessionTitle} /> · FSRS 评分 {stats.graded} 次 · 直接标熟记 {stats.directMastered} 题
               {stats.againCount > 0 ? ` · 回炉强化 ${stats.againCount} 次` : ''}
             </p>
             <div className="toolbar-group" style={{ justifyContent: 'center', marginTop: 22 }}>
@@ -477,7 +477,7 @@ export function FormulaPracticePage() {
           </button>
 
           <div className="formula-session-title">
-            <span>{sessionTitle}</span>
+            <MathText text={sessionTitle} />
             <span className="tabular-nums" style={{ color: 'var(--gold)', fontWeight: 600 }}>
               {index + 1} / {queue.length}
             </span>
@@ -518,7 +518,9 @@ export function FormulaPracticePage() {
           <div className="formula-card-meta">
             <div className="formula-meta-badges">
               <span className="formula-subj-badge">{subj.name}</span>
-              <span className="formula-sec-badge">{sec.fullTitle}</span>
+              <span className="formula-sec-badge">
+                <MathText text={sec.fullTitle} />
+              </span>
               <span className="formula-num-badge tabular-nums">#{currentItem.code}</span>
               {itemMastered && (
                 <span className="formula-tag-ok">当前已标熟记</span>
@@ -734,8 +736,8 @@ export function FormulaPracticePage() {
         </button>
       </div>
 
-      <section className="card-surface" style={{ padding: '20px 22px', marginTop: 18 }}>
-        <div className="section-head-row" style={{ marginBottom: 14 }}>
+      <section className="card-surface today-section-card" style={{ marginTop: 18 }}>
+        <div className="section-row-head">
           <h2 className="section-small-title">自由选科 / 选板块抽查</h2>
           <span className="tabular-nums" style={{ fontSize: 13, color: 'var(--gold)', fontWeight: 600 }}>
             当前命中 {customPool.length} 题
@@ -797,7 +799,8 @@ export function FormulaPracticePage() {
                   className={`formula-sec-chip ${active ? 'active' : ''}`}
                   onClick={() => toggleSectionFilter(sec.id)}
                 >
-                  <span>{sec.code}</span> {sec.title}
+                  <span className="formula-sec-chip-code">{sec.code}</span>
+                  <MathText text={sec.title} />
                 </button>
               );
             })}

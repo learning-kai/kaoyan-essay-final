@@ -9,6 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 import { Layout } from '../components/Layout';
+import { MathText } from '../components/MathText';
 import {
   computeFormula14DayForecast,
   computeFormulaSectionProgress,
@@ -92,8 +93,8 @@ export function FormulaStatsPage() {
         </div>
       </section>
 
-      <section className="card-surface" style={{ padding: '20px 22px', marginBottom: 16 }}>
-        <div className="section-head-row">
+      <section className="card-surface today-section-card">
+        <div className="section-row-head">
           <h2 className="section-small-title">四大科掌握度分布</h2>
           <div className="mastery-legend">
             <span>
@@ -133,8 +134,8 @@ export function FormulaStatsPage() {
         </div>
       </section>
 
-      <section className="card-surface" style={{ padding: '20px 22px', marginBottom: 16 }}>
-        <div className="section-head-row">
+      <section className="card-surface today-section-card">
+        <div className="section-row-head">
           <h2 className="section-small-title">未来 14 天公式复习量预测</h2>
           <span className="page-sub" style={{ marginTop: 0 }}>
             基于 FSRS 到期日（不含已标熟记公式）
@@ -172,8 +173,8 @@ export function FormulaStatsPage() {
         </div>
       </section>
 
-      <section className="card-surface" style={{ padding: '20px 22px' }}>
-        <div className="section-head-row">
+      <section className="card-surface today-section-card">
+        <div className="section-row-head">
           <h2 className="section-small-title">25 个板块进度一览</h2>
         </div>
         <div className="formula-stats-sec-grid">
@@ -188,7 +189,9 @@ export function FormulaStatsPage() {
                     {done}/{sec.total}
                   </span>
                 </div>
-                <div className="formula-stats-sec-title">{sec.title}</div>
+                <div className="formula-stats-sec-title">
+                  <MathText text={sec.title} />
+                </div>
                 <div className="course-bar-track" style={{ marginTop: 8 }}>
                   <div
                     className={`course-bar-fill ${pct === 100 ? 'fill-done' : ''}`}

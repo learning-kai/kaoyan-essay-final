@@ -954,26 +954,23 @@
 }
 
 .math-inline-wrap {
-  display: inline-block;
-  max-width: 100%;
-  overflow-x: auto;
-  vertical-align: baseline;
-  padding: 0 1px;
+  display: inline;
+  padding: 0 2px;
 }
 
 .math-inline-wrap .katex {
-  font-size: 1.04em;
+  font-size: 1.03em;
   color: inherit;
 }
 
 .math-blank-slot {
   display: inline-block;
-  min-width: 64px;
-  height: 1.1em;
+  min-width: 56px;
+  height: 0.95em;
   margin: 0 4px;
-  border-bottom: 2px solid var(--gold);
-  background: var(--gold-soft);
-  border-radius: 3px 3px 0 0;
+  border-bottom: 1.5px solid var(--gold);
+  background: color-mix(in srgb, var(--gold-soft) 60%, transparent);
+  border-radius: 2px 2px 0 0;
   vertical-align: -2px;
 }
 

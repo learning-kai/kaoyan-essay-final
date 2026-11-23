@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { MathText } from '../components/MathText';
+import { MathText, stripLatexForPlainText } from '../components/MathText';
 import {
   getFormulaMasteryLevel,
   isFormulaDirectMastered,
@@ -187,7 +187,7 @@ export function FormulaHandbookPage() {
             <option value="">全部板块（{availableSections.length}）</option>
             {availableSections.map((sec) => (
               <option key={sec.id} value={sec.id}>
-                {sec.fullTitle}（{sec.questionIds.length}题）
+                {stripLatexForPlainText(sec.fullTitle)}（{sec.questionIds.length}题）
               </option>
             ))}
           </select>
@@ -263,7 +263,9 @@ export function FormulaHandbookPage() {
               <section key={section.id} className="formula-handbook-group">
                 <div className="formula-handbook-sec-head">
                   <div>
-                    <h2 className="formula-handbook-sec-title">{section.fullTitle}</h2>
+                    <h2 className="formula-handbook-sec-title">
+                      <MathText text={section.fullTitle} />
+                    </h2>
                     <span className="formula-sec-meta tabular-nums">
                       已搞定 {doneInSection} / {section.questionIds.length}
                     </span>

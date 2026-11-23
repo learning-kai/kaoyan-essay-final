@@ -300,3 +300,46 @@ export function computeFormula14DayForecast(
 
   return days;
 }
+
+export interface FormulaDayActivity {
+  dateKey: string;
+  weekdayLabel: string;
+  count: number;
+  level: 0 | 1 | 2 | 3;
+}
+
+const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
+
+export function getFormulaWeeklyHeatmap(
+  reviews: FormulaReviewRecord[],
+  mastered: Record<string, TimestampedFlag>,
+  now = new Date()
+): FormulaDayActivity[] {
+  const counts = new Map<string, number>();
+  for (const r of reviews) {
+    const key = formatLocalDateKey(new Date(r.timestamp));
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  for (const flag of Object.values(mastered)) {
+    if (!flag.value) continue;
+    const key = formatLocalDateKey(new Date(flag.updatedAt));
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  const days: FormulaDayActivity[] = [];
+  for (let offset = 6; offset >= 0; offset--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - offset);
+    const key = formatLocalDateKey(d);
+    const count = counts.get(key) ?? 0;
+    const level: 0 | 1 | 2 | 3 =
+      count === 0 ? 0 : count < 6 ? 1 : count < 15 ? 2 : 3;
+    days.push({
+      dateKey: key,
+      weekdayLabel: offset === 0 ? '今' : `周${WEEKDAY_LABELS[d.getDay()]}`,
+      count,
+      level,
+    });
+  }
+  return days;
+}

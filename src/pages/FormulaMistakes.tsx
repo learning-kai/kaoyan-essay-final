@@ -138,7 +138,9 @@ export function FormulaMistakesPage() {
                 <div className="mistake-meta">
                   <div className="formula-meta-badges">
                     <span className="formula-subj-badge">{subj.name}</span>
-                    <span className="formula-sec-badge">{sec.fullTitle}</span>
+                    <span className="formula-sec-badge">
+                      <MathText text={sec.fullTitle} />
+                    </span>
                     <span className="formula-num-badge tabular-nums">#{item.code}</span>
                     {m && (
                       <span className="formula-tag-warn tabular-nums">

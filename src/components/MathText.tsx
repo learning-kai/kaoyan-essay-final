@@ -68,6 +68,18 @@ export function renderLatexSafe(tex: string, displayMode = false): string {
   }
 }
 
+export function stripLatexForPlainText(text: string): string {
+  return text
+    .replace(/\$([^$]+)\$/g, (_, inner: string) =>
+      inner
+        .replace(/\\infty/g, '∞')
+        .replace(/\\to/g, '→')
+        .replace(/\^\{([^}]+)\}/g, '^$1')
+        .replace(/\\/g, '')
+    )
+    .trim();
+}
+
 interface MathTextProps {
   text: string;
   className?: string;

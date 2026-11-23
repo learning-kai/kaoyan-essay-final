@@ -5,18 +5,19 @@ import {
   ChevronDown,
   ChevronRight,
   Layers,
-  RotateCcw,
-  Sparkles,
+  Play,
   Star,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
+import { MathText } from '../components/MathText';
 import {
   collectFormulaMistakes,
   computeFormulaSectionProgress,
   computeFormulaSubjectMastery,
   getDueFormulaIds,
+  getFormulaWeeklyHeatmap,
   getStarredFormulaIds,
   getUnlearnedFormulaIds,
 } from '../core/formulaStats';
@@ -25,6 +26,14 @@ import { FORMULA_IDS, type FormulaSubjectId } from '../data/formulas';
 import { useFormulaProgress } from '../store/useFormulaProgress';
 import { useSettings } from '../store/useSettings';
 import './pages.css';
+
+function getGreeting(now = new Date()): string {
+  const h = now.getHours();
+  if (h < 6) return '夜深了';
+  if (h < 12) return '上午好';
+  if (h < 18) return '下午好';
+  return '晚上好';
+}
 
 export function FormulaTodayPage() {
   const navigate = useNavigate();
@@ -36,15 +45,13 @@ export function FormulaTodayPage() {
   const getTodayLearnedCount = useFormulaProgress((s) => s.getTodayLearnedCount);
   const examDate = useSettings((s) => s.examDate);
 
-  const [expandedSubject, setExpandedSubject] = useState<FormulaSubjectId | null>(
-    'calculus'
-  );
+  const [expandedSubject, setExpandedSubject] = useState<FormulaSubjectId | null>(null);
 
   useEffect(() => {
     document.title = '今日公式 · 公式默写';
   }, []);
 
-  const examDays = useMemo(
+  const daysLeft = useMemo(
     () => getDaysUntilExam(examDate, new Date()),
     [examDate]
   );
@@ -63,7 +70,7 @@ export function FormulaTodayPage() {
   );
   const todayLearned = getTodayLearnedCount();
   const remainingNewQuota = Math.max(0, dailyNewLimit - todayLearned);
-  const todayNewCount = Math.min(remainingNewQuota, unlearnedIds.length);
+  const newTodayQuota = Math.min(remainingNewQuota, unlearnedIds.length);
 
   const subjectRows = useMemo(
     () => computeFormulaSubjectMastery(cards, mastered),
@@ -73,167 +80,174 @@ export function FormulaTodayPage() {
     () => computeFormulaSectionProgress(cards, mastered),
     [cards, mastered]
   );
+  const heatmap = useMemo(
+    () => getFormulaWeeklyHeatmap(reviews, mastered),
+    [reviews, mastered]
+  );
 
   const totalDirectMastered = subjectRows.reduce((s, r) => s + r.directMastered, 0);
   const totalFsrsMastered = subjectRows.reduce((s, r) => s + r.fsrsMastered, 0);
   const totalDone = totalDirectMastered + totalFsrsMastered;
 
+  const handlePrimaryStart = () => {
+    if (dueIds.length > 0) {
+      navigate('/formula/practice?mode=due');
+    } else if (newTodayQuota > 0) {
+      navigate('/formula/practice?mode=new');
+    } else {
+      navigate('/formula/practice?mode=custom');
+    }
+  };
+
   return (
     <Layout>
-      <header className="page-header">
+      <header className="today-topbar">
         <div>
-          <h1 className="page-title">今日公式</h1>
-          <p className="page-sub">
-            高数 · 线代 · 概率统计 · 信号系统（共 {FORMULA_IDS.length} 题，支持直接标熟记与 FSRS 间隔复习）
-          </p>
+          <h1 className="page-title">{getGreeting()} · 公式默写</h1>
         </div>
-        {examDays !== null && (
-          <div className="exam-pill tabular-nums">
-            {examDays >= 0 ? `距考试 ${examDays} 天` : `考后第 ${Math.abs(examDays)} 天`}
-          </div>
+        {daysLeft !== null ? (
+          <span className="exam-countdown tabular-nums">
+            {daysLeft > 0 ? `距考试 ${daysLeft} 天` : '考试日已到'}
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() => navigate('/settings')}
+          >
+            设置考试日期
+          </button>
         )}
       </header>
 
-      <section className="formula-kpi-grid">
-        <div className="card-surface formula-kpi-card">
-          <div className="formula-kpi-label">已搞定总进度</div>
-          <div className="formula-kpi-val tabular-nums">
-            {totalDone} <span className="formula-kpi-sub">/ {FORMULA_IDS.length}</span>
+      {/* Unified Primary Today Task Card (consistent with Essay Today page) */}
+      <section className="card-surface today-task-card">
+        <div className="section-row-head" style={{ marginBottom: 14 }}>
+          <div className="today-task-label" style={{ marginBottom: 0 }}>
+            今日公式任务
           </div>
-          <div className="formula-kpi-note tabular-nums">
-            熟记 {totalDirectMastered} · FSRS 掌握 {totalFsrsMastered}
+          <span className="page-sub tabular-nums" style={{ marginTop: 0 }}>
+            总搞定 {totalDone} / {FORMULA_IDS.length}（熟记 {totalDirectMastered} · 掌握 {totalFsrsMastered}）
+          </span>
+        </div>
+
+        <div className="today-metrics formula-today-metrics">
+          <div className="today-metric">
+            <span
+              className="today-metric-num tabular-nums"
+              style={{ color: dueIds.length > 0 ? 'var(--gold)' : undefined }}
+            >
+              {dueIds.length}
+            </span>
+            <span className="today-metric-cap">待复习公式</span>
+          </div>
+          <div className="today-metric-sep" />
+          <div className="today-metric">
+            <span className="today-metric-num tabular-nums">{newTodayQuota}</span>
+            <span className="today-metric-cap">今日新公式</span>
+          </div>
+          <div className="today-metric-sep" />
+          <div className="today-metric">
+            <span className="today-metric-num tabular-nums">{starredIds.length}</span>
+            <span className="today-metric-cap">标星收藏</span>
+          </div>
+          <div className="today-metric-sep" />
+          <div className="today-metric">
+            <span
+              className="today-metric-num tabular-nums"
+              style={{ color: mistakes.length > 0 ? 'var(--err)' : undefined }}
+            >
+              {mistakes.length}
+            </span>
+            <span className="today-metric-cap">薄弱错题</span>
           </div>
         </div>
 
-        <div className="card-surface formula-kpi-card">
-          <div className="formula-kpi-label">今日待复习</div>
-          <div
-            className="formula-kpi-val tabular-nums"
-            style={{ color: dueIds.length > 0 ? 'var(--gold)' : 'var(--ok)' }}
-          >
-            {dueIds.length}
-          </div>
-          <div className="formula-kpi-note">已标熟记自动排除</div>
-        </div>
-
-        <div className="card-surface formula-kpi-card">
-          <div className="formula-kpi-label">今日新公式</div>
-          <div className="formula-kpi-val tabular-nums">
-            {todayLearned}{' '}
-            <span className="formula-kpi-sub">/ {dailyNewLimit}</span>
-          </div>
-          <div className="formula-kpi-note tabular-nums">
-            剩余未学 {unlearnedIds.length} 题
-          </div>
-        </div>
-
-        <div className="card-surface formula-kpi-card">
-          <div className="formula-kpi-label">收藏 / 错题</div>
-          <div className="formula-kpi-val tabular-nums">
-            {starredIds.length}{' '}
-            <span className="formula-kpi-sub">/ {mistakes.length}</span>
-          </div>
-          <div className="formula-kpi-note">考前高危重点</div>
-        </div>
-      </section>
-
-      <section className="task-grid" style={{ marginTop: 16 }}>
-        <div className="card-surface task-card">
-          <div className="task-card-head">
-            <span className="task-tag">FSRS 到期复习</span>
-            <RotateCcw size={16} strokeWidth={1.5} style={{ color: 'var(--gold)' }} />
-          </div>
-          <div className="task-big tabular-nums">
-            {dueIds.length > 0 ? `${dueIds.length} 题待巩固` : '今日已清零'}
-          </div>
-          <p className="task-desc">
-            纸笔默写 + Space 翻面自评，会的题随时按 M 一键标熟记跳过。
-          </p>
+        <div className="today-task-actions">
           <button
             type="button"
-            className={dueIds.length > 0 ? 'btn-primary' : 'btn-secondary'}
-            onClick={() => navigate('/formula/practice?mode=due')}
+            className="btn-primary"
+            onClick={handlePrimaryStart}
           >
-            {dueIds.length > 0 ? '开始复习' : '去自由刷题'}
-            <ArrowRight size={15} strokeWidth={1.5} />
+            <Play size={15} strokeWidth={1.5} />
+            {dueIds.length > 0
+              ? `开始到期复习（${dueIds.length} 题）`
+              : newTodayQuota > 0
+                ? `开始学习今日新公式（${newTodayQuota} 题）`
+                : '自由选章抽查默写'}
           </button>
-        </div>
 
-        <div className="card-surface task-card">
-          <div className="task-card-head">
-            <span className="task-tag">学习新公式</span>
-            <Sparkles size={16} strokeWidth={1.5} style={{ color: 'var(--gold)' }} />
-          </div>
-          <div className="task-big tabular-nums">
-            {unlearnedIds.length === 0
-              ? '全部已覆盖'
-              : todayNewCount > 0
-                ? `今日还可学 ${todayNewCount} 题`
-                : '今日新题已达上限'}
-          </div>
-          <p className="task-desc">
-            遇到早就会的基础公式，直接点「已熟记」秒过，不占复习队列。
-          </p>
-          <div className="toolbar-group">
-            <button
-              type="button"
-              className="btn-primary"
-              disabled={unlearnedIds.length === 0}
-              onClick={() => navigate('/formula/practice?mode=new')}
-            >
-              开始新题默写
-              <ArrowRight size={15} strokeWidth={1.5} />
-            </button>
+          {dueIds.length > 0 && newTodayQuota > 0 && (
             <button
               type="button"
               className="btn-secondary"
-              onClick={() => navigate('/formula/handbook')}
+              onClick={() => navigate('/formula/practice?mode=new')}
             >
-              <BookOpen size={14} strokeWidth={1.5} />
-              去手册先勾熟记
+              直接学新题
+              <ArrowRight size={14} strokeWidth={1.5} />
             </button>
-          </div>
-        </div>
-      </section>
+          )}
 
-      <section className="card-surface" style={{ padding: '18px 20px', marginTop: 16 }}>
-        <div className="section-head-row" style={{ marginBottom: 12 }}>
-          <h2 className="section-small-title">快捷刷题入口</h2>
-        </div>
-        <div className="toolbar-group">
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => navigate('/formula/handbook')}
+          >
+            <BookOpen size={14} strokeWidth={1.5} />
+            去手册勾熟记
+          </button>
+
           <button
             type="button"
             className="btn-secondary"
             onClick={() => navigate('/formula/practice?mode=custom')}
           >
-            <Layers size={15} strokeWidth={1.5} />
-            自由选科 / 选板块抽查
+            <Layers size={14} strokeWidth={1.5} />
+            自由选章抽查
           </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            disabled={starredIds.length === 0}
-            onClick={() => navigate('/formula/practice?mode=starred')}
-          >
-            <Star size={15} strokeWidth={1.5} />
-            只刷标星收藏（{starredIds.length}）
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            disabled={mistakes.length === 0}
-            onClick={() => navigate('/formula/practice?mode=mistakes')}
-          >
-            专攻错题公式（{mistakes.length}）
-          </button>
+
+          {starredIds.length > 0 && (
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate('/formula/practice?mode=starred')}
+            >
+              <Star size={14} strokeWidth={1.5} />
+              刷收藏 ({starredIds.length})
+            </button>
+          )}
         </div>
       </section>
 
-      <section className="card-surface" style={{ padding: '20px 22px', marginTop: 16 }}>
-        <div className="section-head-row">
-          <h2 className="section-small-title">4 大科目与 25 个知识点板块</h2>
-          <span className="page-sub" style={{ marginTop: 0 }}>
-            点击展开各板块，可单独默写或在手册中勾选熟记
+      {/* Weekly 7-day Formula Heatmap */}
+      <section className="card-surface today-section-card">
+        <div className="section-row-head">
+          <h2 className="section-small-title">本周公式练习</h2>
+          <span className="page-sub tabular-nums" style={{ marginTop: 0 }}>
+            近 7 天共 {heatmap.reduce((acc, d) => acc + d.count, 0)} 次默写 / 标熟记
+          </span>
+        </div>
+        <div className="heatmap-grid" aria-label="本周公式练习热力图">
+          {heatmap.map((day) => (
+            <div key={day.dateKey} className="heatmap-cell-wrap">
+              <div
+                className={`heatmap-cell heat-level-${day.level} tabular-nums`}
+                title={`${day.dateKey}：${day.count} 次`}
+              >
+                {day.count > 0 ? day.count : ''}
+              </div>
+              <span className="heatmap-day">{day.weekdayLabel}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4 Subjects & 25 Expandable Sections */}
+      <section className="card-surface today-section-card">
+        <div className="section-row-head">
+          <h2 className="section-small-title">四大科目进度（25 板块）</h2>
+          <span className="page-sub tabular-nums" style={{ marginTop: 0 }}>
+            已搞定 {totalDone} / {FORMULA_IDS.length} 题
           </span>
         </div>
 
@@ -241,16 +255,15 @@ export function FormulaTodayPage() {
           {subjectRows.map((subj) => {
             const isOpen = expandedSubject === subj.subject;
             const secs = sectionRows.filter((s) => s.subject === subj.subject);
-            const pct = subj.total > 0 ? Math.round((subj.doneCount / subj.total) * 100) : 0;
+            const pct =
+              subj.total > 0 ? Math.round((subj.doneCount / subj.total) * 100) : 0;
 
             return (
               <div key={subj.subject} className="course-item">
                 <button
                   type="button"
                   className="course-item-trigger"
-                  onClick={() =>
-                    setExpandedSubject(isOpen ? null : subj.subject)
-                  }
+                  onClick={() => setExpandedSubject(isOpen ? null : subj.subject)}
                 >
                   <span className="course-chevron">
                     {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -290,10 +303,11 @@ export function FormulaTodayPage() {
                                   />
                                 )}
                                 <span className="formula-sec-code">{sec.code}</span>
-                                <span>{sec.title}</span>
+                                <MathText text={sec.title} />
                               </div>
                               <div className="formula-sec-meta tabular-nums">
-                                熟记 {sec.directMastered} · 掌握 {sec.fsrsMastered} · 在学 {sec.inProgress} · 未学 {sec.unlearned}
+                                熟记 {sec.directMastered} · 掌握 {sec.fsrsMastered} · 在学{' '}
+                                {sec.inProgress} · 未学 {sec.unlearned}
                                 {sec.dueCount > 0 && (
                                   <span style={{ color: 'var(--gold)', marginLeft: 8 }}>
                                     到期 {sec.dueCount}
