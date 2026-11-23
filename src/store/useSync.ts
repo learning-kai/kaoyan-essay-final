@@ -12,6 +12,7 @@ import {
 } from '../core/sync';
 import { safeIdbStorage } from './storage';
 import { useFormulaProgress } from './useFormulaProgress';
+import { usePoliticsProgress } from './usePoliticsProgress';
 import { useProgress } from './useProgress';
 import { useSettings } from './useSettings';
 
@@ -58,6 +59,7 @@ export function readLocalSyncPayload(now = new Date()): BackupPayload {
   const p = useProgress.getState();
   const s = useSettings.getState();
   const f = useFormulaProgress.getState();
+  const pol = usePoliticsProgress.getState();
   return buildBackupPayload(
     {
       cards: p.cards,
@@ -91,6 +93,17 @@ export function readLocalSyncPayload(now = new Date()): BackupPayload {
         dailyNewLimit: f.dailyNewLimit,
         updatedAt: f.updatedAt,
         resetAt: f.lastResetAt,
+      },
+      politicsProgress: {
+        cards: pol.cards,
+        reviews: pol.reviews,
+        dailyLearnedCount: pol.dailyLearnedCount,
+        mastered: pol.mastered,
+        starred: pol.starred,
+        drillStats: pol.drillStats,
+        dailyNewLimit: pol.dailyNewLimit,
+        updatedAt: pol.updatedAt,
+        resetAt: pol.lastResetAt,
       },
     }
   );
@@ -131,6 +144,20 @@ function applyPayloadToLocalStores(payload: BackupPayload): void {
         dailyNewLimit: fp.dailyNewLimit,
         updatedAt: fp.updatedAt ?? null,
         lastResetAt: fp.resetAt ?? null,
+      });
+    }
+    if (payload.politicsProgress) {
+      const pp = payload.politicsProgress;
+      usePoliticsProgress.setState({
+        cards: pp.cards,
+        reviews: pp.reviews,
+        dailyLearnedCount: pp.dailyLearnedCount,
+        mastered: pp.mastered,
+        starred: pp.starred,
+        drillStats: pp.drillStats,
+        dailyNewLimit: pp.dailyNewLimit,
+        updatedAt: pp.updatedAt ?? null,
+        lastResetAt: pp.resetAt ?? null,
       });
     }
   } finally {

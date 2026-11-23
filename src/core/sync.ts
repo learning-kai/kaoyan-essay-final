@@ -8,6 +8,11 @@ import type {
   FormulaReviewRecord,
   TimestampedFlag,
 } from '../store/useFormulaProgress';
+import {
+  EMPTY_DRILL_STATS,
+  type PoliticsBackupData,
+  type PoliticsReviewRecord,
+} from '../store/usePoliticsProgress';
 import type {
   ExamRecord,
   IdentificationRecord,
@@ -216,6 +221,10 @@ export function mergeSyncPayloads(
     local.formulaProgress,
     remote.formulaProgress
   );
+  const mergedPolitics = mergePoliticsProgress(
+    local.politicsProgress,
+    remote.politicsProgress
+  );
 
   const out: BackupPayload = {
     app: 'kaoyan-essay',
@@ -229,6 +238,9 @@ export function mergeSyncPayloads(
   };
   if (mergedFormula) {
     out.formulaProgress = mergedFormula;
+  }
+  if (mergedPolitics) {
+    out.politicsProgress = mergedPolitics;
   }
   return out;
 }
@@ -355,6 +367,115 @@ export function mergeFormulaProgress(
   };
 }
 
+function mergePoliticsReviews(
+  a: PoliticsReviewRecord[],
+  b: PoliticsReviewRecord[]
+): PoliticsReviewRecord[] {
+  const map = new Map<string, PoliticsReviewRecord>();
+  for (const item of [...a, ...b]) {
+    const key = `${item.timestamp}|${item.cardId}|${item.rating}`;
+    if (!map.has(key)) map.set(key, item);
+  }
+  return Array.from(map.values()).sort((x, y) =>
+    x.timestamp.localeCompare(y.timestamp)
+  );
+}
+
+function hasAnyPoliticsData(p?: PoliticsBackupData): boolean {
+  if (!p) return false;
+  const ds = p.drillStats;
+  return (
+    Object.keys(p.cards).length > 0 ||
+    p.reviews.length > 0 ||
+    Object.keys(p.mastered).length > 0 ||
+    Object.keys(p.starred).length > 0 ||
+    Object.keys(p.dailyLearnedCount).length > 0 ||
+    ds.meetingTotal > 0 ||
+    ds.trapTotal > 0 ||
+    ds.calcTotal > 0 ||
+    Boolean(p.resetAt) ||
+    Boolean(p.updatedAt)
+  );
+}
+
+export function mergePoliticsProgress(
+  local?: PoliticsBackupData,
+  remote?: PoliticsBackupData
+): PoliticsBackupData | undefined {
+  if (!hasAnyPoliticsData(local) && !hasAnyPoliticsData(remote)) {
+    return local ?? remote;
+  }
+  const empty: PoliticsBackupData = {
+    cards: {},
+    reviews: [],
+    dailyLearnedCount: {},
+    mastered: {},
+    starred: {},
+    drillStats: { ...EMPTY_DRILL_STATS },
+    dailyNewLimit: 10,
+    updatedAt: null,
+    resetAt: null,
+  };
+  const a = local ?? empty;
+  const b = remote ?? empty;
+
+  const aResetMs = parseIsoMs(a.resetAt);
+  const bResetMs = parseIsoMs(b.resetAt);
+  const aUpdatedMs = parseIsoMs(a.updatedAt);
+  const bUpdatedMs = parseIsoMs(b.updatedAt);
+
+  if (aResetMs > 0 && aResetMs > bUpdatedMs && aResetMs >= bResetMs) {
+    return { ...a };
+  }
+  if (bResetMs > 0 && bResetMs > aUpdatedMs && bResetMs >= aResetMs) {
+    return { ...b };
+  }
+
+  const allCardIds = Array.from(
+    new Set([...Object.keys(a.cards), ...Object.keys(b.cards)])
+  ).sort();
+  const mergedCards: Record<string, SerializedCard> = {};
+  for (const id of allCardIds) {
+    const ac = a.cards[id];
+    const bc = b.cards[id];
+    if (ac && bc) mergedCards[id] = pickNewerCard(ac, bc);
+    else if (ac) mergedCards[id] = ac;
+    else if (bc) mergedCards[id] = bc;
+  }
+
+  const maxResetMs = Math.max(aResetMs, bResetMs);
+  const maxUpdatedMs = Math.max(aUpdatedMs, bUpdatedMs);
+
+  return {
+    cards: mergedCards,
+    reviews: mergePoliticsReviews(a.reviews, b.reviews),
+    dailyLearnedCount: mergeDailyLearned(a.dailyLearnedCount, b.dailyLearnedCount),
+    mastered: mergeTimestampedFlags(a.mastered, b.mastered),
+    starred: mergeTimestampedFlags(a.starred, b.starred),
+    drillStats: {
+      meetingCorrect: Math.max(a.drillStats.meetingCorrect, b.drillStats.meetingCorrect),
+      meetingTotal: Math.max(a.drillStats.meetingTotal, b.drillStats.meetingTotal),
+      trapCorrect: Math.max(a.drillStats.trapCorrect, b.drillStats.trapCorrect),
+      trapTotal: Math.max(a.drillStats.trapTotal, b.drillStats.trapTotal),
+      calcCorrect: Math.max(a.drillStats.calcCorrect, b.drillStats.calcCorrect),
+      calcTotal: Math.max(a.drillStats.calcTotal, b.drillStats.calcTotal),
+    },
+    dailyNewLimit: bUpdatedMs > aUpdatedMs ? b.dailyNewLimit : a.dailyNewLimit,
+    resetAt:
+      maxResetMs === 0
+        ? null
+        : aResetMs >= bResetMs
+          ? a.resetAt
+          : b.resetAt,
+    updatedAt:
+      maxUpdatedMs === 0
+        ? null
+        : aUpdatedMs >= bUpdatedMs
+          ? a.updatedAt
+          : b.updatedAt,
+  };
+}
+
 function sortRecord<T>(rec: Record<string, T>): Record<string, T> {
   const out: Record<string, T> = {};
   for (const k of Object.keys(rec).sort()) {
@@ -377,6 +498,20 @@ function canonicalSnapshot(p: BackupPayload): string {
       }
     : null;
 
+  const pp = p.politicsProgress;
+  const politicsSnap = hasAnyPoliticsData(pp) && pp
+    ? {
+        resetAt: pp.resetAt ?? null,
+        dailyNewLimit: pp.dailyNewLimit,
+        cards: sortRecord(pp.cards),
+        reviews: pp.reviews,
+        dailyLearnedCount: sortRecord(pp.dailyLearnedCount),
+        mastered: sortRecord(pp.mastered),
+        starred: sortRecord(pp.starred),
+        drillStats: pp.drillStats,
+      }
+    : null;
+
   return JSON.stringify({
     resetAt: p.resetAt ?? null,
     settingsUpdatedAt: p.settingsUpdatedAt ?? null,
@@ -387,6 +522,7 @@ function canonicalSnapshot(p: BackupPayload): string {
     idRecords: p.progress.idRecords,
     settings: p.settings,
     formulaProgress: formulaSnap,
+    politicsProgress: politicsSnap,
   });
 }
 

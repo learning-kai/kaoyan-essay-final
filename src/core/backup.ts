@@ -1,5 +1,9 @@
 import type { ReviewRecord } from './mistakes';
 import type { FormulaBackupData } from '../store/useFormulaProgress';
+import {
+  EMPTY_DRILL_STATS,
+  type PoliticsBackupData,
+} from '../store/usePoliticsProgress';
 import type { ExamRecord, IdentificationRecord, SerializedCard } from '../store/useProgress';
 import type { InputMode, ThemeMode } from '../store/useSettings';
 import type { PracticeMode } from './grader';
@@ -30,6 +34,7 @@ export interface BackupPayload {
     bodyFontSize: number;
   };
   formulaProgress?: FormulaBackupData;
+  politicsProgress?: PoliticsBackupData;
 }
 
 export interface BackupMeta {
@@ -37,6 +42,7 @@ export interface BackupMeta {
   settingsUpdatedAt?: string | null;
   resetAt?: string | null;
   formulaProgress?: FormulaBackupData;
+  politicsProgress?: PoliticsBackupData;
 }
 
 export function buildBackupPayload(
@@ -57,6 +63,9 @@ export function buildBackupPayload(
   };
   if (meta?.formulaProgress) {
     payload.formulaProgress = meta.formulaProgress;
+  }
+  if (meta?.politicsProgress) {
+    payload.politicsProgress = meta.politicsProgress;
   }
   return payload;
 }
@@ -89,6 +98,29 @@ function normalizeFormulaBackup(raw: unknown): FormulaBackupData | undefined {
   };
 }
 
+function normalizePoliticsBackup(raw: unknown): PoliticsBackupData | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const p = raw as Partial<PoliticsBackupData>;
+  return {
+    cards: p.cards && typeof p.cards === 'object' ? p.cards : {},
+    reviews: Array.isArray(p.reviews) ? p.reviews : [],
+    dailyLearnedCount:
+      p.dailyLearnedCount && typeof p.dailyLearnedCount === 'object'
+        ? p.dailyLearnedCount
+        : {},
+    mastered: p.mastered && typeof p.mastered === 'object' ? p.mastered : {},
+    starred: p.starred && typeof p.starred === 'object' ? p.starred : {},
+    drillStats: {
+      ...EMPTY_DRILL_STATS,
+      ...(p.drillStats && typeof p.drillStats === 'object' ? p.drillStats : {}),
+    },
+    dailyNewLimit:
+      typeof p.dailyNewLimit === 'number' ? p.dailyNewLimit : 10,
+    updatedAt: p.updatedAt ?? null,
+    resetAt: p.resetAt ?? null,
+  };
+}
+
 export function parseBackup(jsonText: string): { ok: true; data: BackupPayload } | { ok: false; error: string } {
   try {
     const raw = JSON.parse(jsonText) as Partial<BackupPayload>;
@@ -99,6 +131,7 @@ export function parseBackup(jsonText: string): { ok: true; data: BackupPayload }
       return { ok: false, error: '备份文件中缺少卡片进度数据。' };
     }
     const formulaProgress = normalizeFormulaBackup(raw.formulaProgress);
+    const politicsProgress = normalizePoliticsBackup(raw.politicsProgress);
     const data: BackupPayload = {
       app: 'kaoyan-essay',
       schemaVersion: raw.schemaVersion ?? 3,
@@ -127,6 +160,9 @@ export function parseBackup(jsonText: string): { ok: true; data: BackupPayload }
     };
     if (formulaProgress) {
       data.formulaProgress = formulaProgress;
+    }
+    if (politicsProgress) {
+      data.politicsProgress = politicsProgress;
     }
     return { ok: true, data };
   } catch {

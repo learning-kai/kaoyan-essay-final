@@ -5,6 +5,7 @@ import { Layout } from '../components/Layout';
 import { parseBackup, serializeBackup } from '../core/backup';
 import { formatLocalDateKey } from '../core/mistakes';
 import { useFormulaProgress } from '../store/useFormulaProgress';
+import { usePoliticsProgress } from '../store/usePoliticsProgress';
 import { useProgress } from '../store/useProgress';
 import { useSettings, type InputMode, type ThemeMode } from '../store/useSettings';
 import './pages.css';
@@ -13,8 +14,9 @@ export function SettingsPage() {
   const settings = useSettings();
   const progress = useProgress();
   const formulaProgress = useFormulaProgress();
+  const politicsProgress = usePoliticsProgress();
 
-  const [resetScope, setResetScope] = useState<'essay' | 'formula'>('essay');
+  const [resetScope, setResetScope] = useState<'essay' | 'formula' | 'politics'>('essay');
   const [resetConfirmText, setResetConfirmText] = useState('');
   const [resetDoneMsg, setResetDoneMsg] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(
@@ -61,6 +63,17 @@ export function SettingsPage() {
           updatedAt: formulaProgress.updatedAt,
           resetAt: formulaProgress.lastResetAt,
         },
+        politicsProgress: {
+          cards: politicsProgress.cards,
+          reviews: politicsProgress.reviews,
+          dailyLearnedCount: politicsProgress.dailyLearnedCount,
+          mastered: politicsProgress.mastered,
+          starred: politicsProgress.starred,
+          drillStats: politicsProgress.drillStats,
+          dailyNewLimit: politicsProgress.dailyNewLimit,
+          updatedAt: politicsProgress.updatedAt,
+          resetAt: politicsProgress.lastResetAt,
+        },
       }
     );
 
@@ -71,7 +84,10 @@ export function SettingsPage() {
     a.download = `kaoyan-backup-${formatLocalDateKey(new Date())}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setBackupMsg({ type: 'ok', text: '已导出 JSON 备份文件（含小作文与公式默写进度）。' });
+    setBackupMsg({
+      type: 'ok',
+      text: '已导出 JSON 备份文件（含小作文、公式默写与政治一页纸进度）。',
+    });
   };
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,14 +124,33 @@ export function SettingsPage() {
           lastResetAt: fp.resetAt ?? null,
         });
       }
+      if (parsed.data.politicsProgress) {
+        const pp = parsed.data.politicsProgress;
+        usePoliticsProgress.setState({
+          cards: pp.cards,
+          reviews: pp.reviews,
+          dailyLearnedCount: pp.dailyLearnedCount,
+          mastered: pp.mastered,
+          starred: pp.starred,
+          drillStats: pp.drillStats,
+          dailyNewLimit: pp.dailyNewLimit,
+          updatedAt: nowIso,
+          lastResetAt: pp.resetAt ?? null,
+        });
+      }
       const formulaCount = parsed.data.formulaProgress
         ? Object.keys(parsed.data.formulaProgress.cards).length
+        : 0;
+      const politicsCount = parsed.data.politicsProgress
+        ? Object.keys(parsed.data.politicsProgress.cards).length
         : 0;
       setBackupMsg({
         type: 'ok',
         text: `恢复成功：已导入小作文 ${Object.keys(parsed.data.progress.cards).length} 张卡片${
-          parsed.data.formulaProgress ? `、公式 ${formulaCount} 张卡片及熟记/收藏记录` : ''
-        }。`,
+          parsed.data.formulaProgress ? `、公式 ${formulaCount} 张卡片` : ''
+        }${
+          parsed.data.politicsProgress ? `、政治 ${politicsCount} 张卡片` : ''
+        }及熟记/收藏记录。`,
       });
     } catch {
       setBackupMsg({ type: 'err', text: '读取文件失败，请重试。' });
@@ -128,10 +163,13 @@ export function SettingsPage() {
     if (resetConfirmText.trim() !== '重置') return;
     if (resetScope === 'essay') {
       progress.resetAll();
-      setResetDoneMsg('已重置英语小作文进度（公式默写不受影响）');
-    } else {
+      setResetDoneMsg('已重置英语小作文进度（公式与政治不受影响）');
+    } else if (resetScope === 'formula') {
       formulaProgress.resetFormulas();
-      setResetDoneMsg('已重置公式默写进度（英语小作文不受影响）');
+      setResetDoneMsg('已重置公式默写进度（小作文与政治不受影响）');
+    } else {
+      politicsProgress.resetPolitics();
+      setResetDoneMsg('已重置政治一页纸进度（小作文与公式不受影响）');
     }
     setResetConfirmText('');
     window.setTimeout(() => setResetDoneMsg(null), 3500);
@@ -207,6 +245,28 @@ export function SettingsPage() {
               />
               <span className="tabular-nums setting-val">
                 {formulaProgress.dailyNewLimit} 题
+              </span>
+            </div>
+          </div>
+
+          <div className="setting-row">
+            <div>
+              <div className="setting-label">政治一页纸 · 每日新卡上限</div>
+              <div className="setting-desc">范围 3–30 张，默认 10 张（已标熟记不占名额）</div>
+            </div>
+            <div className="setting-range-wrap">
+              <input
+                type="range"
+                min={3}
+                max={30}
+                step={1}
+                value={politicsProgress.dailyNewLimit}
+                onChange={(e) =>
+                  politicsProgress.setDailyNewLimit(Number(e.target.value))
+                }
+              />
+              <span className="tabular-nums setting-val">
+                {politicsProgress.dailyNewLimit} 张
               </span>
             </div>
           </div>
@@ -409,7 +469,7 @@ export function SettingsPage() {
             重置学习进度
           </h2>
           <p className="setting-desc" style={{ marginBottom: 12 }}>
-            两科进度相互独立，可按需单独清空。选择目标并输入「重置」两个字后方可确认执行。
+            三科进度相互独立，可按需单独清空。选择目标并输入「重置」两个字后方可确认执行。
           </p>
           <div className="toolbar-group" style={{ marginBottom: 12 }}>
             <button
@@ -425,6 +485,13 @@ export function SettingsPage() {
               onClick={() => setResetScope('formula')}
             >
               仅重置公式默写进度
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary ${resetScope === 'politics' ? 'active' : ''}`}
+              onClick={() => setResetScope('politics')}
+            >
+              仅重置政治一页纸进度
             </button>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -445,7 +512,11 @@ export function SettingsPage() {
               }}
               onClick={handleReset}
             >
-              {resetScope === 'essay' ? '确认重置小作文' : '确认重置公式'}
+              {resetScope === 'essay'
+                ? '确认重置小作文'
+                : resetScope === 'formula'
+                  ? '确认重置公式'
+                  : '确认重置政治'}
             </button>
             {resetDoneMsg && (
               <span style={{ fontSize: 13, color: 'var(--ok)' }}>{resetDoneMsg}</span>

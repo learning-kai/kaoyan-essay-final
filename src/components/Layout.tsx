@@ -17,6 +17,7 @@ import {
   Sigma,
   Star,
   Sun,
+  Zap,
 } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
@@ -27,16 +28,24 @@ import {
   getStarredFormulaIds,
 } from '../core/formulaStats';
 import { collectMistakes } from '../core/mistakes';
+import {
+  collectPoliticsMistakes,
+  getDuePoliticsIds,
+  getPoliticsMasteryLevel,
+  getStarredPoliticsIds,
+} from '../core/politicsStats';
 import { FORMULA_IDS } from '../data/formulas';
+import { POLITICS_CARD_IDS } from '../data/politics';
 import { STUDYABLE_SENTENCE_IDS } from '../data/templates';
 import { useFormulaProgress } from '../store/useFormulaProgress';
+import { usePoliticsProgress } from '../store/usePoliticsProgress';
 import { useProgress } from '../store/useProgress';
 import { useSettings, type ThemeMode } from '../store/useSettings';
 import { useSync } from '../store/useSync';
 import { ShortcutsModal } from './ShortcutsModal';
 import './components.css';
 
-type ActiveModule = 'essay' | 'formula';
+type ActiveModule = 'essay' | 'formula' | 'politics';
 
 let lastActiveModule: ActiveModule = 'essay';
 
@@ -67,6 +76,10 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
       lastActiveModule = 'formula';
       return 'formula';
     }
+    if (location.pathname.startsWith('/politics')) {
+      lastActiveModule = 'politics';
+      return 'politics';
+    }
     if (location.pathname === '/settings') {
       return lastActiveModule;
     }
@@ -81,6 +94,11 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
   const formulaReviews = useFormulaProgress((s) => s.reviews);
   const formulaMastered = useFormulaProgress((s) => s.mastered);
   const formulaStarred = useFormulaProgress((s) => s.starred);
+
+  const politicsCards = usePoliticsProgress((s) => s.cards);
+  const politicsReviews = usePoliticsProgress((s) => s.reviews);
+  const politicsMastered = usePoliticsProgress((s) => s.mastered);
+  const politicsStarred = usePoliticsProgress((s) => s.starred);
 
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -114,6 +132,31 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
     }
     return mistakeIds.size;
   }, [formulaReviews, formulaMastered, formulaStarred]);
+
+  const politicsDueCount = useMemo(
+    () => getDuePoliticsIds(politicsCards, politicsMastered).length,
+    [politicsCards, politicsMastered]
+  );
+  const politicsDoneCount = useMemo(
+    () =>
+      POLITICS_CARD_IDS.filter(
+        (id) =>
+          getPoliticsMasteryLevel(id, politicsCards, politicsMastered) ===
+          'mastered'
+      ).length,
+    [politicsCards, politicsMastered]
+  );
+  const politicsFlagCount = useMemo(() => {
+    const flagged = new Set(
+      collectPoliticsMistakes(politicsReviews, politicsMastered).map(
+        (m) => m.cardId
+      )
+    );
+    for (const id of getStarredPoliticsIds(politicsStarred)) {
+      flagged.add(id);
+    }
+    return flagged.size;
+  }, [politicsReviews, politicsMastered, politicsStarred]);
 
   const theme = useSettings((s) => s.theme);
   const bodyFontSize = useSettings((s) => s.bodyFontSize);
@@ -161,8 +204,16 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
       if (!location.pathname.startsWith('/formula')) {
         navigate('/formula/today');
       }
+    } else if (target === 'politics') {
+      if (!location.pathname.startsWith('/politics')) {
+        navigate('/politics/today');
+      }
     } else {
-      if (location.pathname.startsWith('/formula')) {
+      if (
+        location.pathname.startsWith('/formula') ||
+        location.pathname.startsWith('/politics') ||
+        location.pathname === '/settings'
+      ) {
         navigate('/today');
       }
     }
@@ -184,14 +235,26 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
       <aside className="sidebar" aria-label="主导航">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
-            {activeModule === 'formula' ? '∑' : 'L'}
+            {activeModule === 'formula'
+              ? '∑'
+              : activeModule === 'politics'
+                ? '政'
+                : 'L'}
           </span>
           <div className="brand-text">
             <div className="brand-title">
-              {activeModule === 'formula' ? '公式默写' : '小作文'}
+              {activeModule === 'formula'
+                ? '公式默写'
+                : activeModule === 'politics'
+                  ? '政治一页纸'
+                  : '小作文'}
             </div>
             <div className="brand-sub">
-              {activeModule === 'formula' ? '高数·线代·概率·信号' : '考研英语一'}
+              {activeModule === 'formula'
+                ? '高数·线代·概率·信号'
+                : activeModule === 'politics'
+                  ? '马原·史纲·高频考点'
+                  : '考研英语一'}
             </div>
           </div>
         </div>
@@ -216,8 +279,19 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             onClick={() => switchModule('formula')}
             title="公式默写手册（328题）"
           >
-            <span className="module-switch-full">公式默写</span>
+            <span className="module-switch-full">公式</span>
             <span className="module-switch-short">∑</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeModule === 'politics'}
+            className={`module-switch-btn ${activeModule === 'politics' ? 'active' : ''}`}
+            onClick={() => switchModule('politics')}
+            title="27考研政治一页纸（100卡）"
+          >
+            <span className="module-switch-full">政治</span>
+            <span className="module-switch-short">政</span>
           </button>
         </div>
 
@@ -304,7 +378,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
               <span className="nav-label">设置</span>
             </NavLink>
           </nav>
-        ) : (
+        ) : activeModule === 'formula' ? (
           <nav className="nav-list">
             <NavLink
               to="/formula/today"
@@ -353,6 +427,65 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             >
               <BarChart3 size={18} strokeWidth={1.5} />
               <span className="nav-label">公式统计</span>
+            </NavLink>
+
+            <NavLink
+              to="/settings"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Settings size={18} strokeWidth={1.5} />
+              <span className="nav-label">设置</span>
+            </NavLink>
+          </nav>
+        ) : (
+          <nav className="nav-list">
+            <NavLink
+              to="/politics/today"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <CalendarDays size={18} strokeWidth={1.5} />
+              <span className="nav-label">今日政治</span>
+            </NavLink>
+
+            <NavLink
+              to="/politics/practice"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <RotateCcw size={18} strokeWidth={1.5} />
+              <span className="nav-label">卡片复习</span>
+              {politicsDueCount > 0 && (
+                <span className="nav-badge tabular-nums">{politicsDueCount}</span>
+              )}
+            </NavLink>
+
+            <NavLink
+              to="/politics/drills"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Zap size={18} strokeWidth={1.5} />
+              <span className="nav-label">专项快刷</span>
+            </NavLink>
+
+            <NavLink
+              to="/politics/handbook"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <BookOpen size={18} strokeWidth={1.5} />
+              <span className="nav-label">一页纸总览</span>
+              <span className="nav-badge tabular-nums">
+                {politicsDoneCount}/{POLITICS_CARD_IDS.length}
+              </span>
+            </NavLink>
+
+            <NavLink
+              to="/politics/mistakes"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Star size={18} strokeWidth={1.5} />
+              <span className="nav-label">收藏与错题</span>
+              {politicsFlagCount > 0 && (
+                <span className="nav-badge tabular-nums">{politicsFlagCount}</span>
+              )}
             </NavLink>
 
             <NavLink
@@ -416,7 +549,9 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
           <div style={{ marginTop: 8 }}>
             {activeModule === 'formula'
               ? `已搞定 ${formulaDoneCount} / ${FORMULA_IDS.length} 题`
-              : `已掌握 ${learnedCount} / ${STUDYABLE_SENTENCE_IDS.length} 句`}
+              : activeModule === 'politics'
+                ? `已搞定 ${politicsDoneCount} / ${POLITICS_CARD_IDS.length} 卡`
+                : `已掌握 ${learnedCount} / ${STUDYABLE_SENTENCE_IDS.length} 句`}
           </div>
         </div>
       </aside>
@@ -431,7 +566,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             className={`mobile-mode-pill ${activeModule === 'essay' ? 'active' : ''}`}
             onClick={() => switchModule('essay')}
           >
-            英语小作文
+            小作文
           </button>
           <button
             type="button"
@@ -440,7 +575,16 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             className={`mobile-mode-pill ${activeModule === 'formula' ? 'active' : ''}`}
             onClick={() => switchModule('formula')}
           >
-            公式默写
+            公式
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeModule === 'politics'}
+            className={`mobile-mode-pill ${activeModule === 'politics' ? 'active' : ''}`}
+            onClick={() => switchModule('politics')}
+          >
+            政治
           </button>
         </div>
       </div>
@@ -503,7 +647,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             <span>更多</span>
           </button>
         </nav>
-      ) : (
+      ) : activeModule === 'formula' ? (
         <nav className="mobile-nav" aria-label="公式底部导航">
           <NavLink
             to="/formula/today"
@@ -544,6 +688,57 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
           >
             <Star size={18} strokeWidth={1.5} />
             <span>收藏错题</span>
+          </NavLink>
+          <button
+            type="button"
+            className={`mobile-nav-item mobile-nav-btn ${moreOpen ? 'active' : ''}`}
+            onClick={() => setMoreOpen((v) => !v)}
+          >
+            <MoreHorizontal size={18} strokeWidth={1.5} />
+            <span>更多</span>
+          </button>
+        </nav>
+      ) : (
+        <nav className="mobile-nav" aria-label="政治底部导航">
+          <NavLink
+            to="/politics/today"
+            onClick={() => setMoreOpen(false)}
+            className={({ isActive }) =>
+              `mobile-nav-item ${isActive ? 'active' : ''}`
+            }
+          >
+            <CalendarDays size={18} strokeWidth={1.5} />
+            <span>今日</span>
+          </NavLink>
+          <NavLink
+            to="/politics/practice"
+            onClick={() => setMoreOpen(false)}
+            className={({ isActive }) =>
+              `mobile-nav-item ${isActive ? 'active' : ''}`
+            }
+          >
+            <RotateCcw size={18} strokeWidth={1.5} />
+            <span>复习{politicsDueCount > 0 ? `(${politicsDueCount})` : ''}</span>
+          </NavLink>
+          <NavLink
+            to="/politics/drills"
+            onClick={() => setMoreOpen(false)}
+            className={({ isActive }) =>
+              `mobile-nav-item ${isActive ? 'active' : ''}`
+            }
+          >
+            <Zap size={18} strokeWidth={1.5} />
+            <span>快刷</span>
+          </NavLink>
+          <NavLink
+            to="/politics/handbook"
+            onClick={() => setMoreOpen(false)}
+            className={({ isActive }) =>
+              `mobile-nav-item ${isActive ? 'active' : ''}`
+            }
+          >
+            <BookOpen size={18} strokeWidth={1.5} />
+            <span>一页纸</span>
           </NavLink>
           <button
             type="button"
@@ -602,9 +797,13 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
                   <BookOpen size={16} strokeWidth={1.5} /> 模板库
                 </NavLink>
               </>
-            ) : (
+            ) : activeModule === 'formula' ? (
               <NavLink to="/formula/stats" onClick={() => setMoreOpen(false)} className="mobile-more-link">
                 <BarChart3 size={16} strokeWidth={1.5} /> 公式统计
+              </NavLink>
+            ) : (
+              <NavLink to="/politics/mistakes" onClick={() => setMoreOpen(false)} className="mobile-more-link">
+                <Star size={16} strokeWidth={1.5} /> 政治收藏与错题
               </NavLink>
             )}
             <NavLink to="/settings" onClick={() => setMoreOpen(false)} className="mobile-more-link">

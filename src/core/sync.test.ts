@@ -360,4 +360,141 @@ describe('GitHub 私有 Gist 多端同步：智能合并与配对码单元测试
     expect(Object.keys(afterReset.formulaProgress!.cards)).toHaveLength(0);
     expect(Object.keys(afterReset.formulaProgress!.mastered)).toHaveLength(0);
   });
+
+  it('政治一页纸进度支持双向智能合并（含专项快刷统计与 LWW 熟记收藏）且独立重置不影响小作文和公式', () => {
+    const t1 = new Date('2026-11-23T08:00:00Z');
+    const t2 = new Date('2026-11-23T09:00:00Z');
+    const t3 = new Date('2026-11-23T10:00:00Z');
+
+    const essayCard = serializeCard(reviewCard(createInitialCard(t1), Rating.Good, t1));
+    const pCard1 = serializeCard(reviewCard(createInitialCard(t1), Rating.Good, t1));
+    const pCard2 = serializeCard(reviewCard(createInitialCard(t2), Rating.Easy, t2));
+
+    const desktop = buildBackupPayload(
+      {
+        cards: { 'shared.closing': essayCard },
+        reviews: [],
+        dailyLearnedCount: {},
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings(),
+      t1,
+      {
+        updatedAt: t1.toISOString(),
+        politicsProgress: {
+          cards: { 'p-005': pCard1 },
+          reviews: [{ cardId: 'p-005', rating: Rating.Good, timestamp: t1.toISOString() }],
+          dailyLearnedCount: { '2026-11-23': 3 },
+          mastered: {
+            'p-001': { value: true, updatedAt: t1.toISOString() },
+            'p-002': { value: true, updatedAt: t1.toISOString() },
+          },
+          starred: {
+            'p-092': { value: true, updatedAt: t1.toISOString() },
+          },
+          drillStats: {
+            meetingCorrect: 8,
+            meetingTotal: 10,
+            trapCorrect: 5,
+            trapTotal: 6,
+            calcCorrect: 2,
+            calcTotal: 3,
+          },
+          dailyNewLimit: 10,
+          updatedAt: t1.toISOString(),
+          resetAt: null,
+        },
+      }
+    );
+
+    const phone = buildBackupPayload(
+      {
+        cards: {},
+        reviews: [],
+        dailyLearnedCount: {},
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings(),
+      t2,
+      {
+        politicsProgress: {
+          cards: { 'p-092': pCard2 },
+          reviews: [{ cardId: 'p-092', rating: Rating.Easy, timestamp: t2.toISOString() }],
+          dailyLearnedCount: { '2026-11-23': 5 },
+          mastered: {
+            'p-002': { value: false, updatedAt: t2.toISOString() },
+            'p-033': { value: true, updatedAt: t2.toISOString() },
+          },
+          starred: {
+            'p-077': { value: true, updatedAt: t2.toISOString() },
+          },
+          drillStats: {
+            meetingCorrect: 6,
+            meetingTotal: 7,
+            trapCorrect: 9,
+            trapTotal: 11,
+            calcCorrect: 4,
+            calcTotal: 4,
+          },
+          dailyNewLimit: 12,
+          updatedAt: t2.toISOString(),
+          resetAt: null,
+        },
+      }
+    );
+
+    const merged = mergeSyncPayloads(phone, desktop, t2);
+    expect(Object.keys(merged.progress.cards)).toEqual(['shared.closing']);
+    expect(Object.keys(merged.politicsProgress!.cards).sort()).toEqual(['p-005', 'p-092']);
+    expect(merged.politicsProgress!.mastered['p-001'].value).toBe(true);
+    expect(merged.politicsProgress!.mastered['p-002'].value).toBe(false);
+    expect(merged.politicsProgress!.mastered['p-033'].value).toBe(true);
+    expect(merged.politicsProgress!.starred['p-092'].value).toBe(true);
+    expect(merged.politicsProgress!.starred['p-077'].value).toBe(true);
+    expect(merged.politicsProgress!.drillStats).toEqual({
+      meetingCorrect: 8,
+      meetingTotal: 10,
+      trapCorrect: 9,
+      trapTotal: 11,
+      calcCorrect: 4,
+      calcTotal: 4,
+    });
+    expect(merged.politicsProgress!.dailyNewLimit).toBe(12);
+
+    const politicsResetPhone = buildBackupPayload(
+      merged.progress,
+      merged.settings,
+      t3,
+      {
+        updatedAt: merged.updatedAt,
+        politicsProgress: {
+          cards: {},
+          reviews: [],
+          dailyLearnedCount: {},
+          mastered: {},
+          starred: {},
+          drillStats: {
+            meetingCorrect: 0,
+            meetingTotal: 0,
+            trapCorrect: 0,
+            trapTotal: 0,
+            calcCorrect: 0,
+            calcTotal: 0,
+          },
+          dailyNewLimit: 12,
+          updatedAt: t3.toISOString(),
+          resetAt: t3.toISOString(),
+        },
+      }
+    );
+
+    const afterReset = mergeSyncPayloads(politicsResetPhone, desktop, t3);
+    expect(Object.keys(afterReset.progress.cards)).toEqual(['shared.closing']);
+    expect(Object.keys(afterReset.politicsProgress!.cards)).toHaveLength(0);
+    expect(Object.keys(afterReset.politicsProgress!.mastered)).toHaveLength(0);
+    expect(afterReset.politicsProgress!.drillStats.meetingTotal).toBe(0);
+  });
 });
+

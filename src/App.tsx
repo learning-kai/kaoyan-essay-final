@@ -10,6 +10,11 @@ import { FormulaTodayPage } from './pages/FormulaToday';
 import { LearnPage } from './pages/Learn';
 import { LibraryPage } from './pages/Library';
 import { MistakesPage } from './pages/Mistakes';
+import { PoliticsDrillsPage } from './pages/PoliticsDrills';
+import { PoliticsHandbookPage } from './pages/PoliticsHandbook';
+import { PoliticsMistakesPage } from './pages/PoliticsMistakes';
+import { PoliticsPracticePage } from './pages/PoliticsPractice';
+import { PoliticsTodayPage } from './pages/PoliticsToday';
 import { ReviewPage } from './pages/Review';
 import { SettingsPage } from './pages/Settings';
 import { StatsPage } from './pages/Stats';
@@ -37,6 +42,13 @@ export function App() {
         <Route path="/formula/handbook" element={<FormulaHandbookPage />} />
         <Route path="/formula/mistakes" element={<FormulaMistakesPage />} />
         <Route path="/formula/stats" element={<FormulaStatsPage />} />
+
+        <Route path="/politics" element={<Navigate to="/politics/today" replace />} />
+        <Route path="/politics/today" element={<PoliticsTodayPage />} />
+        <Route path="/politics/practice" element={<PoliticsPracticePage />} />
+        <Route path="/politics/drills" element={<PoliticsDrillsPage />} />
+        <Route path="/politics/handbook" element={<PoliticsHandbookPage />} />
+        <Route path="/politics/mistakes" element={<PoliticsMistakesPage />} />
 
         <Route path="*" element={<Navigate to="/today" replace />} />
       </Routes>
