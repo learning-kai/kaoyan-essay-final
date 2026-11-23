@@ -4,6 +4,7 @@ import { CloudSyncCard } from '../components/CloudSyncCard';
 import { Layout } from '../components/Layout';
 import { parseBackup, serializeBackup } from '../core/backup';
 import { formatLocalDateKey } from '../core/mistakes';
+import { useFormulaProgress } from '../store/useFormulaProgress';
 import { useProgress } from '../store/useProgress';
 import { useSettings, type InputMode, type ThemeMode } from '../store/useSettings';
 import './pages.css';
@@ -11,16 +12,18 @@ import './pages.css';
 export function SettingsPage() {
   const settings = useSettings();
   const progress = useProgress();
+  const formulaProgress = useFormulaProgress();
 
+  const [resetScope, setResetScope] = useState<'essay' | 'formula'>('essay');
   const [resetConfirmText, setResetConfirmText] = useState('');
-  const [resetDone, setResetDone] = useState(false);
+  const [resetDoneMsg, setResetDoneMsg] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(
     null
   );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    document.title = '设置 · 小作文';
+    document.title = '设置 · 考研背诵';
   }, []);
 
   const handleExport = () => {
@@ -48,6 +51,16 @@ export function SettingsPage() {
         updatedAt: progress.updatedAt,
         settingsUpdatedAt: settings.updatedAt,
         resetAt: progress.lastResetAt,
+        formulaProgress: {
+          cards: formulaProgress.cards,
+          reviews: formulaProgress.reviews,
+          dailyLearnedCount: formulaProgress.dailyLearnedCount,
+          mastered: formulaProgress.mastered,
+          starred: formulaProgress.starred,
+          dailyNewLimit: formulaProgress.dailyNewLimit,
+          updatedAt: formulaProgress.updatedAt,
+          resetAt: formulaProgress.lastResetAt,
+        },
       }
     );
 
@@ -55,10 +68,10 @@ export function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `kaoyan-essay-backup-${formatLocalDateKey(new Date())}.json`;
+    a.download = `kaoyan-backup-${formatLocalDateKey(new Date())}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setBackupMsg({ type: 'ok', text: '已导出 JSON 备份文件。' });
+    setBackupMsg({ type: 'ok', text: '已导出 JSON 备份文件（含小作文与公式默写进度）。' });
   };
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,9 +95,27 @@ export function SettingsPage() {
         lastResetAt: parsed.data.resetAt ?? null,
       });
       settings.updateSettings(parsed.data.settings, nowIso);
+      if (parsed.data.formulaProgress) {
+        const fp = parsed.data.formulaProgress;
+        useFormulaProgress.setState({
+          cards: fp.cards,
+          reviews: fp.reviews,
+          dailyLearnedCount: fp.dailyLearnedCount,
+          mastered: fp.mastered,
+          starred: fp.starred,
+          dailyNewLimit: fp.dailyNewLimit,
+          updatedAt: nowIso,
+          lastResetAt: fp.resetAt ?? null,
+        });
+      }
+      const formulaCount = parsed.data.formulaProgress
+        ? Object.keys(parsed.data.formulaProgress.cards).length
+        : 0;
       setBackupMsg({
         type: 'ok',
-        text: `恢复成功：已导入 ${Object.keys(parsed.data.progress.cards).length} 张卡片与全部记录。`,
+        text: `恢复成功：已导入小作文 ${Object.keys(parsed.data.progress.cards).length} 张卡片${
+          parsed.data.formulaProgress ? `、公式 ${formulaCount} 张卡片及熟记/收藏记录` : ''
+        }。`,
       });
     } catch {
       setBackupMsg({ type: 'err', text: '读取文件失败，请重试。' });
@@ -95,10 +126,15 @@ export function SettingsPage() {
 
   const handleReset = () => {
     if (resetConfirmText.trim() !== '重置') return;
-    progress.resetAll();
+    if (resetScope === 'essay') {
+      progress.resetAll();
+      setResetDoneMsg('已重置英语小作文进度（公式默写不受影响）');
+    } else {
+      formulaProgress.resetFormulas();
+      setResetDoneMsg('已重置公式默写进度（英语小作文不受影响）');
+    }
     setResetConfirmText('');
-    setResetDone(true);
-    window.setTimeout(() => setResetDone(false), 3000);
+    window.setTimeout(() => setResetDoneMsg(null), 3500);
   };
 
   return (
@@ -135,7 +171,7 @@ export function SettingsPage() {
 
           <div className="setting-row">
             <div>
-              <div className="setting-label">每日新句子上限</div>
+              <div className="setting-label">小作文 · 每日新句子上限</div>
               <div className="setting-desc">范围 4–15 句，默认 8 句</div>
             </div>
             <div className="setting-range-wrap">
@@ -150,6 +186,28 @@ export function SettingsPage() {
                 }
               />
               <span className="tabular-nums setting-val">{settings.dailyNewLimit} 句</span>
+            </div>
+          </div>
+
+          <div className="setting-row">
+            <div>
+              <div className="setting-label">公式默写 · 每日新公式上限</div>
+              <div className="setting-desc">范围 5–40 题，默认 15 题（已标熟记不占名额）</div>
+            </div>
+            <div className="setting-range-wrap">
+              <input
+                type="range"
+                min={5}
+                max={40}
+                step={1}
+                value={formulaProgress.dailyNewLimit}
+                onChange={(e) =>
+                  formulaProgress.setDailyNewLimit(Number(e.target.value))
+                }
+              />
+              <span className="tabular-nums setting-val">
+                {formulaProgress.dailyNewLimit} 题
+              </span>
             </div>
           </div>
 
@@ -351,8 +409,24 @@ export function SettingsPage() {
             重置学习进度
           </h2>
           <p className="setting-desc" style={{ marginBottom: 12 }}>
-            将清空全部 FSRS 卡片、复习与实战记录。输入「重置」两个字后方可确认执行。
+            两科进度相互独立，可按需单独清空。选择目标并输入「重置」两个字后方可确认执行。
           </p>
+          <div className="toolbar-group" style={{ marginBottom: 12 }}>
+            <button
+              type="button"
+              className={`btn-secondary ${resetScope === 'essay' ? 'active' : ''}`}
+              onClick={() => setResetScope('essay')}
+            >
+              仅重置小作文进度
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary ${resetScope === 'formula' ? 'active' : ''}`}
+              onClick={() => setResetScope('formula')}
+            >
+              仅重置公式默写进度
+            </button>
+          </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             <input
               type="text"
@@ -371,10 +445,10 @@ export function SettingsPage() {
               }}
               onClick={handleReset}
             >
-              确认重置
+              {resetScope === 'essay' ? '确认重置小作文' : '确认重置公式'}
             </button>
-            {resetDone && (
-              <span style={{ fontSize: 13, color: 'var(--ok)' }}>已重置全部进度</span>
+            {resetDoneMsg && (
+              <span style={{ fontSize: 13, color: 'var(--ok)' }}>{resetDoneMsg}</span>
             )}
           </div>
         </section>

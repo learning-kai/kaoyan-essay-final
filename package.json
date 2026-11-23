@@ -15,6 +15,7 @@
     "@fontsource/inter": "^5.1.0",
     "@fontsource/source-serif-4": "^5.1.0",
     "idb-keyval": "^6.2.1",
+    "katex": "^0.19.1",
     "lucide-react": "^0.460.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
@@ -25,6 +26,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@types/katex": "^0.16.8",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

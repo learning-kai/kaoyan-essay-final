@@ -254,4 +254,110 @@ describe('GitHub 私有 Gist 多端同步：智能合并与配对码单元测试
     const invalid = decodeSyncPairing('not-a-valid-code');
     expect(invalid.ok).toBe(false);
   });
+
+  it('公式默写进度支持双向智能合并（熟记与收藏按时间戳 LWW）且独立重置不影响小作文', () => {
+    const t1 = new Date('2026-11-23T08:00:00Z');
+    const t2 = new Date('2026-11-23T09:00:00Z');
+    const t3 = new Date('2026-11-23T10:00:00Z');
+
+    const essayCard = serializeCard(reviewCard(createInitialCard(t1), Rating.Good, t1));
+    const fCard1 = serializeCard(reviewCard(createInitialCard(t1), Rating.Good, t1));
+    const fCard2 = serializeCard(reviewCard(createInitialCard(t2), Rating.Easy, t2));
+
+    const desktop = buildBackupPayload(
+      {
+        cards: { 'shared.closing': essayCard },
+        reviews: [],
+        dailyLearnedCount: { '2026-11-23': 1 },
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings(),
+      t1,
+      {
+        updatedAt: t1.toISOString(),
+        formulaProgress: {
+          cards: { 'f-010': fCard1 },
+          reviews: [{ formulaId: 'f-010', rating: Rating.Good, timestamp: t1.toISOString() }],
+          dailyLearnedCount: { '2026-11-23': 4 },
+          mastered: {
+            'f-003': { value: true, updatedAt: t1.toISOString() },
+            'f-004': { value: true, updatedAt: t1.toISOString() },
+          },
+          starred: {
+            'f-290': { value: true, updatedAt: t1.toISOString() },
+          },
+          dailyNewLimit: 15,
+          updatedAt: t1.toISOString(),
+          resetAt: null,
+        },
+      }
+    );
+
+    const phone = buildBackupPayload(
+      {
+        cards: {},
+        reviews: [],
+        dailyLearnedCount: {},
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings(),
+      t2,
+      {
+        formulaProgress: {
+          cards: { 'f-290': fCard2 },
+          reviews: [{ formulaId: 'f-290', rating: Rating.Easy, timestamp: t2.toISOString() }],
+          dailyLearnedCount: { '2026-11-23': 6 },
+          mastered: {
+            // Phone later unmarked f-004
+            'f-004': { value: false, updatedAt: t2.toISOString() },
+            'f-005': { value: true, updatedAt: t2.toISOString() },
+          },
+          starred: {
+            'f-134': { value: true, updatedAt: t2.toISOString() },
+          },
+          dailyNewLimit: 20,
+          updatedAt: t2.toISOString(),
+          resetAt: null,
+        },
+      }
+    );
+
+    const merged = mergeSyncPayloads(phone, desktop, t2);
+    expect(Object.keys(merged.progress.cards)).toEqual(['shared.closing']);
+    expect(Object.keys(merged.formulaProgress!.cards).sort()).toEqual(['f-010', 'f-290']);
+    expect(merged.formulaProgress!.mastered['f-003'].value).toBe(true);
+    expect(merged.formulaProgress!.mastered['f-004'].value).toBe(false);
+    expect(merged.formulaProgress!.mastered['f-005'].value).toBe(true);
+    expect(merged.formulaProgress!.starred['f-290'].value).toBe(true);
+    expect(merged.formulaProgress!.starred['f-134'].value).toBe(true);
+    expect(merged.formulaProgress!.dailyLearnedCount['2026-11-23']).toBe(6);
+    expect(merged.formulaProgress!.dailyNewLimit).toBe(20);
+
+    // Independent formula reset at t3 clears formulaProgress without wiping essay cards
+    const formulaResetPhone = buildBackupPayload(
+      merged.progress,
+      merged.settings,
+      t3,
+      {
+        updatedAt: merged.updatedAt,
+        formulaProgress: {
+          cards: {},
+          reviews: [],
+          dailyLearnedCount: {},
+          mastered: {},
+          starred: {},
+          dailyNewLimit: 20,
+          updatedAt: t3.toISOString(),
+          resetAt: t3.toISOString(),
+        },
+      }
+    );
+
+    const afterReset = mergeSyncPayloads(formulaResetPhone, desktop, t3);
+    expect(Object.keys(afterReset.progress.cards)).toEqual(['shared.closing']);
+    expect(Object.keys(afterReset.formulaProgress!.cards)).toHaveLength(0);
+    expect(Object.keys(afterReset.formulaProgress!.mastered)).toHaveLength(0);
+  });
 });

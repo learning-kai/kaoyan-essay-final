@@ -4,6 +4,11 @@ import {
   type BackupPayload,
 } from './backup';
 import type {
+  FormulaBackupData,
+  FormulaReviewRecord,
+  TimestampedFlag,
+} from '../store/useFormulaProgress';
+import type {
   ExamRecord,
   IdentificationRecord,
   SerializedCard,
@@ -207,7 +212,12 @@ export function mergeSyncPayloads(
     }
   }
 
-  return {
+  const mergedFormula = mergeFormulaProgress(
+    local.formulaProgress,
+    remote.formulaProgress
+  );
+
+  const out: BackupPayload = {
     app: 'kaoyan-essay',
     schemaVersion: 3,
     exportedAt: now.toISOString(),
@@ -217,26 +227,166 @@ export function mergeSyncPayloads(
     progress: mergedProgress,
     settings: mergedSettings,
   };
+  if (mergedFormula) {
+    out.formulaProgress = mergedFormula;
+  }
+  return out;
+}
+
+function mergeTimestampedFlags(
+  a: Record<string, TimestampedFlag>,
+  b: Record<string, TimestampedFlag>
+): Record<string, TimestampedFlag> {
+  const keys = Array.from(new Set([...Object.keys(a), ...Object.keys(b)])).sort();
+  const out: Record<string, TimestampedFlag> = {};
+  for (const k of keys) {
+    const fa = a[k];
+    const fb = b[k];
+    if (fa && fb) {
+      const ma = parseIsoMs(fa.updatedAt);
+      const mb = parseIsoMs(fb.updatedAt);
+      if (ma !== mb) {
+        out[k] = ma > mb ? fa : fb;
+      } else {
+        out[k] = fa.value ? fa : fb;
+      }
+    } else if (fa) {
+      out[k] = fa;
+    } else if (fb) {
+      out[k] = fb;
+    }
+  }
+  return out;
+}
+
+function mergeFormulaReviews(
+  a: FormulaReviewRecord[],
+  b: FormulaReviewRecord[]
+): FormulaReviewRecord[] {
+  const map = new Map<string, FormulaReviewRecord>();
+  for (const item of [...a, ...b]) {
+    const key = `${item.timestamp}|${item.formulaId}|${item.rating}`;
+    if (!map.has(key)) map.set(key, item);
+  }
+  return Array.from(map.values()).sort((x, y) =>
+    x.timestamp.localeCompare(y.timestamp)
+  );
+}
+
+function hasAnyFormulaData(f?: FormulaBackupData): boolean {
+  if (!f) return false;
+  return (
+    Object.keys(f.cards).length > 0 ||
+    f.reviews.length > 0 ||
+    Object.keys(f.mastered).length > 0 ||
+    Object.keys(f.starred).length > 0 ||
+    Object.keys(f.dailyLearnedCount).length > 0 ||
+    Boolean(f.resetAt) ||
+    Boolean(f.updatedAt)
+  );
+}
+
+export function mergeFormulaProgress(
+  local?: FormulaBackupData,
+  remote?: FormulaBackupData
+): FormulaBackupData | undefined {
+  if (!hasAnyFormulaData(local) && !hasAnyFormulaData(remote)) {
+    return local ?? remote;
+  }
+  const empty: FormulaBackupData = {
+    cards: {},
+    reviews: [],
+    dailyLearnedCount: {},
+    mastered: {},
+    starred: {},
+    dailyNewLimit: 15,
+    updatedAt: null,
+    resetAt: null,
+  };
+  const a = local ?? empty;
+  const b = remote ?? empty;
+
+  const aResetMs = parseIsoMs(a.resetAt);
+  const bResetMs = parseIsoMs(b.resetAt);
+  const aUpdatedMs = parseIsoMs(a.updatedAt);
+  const bUpdatedMs = parseIsoMs(b.updatedAt);
+
+  if (aResetMs > 0 && aResetMs > bUpdatedMs && aResetMs >= bResetMs) {
+    return { ...a };
+  }
+  if (bResetMs > 0 && bResetMs > aUpdatedMs && bResetMs >= aResetMs) {
+    return { ...b };
+  }
+
+  const allCardIds = Array.from(
+    new Set([...Object.keys(a.cards), ...Object.keys(b.cards)])
+  ).sort();
+  const mergedCards: Record<string, SerializedCard> = {};
+  for (const id of allCardIds) {
+    const ac = a.cards[id];
+    const bc = b.cards[id];
+    if (ac && bc) mergedCards[id] = pickNewerCard(ac, bc);
+    else if (ac) mergedCards[id] = ac;
+    else if (bc) mergedCards[id] = bc;
+  }
+
+  const maxResetMs = Math.max(aResetMs, bResetMs);
+  const maxUpdatedMs = Math.max(aUpdatedMs, bUpdatedMs);
+
+  return {
+    cards: mergedCards,
+    reviews: mergeFormulaReviews(a.reviews, b.reviews),
+    dailyLearnedCount: mergeDailyLearned(a.dailyLearnedCount, b.dailyLearnedCount),
+    mastered: mergeTimestampedFlags(a.mastered, b.mastered),
+    starred: mergeTimestampedFlags(a.starred, b.starred),
+    dailyNewLimit: bUpdatedMs > aUpdatedMs ? b.dailyNewLimit : a.dailyNewLimit,
+    resetAt:
+      maxResetMs === 0
+        ? null
+        : aResetMs >= bResetMs
+          ? a.resetAt
+          : b.resetAt,
+    updatedAt:
+      maxUpdatedMs === 0
+        ? null
+        : aUpdatedMs >= bUpdatedMs
+          ? a.updatedAt
+          : b.updatedAt,
+  };
+}
+
+function sortRecord<T>(rec: Record<string, T>): Record<string, T> {
+  const out: Record<string, T> = {};
+  for (const k of Object.keys(rec).sort()) {
+    out[k] = rec[k];
+  }
+  return out;
 }
 
 function canonicalSnapshot(p: BackupPayload): string {
-  const sortedCards: Record<string, SerializedCard> = {};
-  for (const k of Object.keys(p.progress.cards).sort()) {
-    sortedCards[k] = p.progress.cards[k];
-  }
-  const sortedDaily: Record<string, number> = {};
-  for (const k of Object.keys(p.progress.dailyLearnedCount).sort()) {
-    sortedDaily[k] = p.progress.dailyLearnedCount[k];
-  }
+  const fp = p.formulaProgress;
+  const formulaSnap = hasAnyFormulaData(fp) && fp
+    ? {
+        resetAt: fp.resetAt ?? null,
+        dailyNewLimit: fp.dailyNewLimit,
+        cards: sortRecord(fp.cards),
+        reviews: fp.reviews,
+        dailyLearnedCount: sortRecord(fp.dailyLearnedCount),
+        mastered: sortRecord(fp.mastered),
+        starred: sortRecord(fp.starred),
+      }
+    : null;
+
   return JSON.stringify({
     resetAt: p.resetAt ?? null,
     settingsUpdatedAt: p.settingsUpdatedAt ?? null,
-    cards: sortedCards,
+    cards: sortRecord(p.progress.cards),
     reviews: p.progress.reviews,
-    dailyLearnedCount: sortedDaily,
+    dailyLearnedCount: sortRecord(p.progress.dailyLearnedCount),
     examRecords: p.progress.examRecords,
     idRecords: p.progress.idRecords,
     settings: p.settings,
+    formulaProgress: formulaSnap,
   });
 }
 

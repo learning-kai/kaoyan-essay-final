@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useFormulaProgress } from '../store/useFormulaProgress';
 import { useProgress } from '../store/useProgress';
 import { useSettings } from '../store/useSettings';
 import { isApplyingRemoteSync, useSync } from '../store/useSync';
@@ -95,6 +96,20 @@ export function SyncManager() {
       }
     });
 
+    const unsubFormula = useFormulaProgress.subscribe((state, prev) => {
+      if (
+        state.cards !== prev.cards ||
+        state.reviews !== prev.reviews ||
+        state.dailyLearnedCount !== prev.dailyLearnedCount ||
+        state.mastered !== prev.mastered ||
+        state.starred !== prev.starred ||
+        state.dailyNewLimit !== prev.dailyNewLimit ||
+        state.lastResetAt !== prev.lastResetAt
+      ) {
+        scheduleAutoSync();
+      }
+    });
+
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         triggerPullOrFlush(false);
@@ -121,6 +136,7 @@ export function SyncManager() {
     void Promise.all([
       waitForHydration(useProgress),
       waitForHydration(useSettings),
+      waitForHydration(useFormulaProgress),
       waitForHydration(useSync),
     ]).then(() => {
       if (cancelled) return;
@@ -140,6 +156,7 @@ export function SyncManager() {
       clearTimer();
       unsubProgress();
       unsubSettings();
+      unsubFormula();
       document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('online', onOnline);
       window.removeEventListener('pagehide', onPageHide);

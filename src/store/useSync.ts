@@ -11,6 +11,7 @@ import {
   verifyGitHubToken,
 } from '../core/sync';
 import { safeIdbStorage } from './storage';
+import { useFormulaProgress } from './useFormulaProgress';
 import { useProgress } from './useProgress';
 import { useSettings } from './useSettings';
 
@@ -56,6 +57,7 @@ export function isApplyingRemoteSync(): boolean {
 export function readLocalSyncPayload(now = new Date()): BackupPayload {
   const p = useProgress.getState();
   const s = useSettings.getState();
+  const f = useFormulaProgress.getState();
   return buildBackupPayload(
     {
       cards: p.cards,
@@ -80,6 +82,16 @@ export function readLocalSyncPayload(now = new Date()): BackupPayload {
       updatedAt: p.updatedAt,
       settingsUpdatedAt: s.updatedAt,
       resetAt: p.lastResetAt,
+      formulaProgress: {
+        cards: f.cards,
+        reviews: f.reviews,
+        dailyLearnedCount: f.dailyLearnedCount,
+        mastered: f.mastered,
+        starred: f.starred,
+        dailyNewLimit: f.dailyNewLimit,
+        updatedAt: f.updatedAt,
+        resetAt: f.lastResetAt,
+      },
     }
   );
 }
@@ -108,6 +120,19 @@ function applyPayloadToLocalStores(payload: BackupPayload): void {
       bodyFontSize: payload.settings.bodyFontSize,
       updatedAt: payload.settingsUpdatedAt ?? null,
     });
+    if (payload.formulaProgress) {
+      const fp = payload.formulaProgress;
+      useFormulaProgress.setState({
+        cards: fp.cards,
+        reviews: fp.reviews,
+        dailyLearnedCount: fp.dailyLearnedCount,
+        mastered: fp.mastered,
+        starred: fp.starred,
+        dailyNewLimit: fp.dailyNewLimit,
+        updatedAt: fp.updatedAt ?? null,
+        lastResetAt: fp.resetAt ?? null,
+      });
+    }
   } finally {
     applyingRemoteDepth -= 1;
   }
