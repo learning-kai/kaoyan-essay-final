@@ -1,7 +1,7 @@
 import katex from 'katex';
 import { Rating } from 'ts-fsrs';
 import { describe, expect, it } from 'vitest';
-import { tokenizeMathText } from '../components/MathText';
+import { formatFormulaTex, tokenizeMathText } from '../components/MathText';
 import {
   collectFormulaMistakes,
   computeFormula14DayForecast,
@@ -40,9 +40,15 @@ describe('公式默写手册（328题）数据完整性、KaTeX 渲染与熟记�
       probstat: 46,
       signals: 93,
     });
+
+    // (1+x)^a 展开（f-034）使用三阶分式展开形式
+    const f034 = FORMULAS.find((f) => f.id === 'f-034');
+    expect(f034?.answer).toBe(
+      '$(1+x)^a=1+ax+\\frac{a(a-1)}{2!}x^2+\\frac{a(a-1)(a-2)}{3!}x^3+o(x^3)$'
+    );
   });
 
-  it('全部 328 道题干、答案、板块标题与校订说明的 LaTeX 均可通过 KaTeX 严格渲染（0 报错）', () => {
+  it('全部 328 道题干、答案、板块标题与校订说明的 LaTeX 均可通过 KaTeX 严格渲染（0 报错，且数学公式内无斜杠分式）', () => {
     const texts: string[] = [
       ...FORMULA_SECTIONS.map((s) => s.fullTitle),
       ...FORMULAS.flatMap((f) => [f.question, f.answer, ...f.answerParts]),
@@ -55,8 +61,12 @@ describe('公式默写手册（328题）数据完整性、KaTeX 渲染与熟记�
       for (const seg of segs) {
         if (seg.kind === 'math') {
           mathCount += 1;
+          expect(
+            seg.value.includes('/'),
+            `发现未转换的斜杠分式: ${seg.value}`
+          ).toBe(false);
           expect(() =>
-            katex.renderToString(seg.value, {
+            katex.renderToString(formatFormulaTex(seg.value, Boolean(seg.display)), {
               displayMode: Boolean(seg.display),
               throwOnError: true,
               strict: false,

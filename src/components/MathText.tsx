@@ -55,9 +55,23 @@ export function tokenizeMathText(text: string): Segment[] {
   return segments;
 }
 
+const DISPLAY_STYLE_TRIGGER =
+  /\\(frac|dfrac|binom|lim|sum|int|iint|iiint|oint|prod)\b/;
+
+export function formatFormulaTex(tex: string, displayMode = false): string {
+  if (
+    displayMode ||
+    tex.includes('\\displaystyle') ||
+    tex.includes('\\textstyle')
+  ) {
+    return tex;
+  }
+  return DISPLAY_STYLE_TRIGGER.test(tex) ? `\\displaystyle ${tex}` : tex;
+}
+
 export function renderLatexSafe(tex: string, displayMode = false): string {
   try {
-    return katex.renderToString(tex, {
+    return katex.renderToString(formatFormulaTex(tex, displayMode), {
       displayMode,
       throwOnError: false,
       strict: false,
@@ -102,11 +116,20 @@ export function MathText({ text, className, displayMath = false }: MathTextProps
           );
         }
         if (seg.kind === 'math') {
-          const html = renderLatexSafe(seg.value, Boolean(seg.display || displayMath));
+          const useDisplay = Boolean(seg.display || displayMath);
+          const hasStack =
+            useDisplay ||
+            DISPLAY_STYLE_TRIGGER.test(seg.value) ||
+            seg.value.includes('\\displaystyle');
+          const html = renderLatexSafe(seg.value, useDisplay);
           return (
             <span
               key={idx}
-              className="math-inline-wrap"
+              className={
+                hasStack
+                  ? 'math-inline-wrap math-has-stack'
+                  : 'math-inline-wrap'
+              }
               dangerouslySetInnerHTML={{ __html: html }}
             />
           );

@@ -652,7 +652,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "004",
     "subject": "calculus",
     "sectionId": "calc-01",
-    "question": "基本极限 $\\displaystyle\\lim_{x\\to0}(1+x)^{1/x}=$ ________________",
+    "question": "基本极限 $\\displaystyle\\lim_{x\\to0}(1+x)^{\\frac{1}{x}}=$ ________________",
     "hasBlank": true,
     "answer": "$e$",
     "answerParts": [
@@ -665,7 +665,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "005",
     "subject": "calculus",
     "sectionId": "calc-01",
-    "question": "基本极限 $\\displaystyle\\lim_{x\\to\\infty}(1+1/x)^x=$ ________________",
+    "question": "基本极限 $\\displaystyle\\lim_{x\\to\\infty}\\left(1+\\frac{1}{x}\\right)^x=$ ________________",
     "hasBlank": true,
     "answer": "$e$",
     "answerParts": [
@@ -771,7 +771,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "013",
     "subject": "calculus",
     "sectionId": "calc-02",
-    "question": "若 $\\lim f(x)/g(x)=A\\ne0$ 且 $\\lim f(x)=0$，则 $\\lim g(x)=$ ________________",
+    "question": "若 $\\lim\\frac{f(x)}{g(x)}=A\\ne0$ 且 $\\lim f(x)=0$，则 $\\lim g(x)=$ ________________",
     "hasBlank": true,
     "answer": "$0$",
     "answerParts": [
@@ -784,7 +784,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "014",
     "subject": "calculus",
     "sectionId": "calc-02",
-    "question": "若 $\\lim f(x)/g(x)$ 存在有限值且 $g(x)\\to0$，则 $f(x)\\to$ ________________",
+    "question": "若 $\\lim\\frac{f(x)}{g(x)}$ 存在有限值且 $g(x)\\to0$，则 $f(x)\\to$ ________________",
     "hasBlank": true,
     "answer": "$0$",
     "answerParts": [
@@ -864,9 +864,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$1-\\cos x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^2/2$",
+    "answer": "$\\frac{x^2}{2}$",
     "answerParts": [
-      "$x^2/2$"
+      "$\\frac{x^2}{2}$"
     ]
   },
   {
@@ -877,9 +877,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$x-\\ln(1+x)\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^2/2$",
+    "answer": "$\\frac{x^2}{2}$",
     "answerParts": [
-      "$x^2/2$"
+      "$\\frac{x^2}{2}$"
     ]
   },
   {
@@ -890,9 +890,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$e^x-1-x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^2/2$",
+    "answer": "$\\frac{x^2}{2}$",
     "answerParts": [
-      "$x^2/2$"
+      "$\\frac{x^2}{2}$"
     ]
   },
   {
@@ -903,9 +903,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$x-\\sin x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^3/6$",
+    "answer": "$\\frac{x^3}{6}$",
     "answerParts": [
-      "$x^3/6$"
+      "$\\frac{x^3}{6}$"
     ]
   },
   {
@@ -916,9 +916,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$\\tan x-x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^3/3$",
+    "answer": "$\\frac{x^3}{3}$",
     "answerParts": [
-      "$x^3/3$"
+      "$\\frac{x^3}{3}$"
     ]
   },
   {
@@ -929,9 +929,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$x-\\arctan x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^3/3$",
+    "answer": "$\\frac{x^3}{3}$",
     "answerParts": [
-      "$x^3/3$"
+      "$\\frac{x^3}{3}$"
     ]
   },
   {
@@ -942,9 +942,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-03",
     "question": "当 $x\\to0$，$\\arcsin x-x\\sim$ ________________",
     "hasBlank": true,
-    "answer": "$x^3/6$",
+    "answer": "$\\frac{x^3}{6}$",
     "answerParts": [
-      "$x^3/6$"
+      "$\\frac{x^3}{6}$"
     ]
   },
   {
@@ -995,9 +995,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-04",
     "question": "默写 $e^x$ 在 $0$ 点的 $n$ 阶展开及余项。",
     "hasBlank": false,
-    "answer": "$e^x=\\sum_{k=0}^n x^k/k!+o(x^n)$",
+    "answer": "$e^x=\\sum_{k=0}^n\\frac{x^k}{k!}+o(x^n)$",
     "answerParts": [
-      "$e^x=\\sum_{k=0}^n x^k/k!+o(x^n)$"
+      "$e^x=\\sum_{k=0}^n\\frac{x^k}{k!}+o(x^n)$"
     ]
   },
   {
@@ -1008,9 +1008,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-04",
     "question": "默写 $\\sin x$ 在 $0$ 点至 $x^{2n-1}$ 的展开。",
     "hasBlank": false,
-    "answer": "$\\sin x=\\sum_{k=0}^{n-1}(-1)^k x^{2k+1}/(2k+1)!+o(x^{2n-1})$",
+    "answer": "$\\sin x=\\sum_{k=0}^{n-1}(-1)^k\\frac{x^{2k+1}}{(2k+1)!}+o(x^{2n-1})$",
     "answerParts": [
-      "$\\sin x=\\sum_{k=0}^{n-1}(-1)^k x^{2k+1}/(2k+1)!+o(x^{2n-1})$"
+      "$\\sin x=\\sum_{k=0}^{n-1}(-1)^k\\frac{x^{2k+1}}{(2k+1)!}+o(x^{2n-1})$"
     ]
   },
   {
@@ -1021,9 +1021,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-04",
     "question": "默写 $\\cos x$ 在 $0$ 点至 $x^{2n}$ 的展开。",
     "hasBlank": false,
-    "answer": "$\\cos x=\\sum_{k=0}^{n}(-1)^k x^{2k}/(2k)!+o(x^{2n})$",
+    "answer": "$\\cos x=\\sum_{k=0}^{n}(-1)^k\\frac{x^{2k}}{(2k)!}+o(x^{2n})$",
     "answerParts": [
-      "$\\cos x=\\sum_{k=0}^{n}(-1)^k x^{2k}/(2k)!+o(x^{2n})$"
+      "$\\cos x=\\sum_{k=0}^{n}(-1)^k\\frac{x^{2k}}{(2k)!}+o(x^{2n})$"
     ]
   },
   {
@@ -1034,9 +1034,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-04",
     "question": "默写 $\\ln(1+x)$ 在 $0$ 点的 $n$ 阶展开。",
     "hasBlank": false,
-    "answer": "$\\ln(1+x)=\\sum_{k=1}^n(-1)^{k-1}x^k/k+o(x^n)$",
+    "answer": "$\\ln(1+x)=\\sum_{k=1}^n(-1)^{k-1}\\frac{x^k}{k}+o(x^n)$",
     "answerParts": [
-      "$\\ln(1+x)=\\sum_{k=1}^n(-1)^{k-1}x^k/k+o(x^n)$"
+      "$\\ln(1+x)=\\sum_{k=1}^n(-1)^{k-1}\\frac{x^k}{k}+o(x^n)$"
     ]
   },
   {
@@ -1045,11 +1045,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "034",
     "subject": "calculus",
     "sectionId": "calc-04",
-    "question": "默写 $(1+x)^a$ 在 $0$ 点的 $n$ 阶展开。",
+    "question": "默写 $(1+x)^a$ 在 $0$ 点的展开（至 $x^3$ 项）。",
     "hasBlank": false,
-    "answer": "$(1+x)^a=\\sum_{k=0}^n\\binom{a}{k}x^k+o(x^n)$",
+    "answer": "$(1+x)^a=1+ax+\\frac{a(a-1)}{2!}x^2+\\frac{a(a-1)(a-2)}{3!}x^3+o(x^3)$",
     "answerParts": [
-      "$(1+x)^a=\\sum_{k=0}^n\\binom{a}{k}x^k+o(x^n)$"
+      "$(1+x)^a=1+ax+\\frac{a(a-1)}{2!}x^2+\\frac{a(a-1)(a-2)}{3!}x^3+o(x^3)$"
     ]
   },
   {
@@ -1086,9 +1086,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-05",
     "question": "求 $\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{k}{n^2+k}$。",
     "hasBlank": false,
-    "answer": "$1/2$（按黎曼和或夹逼）",
+    "answer": "$\\frac{1}{2}$（按黎曼和或夹逼）",
     "answerParts": [
-      "$1/2$（按黎曼和或夹逼）"
+      "$\\frac{1}{2}$（按黎曼和或夹逼）"
     ]
   },
   {
@@ -1110,11 +1110,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "039",
     "subject": "calculus",
     "sectionId": "calc-05",
-    "question": "分析 $\\displaystyle\\lim_{x\\to\\infty}\\left(\\sqrt[3]{x^3+x^2}-xe^{1/x}\\right)$。",
+    "question": "分析 $\\displaystyle\\lim_{x\\to\\infty}\\left(\\sqrt[3]{x^3+x^2}-xe^{\\frac{1}{x}}\\right)$。",
     "hasBlank": false,
-    "answer": "$-2/3$（首阶展开）",
+    "answer": "$-\\frac{2}{3}$（首阶展开）",
     "answerParts": [
-      "$-2/3$（首阶展开）"
+      "$-\\frac{2}{3}$（首阶展开）"
     ]
   },
   {
@@ -1202,7 +1202,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "046",
     "subject": "calculus",
     "sectionId": "calc-05",
-    "question": "判断 $\\displaystyle\\lim_{x\\to0^+}e^{1/x}$ 与 $\\lim_{x\\to0^-}e^{1/x}$。",
+    "question": "判断 $\\displaystyle\\lim_{x\\to0^+}e^{\\frac{1}{x}}$ 与 $\\lim_{x\\to0^-}e^{\\frac{1}{x}}$。",
     "hasBlank": false,
     "answer": "$+\\infty$，$0$",
     "answerParts": [
@@ -1258,10 +1258,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "$\\log_a x$ 与 $\\ln|x|$ 的导数。",
     "hasBlank": false,
-    "answer": "$1/(x\\ln a)$；$1/x$",
+    "answer": "$\\frac{1}{x\\ln a}$；$\\frac{1}{x}$",
     "answerParts": [
-      "$1/(x\\ln a)$",
-      "$1/x$"
+      "$\\frac{1}{x\\ln a}$",
+      "$\\frac{1}{x}$"
     ]
   },
   {
@@ -1314,10 +1314,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "$\\arcsin x$ 与 $\\arccos x$ 的导数。",
     "hasBlank": false,
-    "answer": "$1/\\sqrt{1-x^2}$；$-1/\\sqrt{1-x^2}$",
+    "answer": "$\\frac{1}{\\sqrt{1-x^2}}$；$-\\frac{1}{\\sqrt{1-x^2}}$",
     "answerParts": [
-      "$1/\\sqrt{1-x^2}$",
-      "$-1/\\sqrt{1-x^2}$"
+      "$\\frac{1}{\\sqrt{1-x^2}}$",
+      "$-\\frac{1}{\\sqrt{1-x^2}}$"
     ]
   },
   {
@@ -1328,10 +1328,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "$\\arctan x$ 与 $\\operatorname{arccot} x$ 的导数。",
     "hasBlank": false,
-    "answer": "$1/(1+x^2)$；$-1/(1+x^2)$",
+    "answer": "$\\frac{1}{1+x^2}$；$-\\frac{1}{1+x^2}$",
     "answerParts": [
-      "$1/(1+x^2)$",
-      "$-1/(1+x^2)$"
+      "$\\frac{1}{1+x^2}$",
+      "$-\\frac{1}{1+x^2}$"
     ]
   },
   {
@@ -1342,10 +1342,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "默写 $\\sin x$ 和 $\\cos x$ 的 $n$ 阶导数。",
     "hasBlank": false,
-    "answer": "$\\sin(x+n\\pi/2)$；$\\cos(x+n\\pi/2)$",
+    "answer": "$\\sin\\left(x+\\frac{n\\pi}{2}\\right)$；$\\cos\\left(x+\\frac{n\\pi}{2}\\right)$",
     "answerParts": [
-      "$\\sin(x+n\\pi/2)$",
-      "$\\cos(x+n\\pi/2)$"
+      "$\\sin\\left(x+\\frac{n\\pi}{2}\\right)$",
+      "$\\cos\\left(x+\\frac{n\\pi}{2}\\right)$"
     ]
   },
   {
@@ -1396,9 +1396,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "用增量 $\\Delta x$ 表示 $f^{\\prime}(x_0)$ 的定义。",
     "hasBlank": false,
-    "answer": "$\\lim_{\\Delta x\\to0}[f(x_0+\\Delta x)-f(x_0)]/\\Delta x$",
+    "answer": "$\\lim_{\\Delta x\\to0}\\frac{f(x_0+\\Delta x)-f(x_0)}{\\Delta x}$",
     "answerParts": [
-      "$\\lim_{\\Delta x\\to0}[f(x_0+\\Delta x)-f(x_0)]/\\Delta x$"
+      "$\\lim_{\\Delta x\\to0}\\frac{f(x_0+\\Delta x)-f(x_0)}{\\Delta x}$"
     ]
   },
   {
@@ -1409,9 +1409,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-06",
     "question": "用 $x\\to x_0$ 表示导数定义。",
     "hasBlank": false,
-    "answer": "$\\lim_{x\\to x_0}[f(x)-f(x_0)]/(x-x_0)$",
+    "answer": "$\\lim_{x\\to x_0}\\frac{f(x)-f(x_0)}{x-x_0}$",
     "answerParts": [
-      "$\\lim_{x\\to x_0}[f(x)-f(x_0)]/(x-x_0)$"
+      "$\\lim_{x\\to x_0}\\frac{f(x)-f(x_0)}{x-x_0}$"
     ]
   },
   {
@@ -1477,9 +1477,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-07",
     "question": "拉格朗日中值定理：写出结论。",
     "hasBlank": false,
-    "answer": "$[f(b)-f(a)]/(b-a)=f^{\\prime}(\\xi)$",
+    "answer": "$\\frac{f(b)-f(a)}{b-a}=f^{\\prime}(\\xi)$",
     "answerParts": [
-      "$[f(b)-f(a)]/(b-a)=f^{\\prime}(\\xi)$"
+      "$\\frac{f(b)-f(a)}{b-a}=f^{\\prime}(\\xi)$"
     ]
   },
   {
@@ -1490,9 +1490,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-07",
     "question": "柯西中值定理：写出结论及关键条件。",
     "hasBlank": false,
-    "answer": "$[f(b)-f(a)]/[F(b)-F(a)]=f^{\\prime}(\\xi)/F^{\\prime}(\\xi)$（分母非零）",
+    "answer": "$\\frac{f(b)-f(a)}{F(b)-F(a)}=\\frac{f^{\\prime}(\\xi)}{F^{\\prime}(\\xi)}$（分母非零）",
     "answerParts": [
-      "$[f(b)-f(a)]/[F(b)-F(a)]=f^{\\prime}(\\xi)/F^{\\prime}(\\xi)$（分母非零）"
+      "$\\frac{f(b)-f(a)}{F(b)-F(a)}=\\frac{f^{\\prime}(\\xi)}{F^{\\prime}(\\xi)}$（分母非零）"
     ]
   },
   {
@@ -1503,9 +1503,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-07",
     "question": "求斜渐近线 $y=kx+b$，写出 $k,b$ 的极限公式。",
     "hasBlank": false,
-    "answer": "$k=\\lim_{x\\to\\infty}f(x)/x$，$b=\\lim_{x\\to\\infty}[f(x)-kx]$",
+    "answer": "$k=\\lim_{x\\to\\infty}\\frac{f(x)}{x}$，$b=\\lim_{x\\to\\infty}[f(x)-kx]$",
     "answerParts": [
-      "$k=\\lim_{x\\to\\infty}f(x)/x$，$b=\\lim_{x\\to\\infty}[f(x)-kx]$"
+      "$k=\\lim_{x\\to\\infty}\\frac{f(x)}{x}$，$b=\\lim_{x\\to\\infty}[f(x)-kx]$"
     ]
   },
   {
@@ -1529,10 +1529,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-07",
     "question": "平面曲线的曲率 $\\kappa$ 及曲率半径 $R$ 公式。",
     "hasBlank": false,
-    "answer": "$\\kappa=|y^{\\prime\\prime}|/[1+(y^{\\prime})^2]^{3/2}$；$R=1/\\kappa$",
+    "answer": "$\\kappa=\\frac{|y^{\\prime\\prime}|}{\\left[1+(y^{\\prime})^2\\right]^{\\frac{3}{2}}}$；$R=\\frac{1}{\\kappa}$",
     "answerParts": [
-      "$\\kappa=|y^{\\prime\\prime}|/[1+(y^{\\prime})^2]^{3/2}$",
-      "$R=1/\\kappa$"
+      "$\\kappa=\\frac{|y^{\\prime\\prime}|}{\\left[1+(y^{\\prime})^2\\right]^{\\frac{3}{2}}}$",
+      "$R=\\frac{1}{\\kappa}$"
     ]
   },
   {
@@ -1543,9 +1543,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-08",
     "question": "写出 $f_x(x_0,y_0)$ 的极限定义。",
     "hasBlank": false,
-    "answer": "$\\lim_{h\\to0}[f(x_0+h,y_0)-f(x_0,y_0)]/h$",
+    "answer": "$\\lim_{h\\to0}\\frac{f(x_0+h,y_0)-f(x_0,y_0)}{h}$",
     "answerParts": [
-      "$\\lim_{h\\to0}[f(x_0+h,y_0)-f(x_0,y_0)]/h$"
+      "$\\lim_{h\\to0}\\frac{f(x_0+h,y_0)-f(x_0,y_0)}{h}$"
     ]
   },
   {
@@ -1556,9 +1556,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-08",
     "question": "写出 $f_y(x_0,y_0)$ 的极限定义。",
     "hasBlank": false,
-    "answer": "$\\lim_{h\\to0}[f(x_0,y_0+h)-f(x_0,y_0)]/h$",
+    "answer": "$\\lim_{h\\to0}\\frac{f(x_0,y_0+h)-f(x_0,y_0)}{h}$",
     "answerParts": [
-      "$\\lim_{h\\to0}[f(x_0,y_0+h)-f(x_0,y_0)]/h$"
+      "$\\lim_{h\\to0}\\frac{f(x_0,y_0+h)-f(x_0,y_0)}{h}$"
     ]
   },
   {
@@ -1650,10 +1650,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-09",
     "question": "$\\int a\\,dx$ 与 $\\int x^m\\,dx$（$m\\ne-1$）。",
     "hasBlank": false,
-    "answer": "$ax+C$；$x^{m+1}/(m+1)+C$",
+    "answer": "$ax+C$；$\\frac{x^{m+1}}{m+1}+C$",
     "answerParts": [
       "$ax+C$",
-      "$x^{m+1}/(m+1)+C$"
+      "$\\frac{x^{m+1}}{m+1}+C$"
     ]
   },
   {
@@ -1662,7 +1662,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "080",
     "subject": "calculus",
     "sectionId": "calc-09",
-    "question": "$\\int dx/x$ 与 $\\int e^x\\,dx$。",
+    "question": "$\\int\\frac{dx}{x}$ 与 $\\int e^x\\,dx$。",
     "hasBlank": false,
     "answer": "$\\ln|x|+C$；$e^x+C$",
     "answerParts": [
@@ -1678,9 +1678,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-09",
     "question": "$\\int a^x\\,dx$ 与 $\\int\\sin x\\,dx$。",
     "hasBlank": false,
-    "answer": "$a^x/\\ln a+C$；$-\\cos x+C$",
+    "answer": "$\\frac{a^x}{\\ln a}+C$；$-\\cos x+C$",
     "answerParts": [
-      "$a^x/\\ln a+C$",
+      "$\\frac{a^x}{\\ln a}+C$",
       "$-\\cos x+C$"
     ]
   },
@@ -1706,9 +1706,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-09",
     "question": "默写 $\\sin^2x$、$\\cos^2x$ 的降幂公式。",
     "hasBlank": false,
-    "answer": "$(1-\\cos2x)/2$、$(1+\\cos2x)/2$",
+    "answer": "$\\frac{1-\\cos2x}{2}$、$\\frac{1+\\cos2x}{2}$",
     "answerParts": [
-      "$(1-\\cos2x)/2$、$(1+\\cos2x)/2$"
+      "$\\frac{1-\\cos2x}{2}$、$\\frac{1+\\cos2x}{2}$"
     ]
   },
   {
@@ -1719,9 +1719,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-09",
     "question": "默写 $\\tan^2x$ 用 $\\cos2x$ 表示的形式。",
     "hasBlank": false,
-    "answer": "$(1-\\cos2x)/(1+\\cos2x)$",
+    "answer": "$\\frac{1-\\cos2x}{1+\\cos2x}$",
     "answerParts": [
-      "$(1-\\cos2x)/(1+\\cos2x)$"
+      "$\\frac{1-\\cos2x}{1+\\cos2x}$"
     ]
   },
   {
@@ -1730,13 +1730,13 @@ export const FORMULAS: FormulaItem[] = [
     "code": "085",
     "subject": "calculus",
     "sectionId": "calc-09",
-    "question": "万能代换：令 $t=\\tan(x/2)$，写出 $\\sin x,\\cos x,dx$。",
+    "question": "万能代换：令 $t=\\tan\\frac{x}{2}$，写出 $\\sin x,\\cos x,dx$。",
     "hasBlank": false,
-    "answer": "$\\sin x=2t/(1+t^2)$；$\\cos x=(1-t^2)/(1+t^2)$；$dx=2dt/(1+t^2)$",
+    "answer": "$\\sin x=\\frac{2t}{1+t^2}$；$\\cos x=\\frac{1-t^2}{1+t^2}$；$dx=\\frac{2dt}{1+t^2}$",
     "answerParts": [
-      "$\\sin x=2t/(1+t^2)$",
-      "$\\cos x=(1-t^2)/(1+t^2)$",
-      "$dx=2dt/(1+t^2)$"
+      "$\\sin x=\\frac{2t}{1+t^2}$",
+      "$\\cos x=\\frac{1-t^2}{1+t^2}$",
+      "$dx=\\frac{2dt}{1+t^2}$"
     ]
   },
   {
@@ -1973,9 +1973,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-10",
     "question": "欧拉方程 $x^2y^{\\prime\\prime}+pxy^{\\prime}+qy=f(x)$，常用自变量代换。",
     "hasBlank": false,
-    "answer": "$x=e^t$（$x>0$），$D=d/dt$，$xy^{\\prime}=Dy$，$x^2y^{\\prime\\prime}=D(D-1)y$",
+    "answer": "$x=e^t$（$x>0$），$D=\\frac{d}{dt}$，$xy^{\\prime}=Dy$，$x^2y^{\\prime\\prime}=D(D-1)y$",
     "answerParts": [
-      "$x=e^t$（$x>0$），$D=d/dt$，$xy^{\\prime}=Dy$，$x^2y^{\\prime\\prime}=D(D-1)y$"
+      "$x=e^t$（$x>0$），$D=\\frac{d}{dt}$，$xy^{\\prime}=Dy$，$x^2y^{\\prime\\prime}=D(D-1)y$"
     ]
   },
   {
@@ -1984,7 +1984,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "104",
     "subject": "calculus",
     "sectionId": "calc-11",
-    "question": "$\\sum_{n=1}^\\infty 1/n^p$ 的收敛条件。",
+    "question": "$\\sum_{n=1}^\\infty\\frac{1}{n^p}$ 的收敛条件。",
     "hasBlank": false,
     "answer": "$p>1$",
     "answerParts": [
@@ -2010,7 +2010,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "106",
     "subject": "calculus",
     "sectionId": "calc-11",
-    "question": "$\\sum_{n\\ge2}1/[n^a(\\ln n)^b]$ 的收敛条件。",
+    "question": "$\\sum_{n\\ge2}\\frac{1}{n^a(\\ln n)^b}$ 的收敛条件。",
     "hasBlank": false,
     "answer": "$a>1$；或 $a=1,b>1$",
     "answerParts": [
@@ -2026,9 +2026,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "写出 $\\sum_{k=m}^n aq^k$ 的求和公式（$q\\ne1$）。",
     "hasBlank": false,
-    "answer": "$a(q^m-q^{n+1})/(1-q)$",
+    "answer": "$\\frac{a(q^m-q^{n+1})}{1-q}$",
     "answerParts": [
-      "$a(q^m-q^{n+1})/(1-q)$"
+      "$\\frac{a(q^m-q^{n+1})}{1-q}$"
     ]
   },
   {
@@ -2039,9 +2039,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "等差数列前 $n$ 项和的两个公式。",
     "hasBlank": false,
-    "answer": "$S_n=n(a_1+a_n)/2=na_1+n(n-1)d/2$",
+    "answer": "$S_n=\\frac{n(a_1+a_n)}{2}=na_1+\\frac{n(n-1)}{2}d$",
     "answerParts": [
-      "$S_n=n(a_1+a_n)/2=na_1+n(n-1)d/2$"
+      "$S_n=\\frac{n(a_1+a_n)}{2}=na_1+\\frac{n(n-1)}{2}d$"
     ]
   },
   {
@@ -2052,9 +2052,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "等比数列前 $n$ 项和公式。",
     "hasBlank": false,
-    "answer": "$S_n=a_1(1-q^n)/(1-q)$（$q\\ne1$）",
+    "answer": "$S_n=\\frac{a_1(1-q^n)}{1-q}$（$q\\ne1$）",
     "answerParts": [
-      "$S_n=a_1(1-q^n)/(1-q)$（$q\\ne1$）"
+      "$S_n=\\frac{a_1(1-q^n)}{1-q}$（$q\\ne1$）"
     ]
   },
   {
@@ -2065,9 +2065,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "$2\\pi$ 周期傅里叶级数的三角形式。",
     "hasBlank": false,
-    "answer": "$f(x)\\sim a_0/2+\\sum_{n\\ge1}(a_n\\cos nx+b_n\\sin nx)$",
+    "answer": "$f(x)\\sim\\frac{a_0}{2}+\\sum_{n\\ge1}(a_n\\cos nx+b_n\\sin nx)$",
     "answerParts": [
-      "$f(x)\\sim a_0/2+\\sum_{n\\ge1}(a_n\\cos nx+b_n\\sin nx)$"
+      "$f(x)\\sim\\frac{a_0}{2}+\\sum_{n\\ge1}(a_n\\cos nx+b_n\\sin nx)$"
     ]
   },
   {
@@ -2093,10 +2093,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "周期 $2L$ 的傅里叶级数三角形式及基频。",
     "hasBlank": false,
-    "answer": "$a_0/2+\\sum(a_n\\cos(n\\pi x/L)+b_n\\sin(n\\pi x/L))$；$\\omega_0=\\pi/L$",
+    "answer": "$\\frac{a_0}{2}+\\sum\\left(a_n\\cos\\frac{n\\pi x}{L}+b_n\\sin\\frac{n\\pi x}{L}\\right)$；$\\omega_0=\\frac{\\pi}{L}$",
     "answerParts": [
-      "$a_0/2+\\sum(a_n\\cos(n\\pi x/L)+b_n\\sin(n\\pi x/L))$",
-      "$\\omega_0=\\pi/L$"
+      "$\\frac{a_0}{2}+\\sum\\left(a_n\\cos\\frac{n\\pi x}{L}+b_n\\sin\\frac{n\\pi x}{L}\\right)$",
+      "$\\omega_0=\\frac{\\pi}{L}$"
     ]
   },
   {
@@ -2107,9 +2107,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "周期 $2L$ 的傅里叶系数中积分区间与系数。",
     "hasBlank": false,
-    "answer": "$a_n=\\frac1L\\int_{-L}^L f(x)\\cos(n\\pi x/L)dx$；$b_n$ 同理换 $\\sin$",
+    "answer": "$a_n=\\frac{1}{L}\\int_{-L}^L f(x)\\cos\\frac{n\\pi x}{L}\\,dx$；$b_n$ 同理换 $\\sin$",
     "answerParts": [
-      "$a_n=\\frac1L\\int_{-L}^L f(x)\\cos(n\\pi x/L)dx$",
+      "$a_n=\\frac{1}{L}\\int_{-L}^L f(x)\\cos\\frac{n\\pi x}{L}\\,dx$",
       "$b_n$ 同理换 $\\sin$"
     ]
   },
@@ -2121,10 +2121,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "幂级数 $\\frac1{1-x}$、$e^x$ 的展开及收敛范围。",
     "hasBlank": false,
-    "answer": "$\\sum_{n\\ge0}x^n\\ (|x|<1)$；$\\sum x^n/n!\\ (x\\in\\mathbb R)$",
+    "answer": "$\\sum_{n\\ge0}x^n\\ (|x|<1)$；$\\sum\\frac{x^n}{n!}\\ (x\\in\\mathbb R)$",
     "answerParts": [
       "$\\sum_{n\\ge0}x^n\\ (|x|<1)$",
-      "$\\sum x^n/n!\\ (x\\in\\mathbb R)$"
+      "$\\sum\\frac{x^n}{n!}\\ (x\\in\\mathbb R)$"
     ]
   },
   {
@@ -2135,10 +2135,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "$\\sin x$、$\\cos x$ 的幂级数通项。",
     "hasBlank": false,
-    "answer": "$\\sum_{n\\ge0}(-1)^nx^{2n+1}/(2n+1)!$；$\\sum_{n\\ge0}(-1)^nx^{2n}/(2n)!$",
+    "answer": "$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n+1}}{(2n+1)!}$；$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n}}{(2n)!}$",
     "answerParts": [
-      "$\\sum_{n\\ge0}(-1)^nx^{2n+1}/(2n+1)!$",
-      "$\\sum_{n\\ge0}(-1)^nx^{2n}/(2n)!$"
+      "$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n+1}}{(2n+1)!}$",
+      "$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n}}{(2n)!}$"
     ]
   },
   {
@@ -2149,10 +2149,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-11",
     "question": "$\\ln(1+x)$、$\\arctan x$ 的幂级数通项。",
     "hasBlank": false,
-    "answer": "$\\sum_{n\\ge1}(-1)^{n-1}x^n/n$；$\\sum_{n\\ge0}(-1)^nx^{2n+1}/(2n+1)$",
+    "answer": "$\\sum_{n\\ge1}(-1)^{n-1}\\frac{x^n}{n}$；$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n+1}}{2n+1}$",
     "answerParts": [
-      "$\\sum_{n\\ge1}(-1)^{n-1}x^n/n$",
-      "$\\sum_{n\\ge0}(-1)^nx^{2n+1}/(2n+1)$"
+      "$\\sum_{n\\ge1}(-1)^{n-1}\\frac{x^n}{n}$",
+      "$\\sum_{n\\ge0}(-1)^n\\frac{x^{2n+1}}{2n+1}$"
     ]
   },
   {
@@ -2163,10 +2163,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "点积 $\\mathbf a\\cdot\\mathbf b$ 与夹角 $\\cos\\theta$ 的公式。",
     "hasBlank": false,
-    "answer": "$|a||b|\\cos\\theta$；$\\cos\\theta=(a\\cdot b)/(|a||b|)$",
+    "answer": "$|a||b|\\cos\\theta$；$\\cos\\theta=\\frac{a\\cdot b}{|a||b|}$",
     "answerParts": [
       "$|a||b|\\cos\\theta$",
-      "$\\cos\\theta=(a\\cdot b)/(|a||b|)$"
+      "$\\cos\\theta=\\frac{a\\cdot b}{|a||b|}$"
     ]
   },
   {
@@ -2204,11 +2204,11 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "空间平面的一般式、点法式、截距式。",
     "hasBlank": false,
-    "answer": "$Ax+By+Cz+D=0$；$A(x-x_0)+B(y-y_0)+C(z-z_0)=0$；$x/a+y/b+z/c=1$",
+    "answer": "$Ax+By+Cz+D=0$；$A(x-x_0)+B(y-y_0)+C(z-z_0)=0$；$\\frac{x}{a}+\\frac{y}{b}+\\frac{z}{c}=1$",
     "answerParts": [
       "$Ax+By+Cz+D=0$",
       "$A(x-x_0)+B(y-y_0)+C(z-z_0)=0$",
-      "$x/a+y/b+z/c=1$"
+      "$\\frac{x}{a}+\\frac{y}{b}+\\frac{z}{c}=1$"
     ]
   },
   {
@@ -2219,10 +2219,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "空间直线的一般式、对称式、参数式。",
     "hasBlank": false,
-    "answer": "两平面方程组；$(x-x_0)/l=(y-y_0)/m=(z-z_0)/n$；$(x,y,z)=(x_0,y_0,z_0)+t(l,m,n)$",
+    "answer": "两平面方程组；$\\frac{x-x_0}{l}=\\frac{y-y_0}{m}=\\frac{z-z_0}{n}$；$(x,y,z)=(x_0,y_0,z_0)+t(l,m,n)$",
     "answerParts": [
       "两平面方程组",
-      "$(x-x_0)/l=(y-y_0)/m=(z-z_0)/n$",
+      "$\\frac{x-x_0}{l}=\\frac{y-y_0}{m}=\\frac{z-z_0}{n}$",
       "$(x,y,z)=(x_0,y_0,z_0)+t(l,m,n)$"
     ]
   },
@@ -2234,9 +2234,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "点 $(x_0,y_0,z_0)$ 到平面 $Ax+By+Cz+D=0$ 的距离。",
     "hasBlank": false,
-    "answer": "$|Ax_0+By_0+Cz_0+D|/\\sqrt{A^2+B^2+C^2}$",
+    "answer": "$\\frac{|Ax_0+By_0+Cz_0+D|}{\\sqrt{A^2+B^2+C^2}}$",
     "answerParts": [
-      "$|Ax_0+By_0+Cz_0+D|/\\sqrt{A^2+B^2+C^2}$"
+      "$\\frac{|Ax_0+By_0+Cz_0+D|}{\\sqrt{A^2+B^2+C^2}}$"
     ]
   },
   {
@@ -2247,9 +2247,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "点到空间直线（方向向量 $s$，线上点 $M_0$）的距离。",
     "hasBlank": false,
-    "answer": "$d=|\\overrightarrow{M_0M}\\times s|/|s|$",
+    "answer": "$d=\\frac{|\\overrightarrow{M_0M}\\times s|}{|s|}$",
     "answerParts": [
-      "$d=|\\overrightarrow{M_0M}\\times s|/|s|$"
+      "$d=\\frac{|\\overrightarrow{M_0M}\\times s|}{|s|}$"
     ]
   },
   {
@@ -2260,10 +2260,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "写出椭圆锥面、椭球面的标准方程。",
     "hasBlank": false,
-    "answer": "$x^2/a^2+y^2/b^2=z^2$；$x^2/a^2+y^2/b^2+z^2/c^2=1$",
+    "answer": "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=z^2$；$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$",
     "answerParts": [
-      "$x^2/a^2+y^2/b^2=z^2$",
-      "$x^2/a^2+y^2/b^2+z^2/c^2=1$"
+      "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=z^2$",
+      "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$"
     ]
   },
   {
@@ -2274,10 +2274,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "写出椭圆抛物面与双曲抛物面的示例方程。",
     "hasBlank": false,
-    "answer": "$z=x^2/a^2+y^2/b^2$；$z=x^2/a^2-y^2/b^2$",
+    "answer": "$z=\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$；$z=\\frac{x^2}{a^2}-\\frac{y^2}{b^2}$",
     "answerParts": [
-      "$z=x^2/a^2+y^2/b^2$",
-      "$z=x^2/a^2-y^2/b^2$"
+      "$z=\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$",
+      "$z=\\frac{x^2}{a^2}-\\frac{y^2}{b^2}$"
     ]
   },
   {
@@ -2302,9 +2302,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "单叶双曲面：典型方程与正、负平方项个数。",
     "hasBlank": false,
-    "answer": "$x^2/a^2+y^2/b^2-z^2/c^2=1$；正 2、负 1",
+    "answer": "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}-\\frac{z^2}{c^2}=1$；正 2、负 1",
     "answerParts": [
-      "$x^2/a^2+y^2/b^2-z^2/c^2=1$",
+      "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}-\\frac{z^2}{c^2}=1$",
       "正 2、负 1"
     ]
   },
@@ -2316,9 +2316,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "双叶双曲面：典型方程与正、负平方项个数。",
     "hasBlank": false,
-    "answer": "$z^2/c^2-x^2/a^2-y^2/b^2=1$；正 1、负 2",
+    "answer": "$\\frac{z^2}{c^2}-\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1$；正 1、负 2",
     "answerParts": [
-      "$z^2/c^2-x^2/a^2-y^2/b^2=1$",
+      "$\\frac{z^2}{c^2}-\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1$",
       "正 1、负 2"
     ]
   },
@@ -2330,10 +2330,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-12",
     "question": "椭圆柱面、双曲柱面：写出示例方程。",
     "hasBlank": false,
-    "answer": "$x^2/a^2+y^2/b^2=1$；$x^2/a^2-y^2/b^2=1$",
+    "answer": "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1$；$\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1$",
     "answerParts": [
-      "$x^2/a^2+y^2/b^2=1$",
-      "$x^2/a^2-y^2/b^2=1$"
+      "$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1$",
+      "$\\frac{x^2}{a^2}-\\frac{y^2}{b^2}=1$"
     ]
   },
   {
@@ -2370,9 +2370,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-13",
     "question": "格林公式（正向边界 $L$）：写出两侧。",
     "hasBlank": false,
-    "answer": "$\\oint_L Pdx+Qdy=\\iint_D(\\partial Q/\\partial x-\\partial P/\\partial y)dxdy$",
+    "answer": "$\\oint_L P\\,dx+Q\\,dy=\\iint_D\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)dx\\,dy$",
     "answerParts": [
-      "$\\oint_L Pdx+Qdy=\\iint_D(\\partial Q/\\partial x-\\partial P/\\partial y)dxdy$"
+      "$\\oint_L P\\,dx+Q\\,dy=\\iint_D\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)dx\\,dy$"
     ]
   },
   {
@@ -2422,10 +2422,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-13",
     "question": "质心 $\\bar x$ 的一般密度公式；均匀曲线简化式。",
     "hasBlank": false,
-    "answer": "$\\bar x=\\int_Lx\\rho ds/\\int_L\\rho ds$；$\\bar x=\\int_Lx ds/\\int_Lds$",
+    "answer": "$\\bar x=\\frac{\\int_L x\\rho\\,ds}{\\int_L \\rho\\,ds}$；$\\bar x=\\frac{\\int_L x\\,ds}{\\int_L ds}$",
     "answerParts": [
-      "$\\bar x=\\int_Lx\\rho ds/\\int_L\\rho ds$",
-      "$\\bar x=\\int_Lx ds/\\int_Lds$"
+      "$\\bar x=\\frac{\\int_L x\\rho\\,ds}{\\int_L \\rho\\,ds}$",
+      "$\\bar x=\\frac{\\int_L x\\,ds}{\\int_L ds}$"
     ]
   },
   {
@@ -2488,9 +2488,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "calc-13",
     "question": "平面曲线 $z=f(x,y)$ 沿单位方向 $(\\cos\\alpha,\\cos\\beta)$ 的方向导数。",
     "hasBlank": false,
-    "answer": "$\\partial z/\\partial l=f_x\\cos\\alpha+f_y\\cos\\beta$",
+    "answer": "$\\frac{\\partial z}{\\partial l}=f_x\\cos\\alpha+f_y\\cos\\beta$",
     "answerParts": [
-      "$\\partial z/\\partial l=f_x\\cos\\alpha+f_y\\cos\\beta$"
+      "$\\frac{\\partial z}{\\partial l}=f_x\\cos\\alpha+f_y\\cos\\beta$"
     ]
   },
   {
@@ -2525,12 +2525,12 @@ export const FORMULAS: FormulaItem[] = [
     "code": "144",
     "subject": "calculus",
     "sectionId": "calc-13",
-    "question": "$\\displaystyle I_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$ 的递推关系。",
+    "question": "$\\displaystyle I_n=\\int_0^{\\frac{\\pi}{2}}\\sin^n x\\,dx$ 的递推关系。",
     "hasBlank": false,
-    "answer": "$I_n=\\frac{n-1}{n}I_{n-2}$；$I_0=\\pi/2,I_1=1$",
+    "answer": "$I_n=\\frac{n-1}{n}I_{n-2}$；$I_0=\\frac{\\pi}{2},\\ I_1=1$",
     "answerParts": [
       "$I_n=\\frac{n-1}{n}I_{n-2}$",
-      "$I_0=\\pi/2,I_1=1$"
+      "$I_0=\\frac{\\pi}{2},\\ I_1=1$"
     ]
   },
   {
@@ -2606,9 +2606,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "la-01",
     "question": "克拉默法则：$Ax=b$（$|A|\\ne0$）的 $x_i$。",
     "hasBlank": false,
-    "answer": "$x_i=|A_i|/|A|$",
+    "answer": "$x_i=\\frac{|A_i|}{|A|}$",
     "answerParts": [
-      "$x_i=|A_i|/|A|$"
+      "$x_i=\\frac{|A_i|}{|A|}$"
     ]
   },
   {
@@ -2935,9 +2935,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "la-03",
     "question": "当 $A$ 可逆时 $(A^*)^{-1}$ 的公式。",
     "hasBlank": false,
-    "answer": "$(A^*)^{-1}=A/|A|$",
+    "answer": "$(A^*)^{-1}=\\frac{A}{|A|}$",
     "answerParts": [
-      "$(A^*)^{-1}=A/|A|$"
+      "$(A^*)^{-1}=\\frac{A}{|A|}$"
     ]
   },
   {
@@ -3013,9 +3013,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "la-03",
     "question": "若 $A$ 可逆，$A^{-1}$ 的对应特征值。",
     "hasBlank": false,
-    "answer": "$1/\\lambda$",
+    "answer": "$\\frac{1}{\\lambda}$",
     "answerParts": [
-      "$1/\\lambda$"
+      "$\\frac{1}{\\lambda}$"
     ]
   },
   {
@@ -3026,9 +3026,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "la-03",
     "question": "若 $A$ 可逆，$A^*$ 的对应特征值。",
     "hasBlank": false,
-    "answer": "$|A|/\\lambda$",
+    "answer": "$\\frac{|A|}{\\lambda}$",
     "answerParts": [
-      "$|A|/\\lambda$"
+      "$\\frac{|A|}{\\lambda}$"
     ]
   },
   {
@@ -3145,10 +3145,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "几何分布（首成功次数）的 $E(X),D(X)$。",
     "hasBlank": false,
-    "answer": "$1/p$；$(1-p)/p^2$",
+    "answer": "$\\frac{1}{p}$；$\\frac{1-p}{p^2}$",
     "answerParts": [
-      "$1/p$",
-      "$(1-p)/p^2$"
+      "$\\frac{1}{p}$",
+      "$\\frac{1-p}{p^2}$"
     ]
   },
   {
@@ -3186,9 +3186,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "泊松分布 $X\\sim P(\\lambda)$ 的分布律。",
     "hasBlank": false,
-    "answer": "$P(X=k)=e^{-\\lambda}\\lambda^k/k!$",
+    "answer": "$P(X=k)=\\frac{\\lambda^k}{k!}e^{-\\lambda}$",
     "answerParts": [
-      "$P(X=k)=e^{-\\lambda}\\lambda^k/k!$"
+      "$P(X=k)=\\frac{\\lambda^k}{k!}e^{-\\lambda}$"
     ]
   },
   {
@@ -3226,10 +3226,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "指数分布 $E(X),D(X)$。",
     "hasBlank": false,
-    "answer": "$1/\\lambda$；$1/\\lambda^2$",
+    "answer": "$\\frac{1}{\\lambda}$；$\\frac{1}{\\lambda^2}$",
     "answerParts": [
-      "$1/\\lambda$",
-      "$1/\\lambda^2$"
+      "$\\frac{1}{\\lambda}$",
+      "$\\frac{1}{\\lambda^2}$"
     ]
   },
   {
@@ -3240,9 +3240,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "正态分布 $X\\sim N(\\mu,\\sigma^2)$ 的密度。",
     "hasBlank": false,
-    "answer": "$\\displaystyle f(x)=\\frac1{\\sqrt{2\\pi}\\sigma}e^{-(x-\\mu)^2/(2\\sigma^2)}$",
+    "answer": "$\\displaystyle f(x)=\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}$",
     "answerParts": [
-      "$\\displaystyle f(x)=\\frac1{\\sqrt{2\\pi}\\sigma}e^{-(x-\\mu)^2/(2\\sigma^2)}$"
+      "$\\displaystyle f(x)=\\frac{1}{\\sqrt{2\\pi}\\sigma}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}$"
     ]
   },
   {
@@ -3267,9 +3267,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "超几何分布（$N$ 件中 $M$ 件成功，抽 $n$ 件）的分布律。",
     "hasBlank": false,
-    "answer": "$P(X=k)=\\binom Mk\\binom{N-M}{n-k}/\\binom Nn$",
+    "answer": "$P(X=k)=\\frac{\\binom{M}{k}\\binom{N-M}{n-k}}{\\binom{N}{n}}$",
     "answerParts": [
-      "$P(X=k)=\\binom Mk\\binom{N-M}{n-k}/\\binom Nn$"
+      "$P(X=k)=\\frac{\\binom{M}{k}\\binom{N-M}{n-k}}{\\binom{N}{n}}$"
     ]
   },
   {
@@ -3280,9 +3280,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "超几何分布的期望。",
     "hasBlank": false,
-    "answer": "$E(X)=nM/N$",
+    "answer": "$E(X)=\\frac{nM}{N}$",
     "answerParts": [
-      "$E(X)=nM/N$"
+      "$E(X)=\\frac{nM}{N}$"
     ]
   },
   {
@@ -3293,10 +3293,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-01",
     "question": "均匀分布 $U(a,b)$ 的期望与方差。",
     "hasBlank": false,
-    "answer": "$(a+b)/2$；$(b-a)^2/12$",
+    "answer": "$\\frac{a+b}{2}$；$\\frac{(b-a)^2}{12}$",
     "answerParts": [
-      "$(a+b)/2$",
-      "$(b-a)^2/12$"
+      "$\\frac{a+b}{2}$",
+      "$\\frac{(b-a)^2}{12}$"
     ]
   },
   {
@@ -3359,9 +3359,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-02",
     "question": "相关系数 $\\rho_{XY}$ 的定义。",
     "hasBlank": false,
-    "answer": "$\\operatorname{Cov}(X,Y)/(\\sqrt{D(X)D(Y)})$",
+    "answer": "$\\frac{\\operatorname{Cov}(X,Y)}{\\sqrt{D(X)D(Y)}}$",
     "answerParts": [
-      "$\\operatorname{Cov}(X,Y)/(\\sqrt{D(X)D(Y)})$"
+      "$\\frac{\\operatorname{Cov}(X,Y)}{\\sqrt{D(X)D(Y)}}$"
     ]
   },
   {
@@ -3399,9 +3399,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-02",
     "question": "切比雪夫不等式：给出 $P(|X-EX|\\ge\\varepsilon)$ 的上界。",
     "hasBlank": false,
-    "answer": "$\\le D(X)/\\varepsilon^2$",
+    "answer": "$\\le\\frac{D(X)}{\\varepsilon^2}$",
     "answerParts": [
-      "$\\le D(X)/\\varepsilon^2$"
+      "$\\le\\frac{D(X)}{\\varepsilon^2}$"
     ]
   },
   {
@@ -3464,9 +3464,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-02",
     "question": "中心极限定理：样本均值标准化形式。",
     "hasBlank": false,
-    "answer": "$(\\bar X-\\mu)/(\\sigma/\\sqrt n)\\Rightarrow N(0,1)$",
+    "answer": "$\\frac{\\bar X-\\mu}{\\frac{\\sigma}{\\sqrt{n}}}\\Rightarrow N(0,1)$",
     "answerParts": [
-      "$(\\bar X-\\mu)/(\\sigma/\\sqrt n)\\Rightarrow N(0,1)$"
+      "$\\frac{\\bar X-\\mu}{\\frac{\\sigma}{\\sqrt{n}}}\\Rightarrow N(0,1)$"
     ]
   },
   {
@@ -3477,9 +3477,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "prob-02",
     "question": "二项分布 $X\\sim B(n,p)$ 的正态近似标准化。",
     "hasBlank": false,
-    "answer": "$(X-np)/\\sqrt{np(1-p)}\\Rightarrow N(0,1)$",
+    "answer": "$\\frac{X-np}{\\sqrt{np(1-p)}}\\Rightarrow N(0,1)$",
     "answerParts": [
-      "$(X-np)/\\sqrt{np(1-p)}\\Rightarrow N(0,1)$"
+      "$\\frac{X-np}{\\sqrt{np(1-p)}}\\Rightarrow N(0,1)$"
     ]
   },
   {
@@ -3504,10 +3504,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "i.i.d. 的样本均值的期望、方差。",
     "hasBlank": false,
-    "answer": "$E(\\bar X)=\\mu$；$D(\\bar X)=\\sigma^2/n$",
+    "answer": "$E(\\bar X)=\\mu$；$D(\\bar X)=\\frac{\\sigma^2}{n}$",
     "answerParts": [
       "$E(\\bar X)=\\mu$",
-      "$D(\\bar X)=\\sigma^2/n$"
+      "$D(\\bar X)=\\frac{\\sigma^2}{n}$"
     ]
   },
   {
@@ -3558,9 +3558,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "$t(n)$ 分布的标准构造（$Z\\sim N(0,1)$，$U\\sim\\chi^2(n)$ 独立）。",
     "hasBlank": false,
-    "answer": "$t=Z/\\sqrt{U/n}$",
+    "answer": "$t=\\frac{Z}{\\sqrt{\\frac{U}{n}}}$",
     "answerParts": [
-      "$t=Z/\\sqrt{U/n}$"
+      "$t=\\frac{Z}{\\sqrt{\\frac{U}{n}}}$"
     ]
   },
   {
@@ -3571,9 +3571,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "$F(n_1,n_2)$ 分布的标准构造。",
     "hasBlank": false,
-    "answer": "$(U_1/n_1)/(U_2/n_2)$（独立卡方）",
+    "answer": "$\\frac{\\frac{U_1}{n_1}}{\\frac{U_2}{n_2}}$（独立卡方）",
     "answerParts": [
-      "$(U_1/n_1)/(U_2/n_2)$（独立卡方）"
+      "$\\frac{\\frac{U_1}{n_1}}{\\frac{U_2}{n_2}}$（独立卡方）"
     ]
   },
   {
@@ -3584,9 +3584,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "正态总体均值的 $Z$ 枢轴量（$\\sigma$ 已知）。",
     "hasBlank": false,
-    "answer": "$(\\bar X-\\mu)/(\\sigma/\\sqrt n)\\sim N(0,1)$",
+    "answer": "$\\frac{\\bar X-\\mu}{\\frac{\\sigma}{\\sqrt{n}}}\\sim N(0,1)$",
     "answerParts": [
-      "$(\\bar X-\\mu)/(\\sigma/\\sqrt n)\\sim N(0,1)$"
+      "$\\frac{\\bar X-\\mu}{\\frac{\\sigma}{\\sqrt{n}}}\\sim N(0,1)$"
     ]
   },
   {
@@ -3597,9 +3597,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "正态总体均值的 $t$ 枢轴量（$\\sigma$ 未知）。",
     "hasBlank": false,
-    "answer": "$(\\bar X-\\mu)/(S/\\sqrt n)\\sim t(n-1)$",
+    "answer": "$\\frac{\\bar X-\\mu}{\\frac{S}{\\sqrt{n}}}\\sim t(n-1)$",
     "answerParts": [
-      "$(\\bar X-\\mu)/(S/\\sqrt n)\\sim t(n-1)$"
+      "$\\frac{\\bar X-\\mu}{\\frac{S}{\\sqrt{n}}}\\sim t(n-1)$"
     ]
   },
   {
@@ -3610,9 +3610,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "正态总体方差的卡方枢轴量。",
     "hasBlank": false,
-    "answer": "$(n-1)S^2/\\sigma^2\\sim\\chi^2(n-1)$",
+    "answer": "$\\frac{(n-1)S^2}{\\sigma^2}\\sim\\chi^2(n-1)$",
     "answerParts": [
-      "$(n-1)S^2/\\sigma^2\\sim\\chi^2(n-1)$"
+      "$\\frac{(n-1)S^2}{\\sigma^2}\\sim\\chi^2(n-1)$"
     ]
   },
   {
@@ -3675,10 +3675,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "stat-01",
     "question": "$\\max(X,Y)$ 与 $\\min(X,Y)$ 的绝对值表达式。",
     "hasBlank": false,
-    "answer": "$\\max=(X+Y+|X-Y|)/2$；$\\min=(X+Y-|X-Y|)/2$",
+    "answer": "$\\max=\\frac{X+Y+|X-Y|}{2}$；$\\min=\\frac{X+Y-|X-Y|}{2}$",
     "answerParts": [
-      "$\\max=(X+Y+|X-Y|)/2$",
-      "$\\min=(X+Y-|X-Y|)/2$"
+      "$\\max=\\frac{X+Y+|X-Y|}{2}$",
+      "$\\min=\\frac{X+Y-|X-Y|}{2}$"
     ]
   },
   {
@@ -3959,9 +3959,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-02",
     "question": "冲激缩放 $\\delta(at+b)$ 的公式。",
     "hasBlank": false,
-    "answer": "$\\frac1{|a|}\\delta(t+b/a)$（$a\\ne0$）",
+    "answer": "$\\frac{1}{|a|}\\delta\\left(t+\\frac{b}{a}\\right)$（$a\\ne0$）",
     "answerParts": [
-      "$\\frac1{|a|}\\delta(t+b/a)$（$a\\ne0$）"
+      "$\\frac{1}{|a|}\\delta\\left(t+\\frac{b}{a}\\right)$（$a\\ne0$）"
     ]
   },
   {
@@ -3972,9 +3972,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-02",
     "question": "冲激导数缩放 $\\delta^{\\prime}(at)$ 的公式。",
     "hasBlank": false,
-    "answer": "$\\delta^{\\prime}(at)=\\delta^{\\prime}(t)/(a|a|)$",
+    "answer": "$\\delta^{\\prime}(at)=\\frac{\\delta^{\\prime}(t)}{a|a|}$",
     "answerParts": [
-      "$\\delta^{\\prime}(at)=\\delta^{\\prime}(t)/(a|a|)$"
+      "$\\delta^{\\prime}(at)=\\frac{\\delta^{\\prime}(t)}{a|a|}$"
     ]
   },
   {
@@ -4129,9 +4129,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-03",
     "question": "连续时间三角傅里叶级数表达式。",
     "hasBlank": false,
-    "answer": "$x(t)=a_0/2+\\sum_{n\\ge1}[a_n\\cos(n\\omega_0t)+b_n\\sin(n\\omega_0t)]$",
+    "answer": "$x(t)=\\frac{a_0}{2}+\\sum_{n\\ge1}[a_n\\cos(n\\omega_0t)+b_n\\sin(n\\omega_0t)]$",
     "answerParts": [
-      "$x(t)=a_0/2+\\sum_{n\\ge1}[a_n\\cos(n\\omega_0t)+b_n\\sin(n\\omega_0t)]$"
+      "$x(t)=\\frac{a_0}{2}+\\sum_{n\\ge1}[a_n\\cos(n\\omega_0t)+b_n\\sin(n\\omega_0t)]$"
     ]
   },
   {
@@ -4170,10 +4170,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-03",
     "question": "三角谱转双边复指数谱：$a_k$ 与 $C_k,\\varphi_k$ 关系（$k>0$）。",
     "hasBlank": false,
-    "answer": "$a_k=(C_k/2)e^{j\\varphi_k}$；$a_{-k}=(C_k/2)e^{-j\\varphi_k}$",
+    "answer": "$a_k=\\frac{C_k}{2}e^{j\\varphi_k}$；$a_{-k}=\\frac{C_k}{2}e^{-j\\varphi_k}$",
     "answerParts": [
-      "$a_k=(C_k/2)e^{j\\varphi_k}$",
-      "$a_{-k}=(C_k/2)e^{-j\\varphi_k}$"
+      "$a_k=\\frac{C_k}{2}e^{j\\varphi_k}$",
+      "$a_{-k}=\\frac{C_k}{2}e^{-j\\varphi_k}$"
     ]
   },
   {
@@ -4251,9 +4251,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-03",
     "question": "正弦离散信号 $\\cos(\\Omega n+\\phi)$ 周期存在的条件。",
     "hasBlank": false,
-    "answer": "$\\Omega/(2\\pi)$ 为有理数",
+    "answer": "$\\frac{\\Omega}{2\\pi}$ 为有理数",
     "answerParts": [
-      "$\\Omega/(2\\pi)$ 为有理数"
+      "$\\frac{\\Omega}{2\\pi}$ 为有理数"
     ]
   },
   {
@@ -4262,7 +4262,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "275",
     "subject": "signals",
     "sectionId": "sig-03",
-    "question": "若 $\\Omega/(2\\pi)=p/q$（最简分数），离散正弦基本周期。",
+    "question": "若 $\\frac{\\Omega}{2\\pi}=\\frac{p}{q}$（最简分数），离散正弦基本周期。",
     "hasBlank": false,
     "answer": "$N=q$（非退化正弦）",
     "answerParts": [
@@ -4290,9 +4290,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-03",
     "question": "系统群时延与相位响应的关系。",
     "hasBlank": false,
-    "answer": "$\\tau_g(\\omega)=-d\\phi(\\omega)/d\\omega$",
+    "answer": "$\\tau_g(\\omega)=-\\frac{d\\phi(\\omega)}{d\\omega}$",
     "answerParts": [
-      "$\\tau_g(\\omega)=-d\\phi(\\omega)/d\\omega$"
+      "$\\tau_g(\\omega)=-\\frac{d\\phi(\\omega)}{d\\omega}$"
     ]
   },
   {
@@ -4329,9 +4329,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "单位阶跃 $u(t)$ 的双边拉普拉斯变换（含 ROC）。",
     "hasBlank": false,
-    "answer": "$1/s$，$\\operatorname{Re}s>0$",
+    "answer": "$\\frac{1}{s}$，$\\operatorname{Re}s>0$",
     "answerParts": [
-      "$1/s$，$\\operatorname{Re}s>0$"
+      "$\\frac{1}{s}$，$\\operatorname{Re}s>0$"
     ]
   },
   {
@@ -4342,10 +4342,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$tu(t)$ 与 $t^2u(t)$ 的拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$1/s^2$；$2/s^3$（$\\operatorname{Re}s>0$）",
+    "answer": "$\\frac{1}{s^2}$；$\\frac{2}{s^3}$（$\\operatorname{Re}s>0$）",
     "answerParts": [
-      "$1/s^2$",
-      "$2/s^3$（$\\operatorname{Re}s>0$）"
+      "$\\frac{1}{s^2}$",
+      "$\\frac{2}{s^3}$（$\\operatorname{Re}s>0$）"
     ]
   },
   {
@@ -4356,9 +4356,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$e^{at}u(t)$ 的拉普拉斯变换和 ROC。",
     "hasBlank": false,
-    "answer": "$1/(s-a)$，$\\operatorname{Re}s>a$",
+    "answer": "$\\frac{1}{s-a}$，$\\operatorname{Re}s>a$",
     "answerParts": [
-      "$1/(s-a)$，$\\operatorname{Re}s>a$"
+      "$\\frac{1}{s-a}$，$\\operatorname{Re}s>a$"
     ]
   },
   {
@@ -4369,10 +4369,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$\\cos(\\beta t)u(t)$、$\\sin(\\beta t)u(t)$ 的拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$s/(s^2+\\beta^2)$；$\\beta/(s^2+\\beta^2)$",
+    "answer": "$\\frac{s}{s^2+\\beta^2}$；$\\frac{\\beta}{s^2+\\beta^2}$",
     "answerParts": [
-      "$s/(s^2+\\beta^2)$",
-      "$\\beta/(s^2+\\beta^2)$"
+      "$\\frac{s}{s^2+\\beta^2}$",
+      "$\\frac{\\beta}{s^2+\\beta^2}$"
     ]
   },
   {
@@ -4383,9 +4383,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$e^{-at}\\cos\\beta t\\,u(t)$ 的拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$(s+a)/[(s+a)^2+\\beta^2]$",
+    "answer": "$\\frac{s+a}{(s+a)^2+\\beta^2}$",
     "answerParts": [
-      "$(s+a)/[(s+a)^2+\\beta^2]$"
+      "$\\frac{s+a}{(s+a)^2+\\beta^2}$"
     ]
   },
   {
@@ -4396,9 +4396,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$e^{-at}\\sin\\beta t\\,u(t)$ 的拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$\\beta/[(s+a)^2+\\beta^2]$",
+    "answer": "$\\frac{\\beta}{(s+a)^2+\\beta^2}$",
     "answerParts": [
-      "$\\beta/[(s+a)^2+\\beta^2]$"
+      "$\\frac{\\beta}{(s+a)^2+\\beta^2}$"
     ]
   },
   {
@@ -4422,9 +4422,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "离散阶跃 $u[n]$ 的 $Z$ 变换及 ROC。",
     "hasBlank": false,
-    "answer": "$z/(z-1)$，$|z|>1$",
+    "answer": "$\\frac{z}{z-1}$，$|z|>1$",
     "answerParts": [
-      "$z/(z-1)$，$|z|>1$"
+      "$\\frac{z}{z-1}$，$|z|>1$"
     ]
   },
   {
@@ -4435,10 +4435,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$nu[n]$、$n^2u[n]$ 的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$z/(z-1)^2$；$z(z+1)/(z-1)^3$",
+    "answer": "$\\frac{z}{(z-1)^2}$；$\\frac{z(z+1)}{(z-1)^3}$",
     "answerParts": [
-      "$z/(z-1)^2$",
-      "$z(z+1)/(z-1)^3$"
+      "$\\frac{z}{(z-1)^2}$",
+      "$\\frac{z(z+1)}{(z-1)^3}$"
     ]
   },
   {
@@ -4449,9 +4449,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$a^nu[n]$ 的 $Z$ 变换与 ROC。",
     "hasBlank": false,
-    "answer": "$z/(z-a)$，$|z|>|a|$",
+    "answer": "$\\frac{z}{z-a}$，$|z|>|a|$",
     "answerParts": [
-      "$z/(z-a)$，$|z|>|a|$"
+      "$\\frac{z}{z-a}$，$|z|>|a|$"
     ]
   },
   {
@@ -4462,9 +4462,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$\\cos(\\Omega n)u[n]$ 的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$z(z-\\cos\\Omega)/(z^2-2z\\cos\\Omega+1)$",
+    "answer": "$\\frac{z(z-\\cos\\Omega)}{z^2-2z\\cos\\Omega+1}$",
     "answerParts": [
-      "$z(z-\\cos\\Omega)/(z^2-2z\\cos\\Omega+1)$"
+      "$\\frac{z(z-\\cos\\Omega)}{z^2-2z\\cos\\Omega+1}$"
     ]
   },
   {
@@ -4475,9 +4475,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$\\sin(\\Omega n)u[n]$ 的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$z\\sin\\Omega/(z^2-2z\\cos\\Omega+1)$",
+    "answer": "$\\frac{z\\sin\\Omega}{z^2-2z\\cos\\Omega+1}$",
     "answerParts": [
-      "$z\\sin\\Omega/(z^2-2z\\cos\\Omega+1)$"
+      "$\\frac{z\\sin\\Omega}{z^2-2z\\cos\\Omega+1}$"
     ]
   },
   {
@@ -4488,9 +4488,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$a^n\\cos(\\Omega n)u[n]$ 的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$z(z-a\\cos\\Omega)/(z^2-2az\\cos\\Omega+a^2)$",
+    "answer": "$\\frac{z(z-a\\cos\\Omega)}{z^2-2az\\cos\\Omega+a^2}$",
     "answerParts": [
-      "$z(z-a\\cos\\Omega)/(z^2-2az\\cos\\Omega+a^2)$"
+      "$\\frac{z(z-a\\cos\\Omega)}{z^2-2az\\cos\\Omega+a^2}$"
     ]
   },
   {
@@ -4501,9 +4501,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "$a^n\\sin(\\Omega n)u[n]$ 的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$az\\sin\\Omega/(z^2-2az\\cos\\Omega+a^2)$",
+    "answer": "$\\frac{az\\sin\\Omega}{z^2-2az\\cos\\Omega+a^2}$",
     "answerParts": [
-      "$az\\sin\\Omega/(z^2-2az\\cos\\Omega+a^2)$"
+      "$\\frac{az\\sin\\Omega}{z^2-2az\\cos\\Omega+a^2}$"
     ]
   },
   {
@@ -4540,9 +4540,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "傅里叶变换对 $\\sin\\omega_0t$。",
     "hasBlank": false,
-    "answer": "$\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]/j$",
+    "answer": "$\\frac{\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]}{j}$",
     "answerParts": [
-      "$\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]/j$"
+      "$\\frac{\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]}{j}$"
     ]
   },
   {
@@ -4553,9 +4553,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "傅里叶变换对 $u(t)$（广义函数意义）。",
     "hasBlank": false,
-    "answer": "$\\pi\\delta(\\omega)+\\operatorname{PV}(1/(j\\omega))$",
+    "answer": "$\\pi\\delta(\\omega)+\\operatorname{PV}\\left(\\frac{1}{j\\omega}\\right)$",
     "answerParts": [
-      "$\\pi\\delta(\\omega)+\\operatorname{PV}(1/(j\\omega))$"
+      "$\\pi\\delta(\\omega)+\\operatorname{PV}\\left(\\frac{1}{j\\omega}\\right)$"
     ]
   },
   {
@@ -4592,9 +4592,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "傅里叶时域尺度变换：$f(at)\\longleftrightarrow$ ________________",
     "hasBlank": true,
-    "answer": "$\\frac1{|a|}F(j\\omega/a)$",
+    "answer": "$\\frac{1}{|a|}F\\left(\\frac{j\\omega}{a}\\right)$",
     "answerParts": [
-      "$\\frac1{|a|}F(j\\omega/a)$"
+      "$\\frac{1}{|a|}F\\left(\\frac{j\\omega}{a}\\right)$"
     ]
   },
   {
@@ -4644,9 +4644,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "傅里叶时域乘 $t$ 与频域微分的关系。",
     "hasBlank": false,
-    "answer": "$tf(t)\\longleftrightarrow j\\,dF(j\\omega)/d\\omega$",
+    "answer": "$tf(t)\\longleftrightarrow j\\frac{dF(j\\omega)}{d\\omega}$",
     "answerParts": [
-      "$tf(t)\\longleftrightarrow j\\,dF(j\\omega)/d\\omega$"
+      "$tf(t)\\longleftrightarrow j\\frac{dF(j\\omega)}{d\\omega}$"
     ]
   },
   {
@@ -4763,9 +4763,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "$Z$ 变换尺度：$a^nx[n]$ 的变换。",
     "hasBlank": false,
-    "answer": "$X(z/a)$",
+    "answer": "$X\\left(\\frac{z}{a}\\right)$",
     "answerParts": [
-      "$X(z/a)$"
+      "$X\\left(\\frac{z}{a}\\right)$"
     ]
   },
   {
@@ -4789,9 +4789,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "$Z$ 变换时域乘 $n$ 的性质。",
     "hasBlank": false,
-    "answer": "$nx[n]\\longleftrightarrow-z\\,dX(z)/dz$",
+    "answer": "$nx[n]\\longleftrightarrow -z\\frac{dX(z)}{dz}$",
     "answerParts": [
-      "$nx[n]\\longleftrightarrow-z\\,dX(z)/dz$"
+      "$nx[n]\\longleftrightarrow -z\\frac{dX(z)}{dz}$"
     ]
   },
   {
@@ -4802,10 +4802,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "$Z$ 变换初值 / 终值公式（因果序列且条件满足）。",
     "hasBlank": false,
-    "answer": "$x[0]=\\lim_{z\\to\\infty}X(z)$；$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}(z-1)X(z)/z$",
+    "answer": "$x[0]=\\lim_{z\\to\\infty}X(z)$；$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}\\frac{(z-1)X(z)}{z}$",
     "answerParts": [
       "$x[0]=\\lim_{z\\to\\infty}X(z)$",
-      "$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}(z-1)X(z)/z$"
+      "$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}\\frac{(z-1)X(z)}{z}$"
     ]
   },
   {
@@ -4830,10 +4830,10 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-05",
     "question": "矩形脉冲宽度为 $T$，变换后频谱中零点间隔与什么相关？",
     "hasBlank": false,
-    "answer": "与脉宽成反比；连续时间第一个零点通常 $\\omega=2\\pi/T$",
+    "answer": "与脉宽成反比；连续时间第一个零点通常 $\\omega=\\frac{2\\pi}{T}$",
     "answerParts": [
       "与脉宽成反比",
-      "连续时间第一个零点通常 $\\omega=2\\pi/T$"
+      "连续时间第一个零点通常 $\\omega=\\frac{2\\pi}{T}$"
     ]
   },
   {
@@ -4844,11 +4844,11 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-06",
     "question": "零初始条件下，电阻、电感、电容在 $s$ 域的阻抗。",
     "hasBlank": false,
-    "answer": "$R$；$sL$；$1/(sC)$",
+    "answer": "$R$；$sL$；$\\frac{1}{sC}$",
     "answerParts": [
       "$R$",
       "$sL$",
-      "$1/(sC)$"
+      "$\\frac{1}{sC}$"
     ]
   },
   {
@@ -4872,9 +4872,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-06",
     "question": "电容含初始电压时，$s$ 域串联等效初始电压源大小。",
     "hasBlank": false,
-    "answer": "$u_C(0^-)/s$",
+    "answer": "$\\frac{u_C(0^-)}{s}$",
     "answerParts": [
-      "$u_C(0^-)/s$"
+      "$\\frac{u_C(0^-)}{s}$"
     ]
   },
   {
@@ -4938,7 +4938,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "326",
     "subject": "signals",
     "sectionId": "sig-06",
-    "question": "函数 $H(s)=B(s)/A(s)$：若分母次数更高，则 $|s|\\to\\infty$ 时如何？",
+    "question": "函数 $H(s)=\\frac{B(s)}{A(s)}$：若分母次数更高，则 $|s|\\to\\infty$ 时如何？",
     "hasBlank": false,
     "answer": "$H(s)\\to0$",
     "answerParts": [

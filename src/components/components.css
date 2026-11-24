@@ -1014,7 +1014,7 @@
 
 /* ========== MathText / KaTeX Styling ========== */
 .math-text {
-  line-height: 1.8;
+  line-height: 2.15;
   word-break: break-word;
 }
 
@@ -1023,8 +1023,14 @@
   padding: 0 2px;
 }
 
+.math-inline-wrap.math-has-stack {
+  display: inline-block;
+  padding: 4px 2px;
+  vertical-align: baseline;
+}
+
 .math-inline-wrap .katex {
-  font-size: 1.03em;
+  font-size: 1.04em;
   color: inherit;
 }
 
