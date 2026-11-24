@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { SyncManager } from './components/SyncManager';
+import { BigEssayPage } from './pages/BigEssay';
 import { DrillsPage } from './pages/Drills';
 import { ExamPage } from './pages/Exam';
 import { FormulaHandbookPage } from './pages/FormulaHandbook';
@@ -29,6 +30,7 @@ export function App() {
         <Route path="/today" element={<TodayPage />} />
         <Route path="/learn" element={<LearnPage />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/big" element={<BigEssayPage />} />
         <Route path="/exam" element={<ExamPage />} />
         <Route path="/drills" element={<DrillsPage />} />
         <Route path="/mistakes" element={<MistakesPage />} />

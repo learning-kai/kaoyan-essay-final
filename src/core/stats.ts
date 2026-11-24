@@ -1,7 +1,14 @@
 import { formatLocalDateKey } from './mistakes';
 import { getMasteryLevel } from './scheduler';
+import { BIG_SENTENCES } from '../data/bigEssay';
 import { SENTENCES, TEMPLATES } from '../data/templates';
-import { deserializeCard, type ExamRecord, type IdentificationRecord, type SerializedCard } from '../store/useProgress';
+import {
+  deserializeCard,
+  type BigExamRecord,
+  type ExamRecord,
+  type IdentificationRecord,
+  type SerializedCard,
+} from '../store/useProgress';
 import type { TemplateId } from '../data/types';
 
 export interface TemplateMasteryRow {
@@ -39,6 +46,50 @@ export function computeTemplateMastery(
       templateId: tpl.id,
       name: tpl.name.replace('（备用）', ''),
       total: studyIds.length,
+      unlearned,
+      learning,
+      familiar,
+      mastered,
+    };
+  });
+}
+
+export interface BigParagraphMasteryRow {
+  paragraph: 1 | 2 | 3;
+  name: string;
+  total: number;
+  unlearned: number;
+  learning: number;
+  familiar: number;
+  mastered: number;
+}
+
+export function computeBigParagraphMastery(
+  cards: Record<string, SerializedCard>
+): BigParagraphMasteryRow[] {
+  const specs: { paragraph: 1 | 2 | 3; name: string }[] = [
+    { paragraph: 1, name: '第一段（描述与意义）' },
+    { paragraph: 2, name: '第二段（价值与变化）' },
+    { paragraph: 3, name: '第三段（关键与行动）' },
+  ];
+  return specs.map((spec) => {
+    const sents = BIG_SENTENCES.filter((s) => s.paragraph === spec.paragraph);
+    let unlearned = 0;
+    let learning = 0;
+    let familiar = 0;
+    let mastered = 0;
+    for (const s of sents) {
+      const raw = cards[s.id];
+      const level = getMasteryLevel(raw ? deserializeCard(raw) : undefined);
+      if (level === 'unlearned') unlearned++;
+      else if (level === 'learning') learning++;
+      else if (level === 'familiar') familiar++;
+      else mastered++;
+    }
+    return {
+      paragraph: spec.paragraph,
+      name: spec.name,
+      total: sents.length,
       unlearned,
       learning,
       familiar,
@@ -106,6 +157,15 @@ export function computeExamTimeSeries(records: ExamRecord[]): ExamTimePoint[] {
     label: `第 ${i + 1} 篇`,
     minutes: Number((rec.durationSec / 60).toFixed(1)),
     accuracyPct: Math.round(rec.overallAccuracy * 100),
+  }));
+}
+
+export function computeBigExamTimeSeries(records: BigExamRecord[]): ExamTimePoint[] {
+  return records.map((rec, i) => ({
+    index: i + 1,
+    label: `第 ${i + 1} 篇`,
+    minutes: Number((rec.durationSec / 60).toFixed(1)),
+    accuracyPct: Math.round(rec.fixedAccuracy * 100),
   }));
 }
 

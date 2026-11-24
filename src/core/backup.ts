@@ -4,7 +4,13 @@ import {
   EMPTY_DRILL_STATS,
   type PoliticsBackupData,
 } from '../store/usePoliticsProgress';
-import type { ExamRecord, IdentificationRecord, SerializedCard } from '../store/useProgress';
+import type {
+  BigEssayBackupData,
+  ExamRecord,
+  IdentificationRecord,
+  SerializedCard,
+} from '../store/useProgress';
+import { migrateProgressCards } from '../store/useProgress';
 import type { InputMode, ThemeMode } from '../store/useSettings';
 import type { PracticeMode } from './grader';
 
@@ -24,6 +30,8 @@ export interface BackupPayload {
   };
   settings: {
     dailyNewLimit: number;
+    bigDailyNewLimit?: number;
+    enableBigPackCards?: boolean;
     requestRetention: number;
     examDate: string | null;
     strictPunctuation: boolean;
@@ -33,6 +41,7 @@ export interface BackupPayload {
     unlockAllLessons: boolean;
     bodyFontSize: number;
   };
+  bigEssayProgress?: BigEssayBackupData;
   formulaProgress?: FormulaBackupData;
   politicsProgress?: PoliticsBackupData;
 }
@@ -41,6 +50,7 @@ export interface BackupMeta {
   updatedAt?: string | null;
   settingsUpdatedAt?: string | null;
   resetAt?: string | null;
+  bigEssayProgress?: BigEssayBackupData;
   formulaProgress?: FormulaBackupData;
   politicsProgress?: PoliticsBackupData;
 }
@@ -53,7 +63,7 @@ export function buildBackupPayload(
 ): BackupPayload {
   const payload: BackupPayload = {
     app: 'kaoyan-essay',
-    schemaVersion: 3,
+    schemaVersion: 4,
     exportedAt: now.toISOString(),
     updatedAt: meta?.updatedAt ?? null,
     settingsUpdatedAt: meta?.settingsUpdatedAt ?? null,
@@ -61,6 +71,9 @@ export function buildBackupPayload(
     progress,
     settings,
   };
+  if (meta?.bigEssayProgress) {
+    payload.bigEssayProgress = meta.bigEssayProgress;
+  }
   if (meta?.formulaProgress) {
     payload.formulaProgress = meta.formulaProgress;
   }
@@ -77,6 +90,21 @@ export function serializeBackup(
   meta?: BackupMeta
 ): string {
   return JSON.stringify(buildBackupPayload(progress, settings, now, meta), null, 2);
+}
+
+function normalizeBigEssayBackup(raw: unknown): BigEssayBackupData | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const b = raw as Partial<BigEssayBackupData>;
+  return {
+    bigDailyLearnedCount:
+      b.bigDailyLearnedCount && typeof b.bigDailyLearnedCount === 'object'
+        ? b.bigDailyLearnedCount
+        : {},
+    bigPlanRecords: Array.isArray(b.bigPlanRecords) ? b.bigPlanRecords : [],
+    bigExamRecords: Array.isArray(b.bigExamRecords) ? b.bigExamRecords : [],
+    bigPackIdRecords: Array.isArray(b.bigPackIdRecords) ? b.bigPackIdRecords : [],
+    bigChartRecords: Array.isArray(b.bigChartRecords) ? b.bigChartRecords : [],
+  };
 }
 
 function normalizeFormulaBackup(raw: unknown): FormulaBackupData | undefined {
@@ -130,34 +158,46 @@ export function parseBackup(jsonText: string): { ok: true; data: BackupPayload }
     if (!raw.progress.cards || typeof raw.progress.cards !== 'object') {
       return { ok: false, error: '备份文件中缺少卡片进度数据。' };
     }
+    const bigEssayProgress = normalizeBigEssayBackup(raw.bigEssayProgress);
     const formulaProgress = normalizeFormulaBackup(raw.formulaProgress);
     const politicsProgress = normalizePoliticsBackup(raw.politicsProgress);
+    const settingsObj: BackupPayload['settings'] = {
+      dailyNewLimit: raw.settings?.dailyNewLimit ?? 8,
+      requestRetention: raw.settings?.requestRetention ?? 0.9,
+      examDate: raw.settings?.examDate ?? null,
+      strictPunctuation: raw.settings?.strictPunctuation ?? false,
+      practiceMode: raw.settings?.practiceMode ?? 'framework',
+      inputMode: raw.settings?.inputMode ?? 'typing',
+      theme: raw.settings?.theme ?? 'light',
+      unlockAllLessons: raw.settings?.unlockAllLessons ?? false,
+      bodyFontSize: raw.settings?.bodyFontSize ?? 19,
+    };
+    if (typeof raw.settings?.bigDailyNewLimit === 'number') {
+      settingsObj.bigDailyNewLimit = raw.settings.bigDailyNewLimit;
+    }
+    if (typeof raw.settings?.enableBigPackCards === 'boolean') {
+      settingsObj.enableBigPackCards = raw.settings.enableBigPackCards;
+    }
+
     const data: BackupPayload = {
       app: 'kaoyan-essay',
-      schemaVersion: raw.schemaVersion ?? 3,
+      schemaVersion: raw.schemaVersion ?? 4,
       exportedAt: raw.exportedAt ?? new Date().toISOString(),
       updatedAt: raw.updatedAt ?? null,
       settingsUpdatedAt: raw.settingsUpdatedAt ?? null,
       resetAt: raw.resetAt ?? null,
       progress: {
-        cards: raw.progress.cards ?? {},
+        cards: migrateProgressCards(raw.progress.cards),
         reviews: Array.isArray(raw.progress.reviews) ? raw.progress.reviews : [],
         dailyLearnedCount: raw.progress.dailyLearnedCount ?? {},
         examRecords: Array.isArray(raw.progress.examRecords) ? raw.progress.examRecords : [],
         idRecords: Array.isArray(raw.progress.idRecords) ? raw.progress.idRecords : [],
       },
-      settings: {
-        dailyNewLimit: raw.settings?.dailyNewLimit ?? 8,
-        requestRetention: raw.settings?.requestRetention ?? 0.9,
-        examDate: raw.settings?.examDate ?? null,
-        strictPunctuation: raw.settings?.strictPunctuation ?? false,
-        practiceMode: raw.settings?.practiceMode ?? 'framework',
-        inputMode: raw.settings?.inputMode ?? 'typing',
-        theme: raw.settings?.theme ?? 'light',
-        unlockAllLessons: raw.settings?.unlockAllLessons ?? false,
-        bodyFontSize: raw.settings?.bodyFontSize ?? 19,
-      },
+      settings: settingsObj,
     };
+    if (bigEssayProgress) {
+      data.bigEssayProgress = bigEssayProgress;
+    }
     if (formulaProgress) {
       data.formulaProgress = formulaProgress;
     }

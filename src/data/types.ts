@@ -1,4 +1,5 @@
 export type POS = 'noun' | 'verb' | 'doing';
+export type Deck = 'small' | 'big';
 
 export interface Slot {
   id: string;
@@ -21,6 +22,7 @@ export type SentenceRole =
 
 export interface Sentence {
   id: string;
+  deck?: Deck;
   layer: SentenceLayer;
   role: SentenceRole;
   en: string;

@@ -16,7 +16,7 @@ export function SettingsPage() {
   const formulaProgress = useFormulaProgress();
   const politicsProgress = usePoliticsProgress();
 
-  const [resetScope, setResetScope] = useState<'essay' | 'formula' | 'politics'>('essay');
+  const [resetScope, setResetScope] = useState<'essay' | 'big' | 'formula' | 'politics'>('essay');
   const [resetConfirmText, setResetConfirmText] = useState('');
   const [resetDoneMsg, setResetDoneMsg] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(
@@ -39,6 +39,8 @@ export function SettingsPage() {
       },
       {
         dailyNewLimit: settings.dailyNewLimit,
+        bigDailyNewLimit: settings.bigDailyNewLimit,
+        enableBigPackCards: settings.enableBigPackCards,
         requestRetention: settings.requestRetention,
         examDate: settings.examDate,
         strictPunctuation: settings.strictPunctuation,
@@ -53,6 +55,13 @@ export function SettingsPage() {
         updatedAt: progress.updatedAt,
         settingsUpdatedAt: settings.updatedAt,
         resetAt: progress.lastResetAt,
+        bigEssayProgress: {
+          bigDailyLearnedCount: progress.bigDailyLearnedCount,
+          bigPlanRecords: progress.bigPlanRecords,
+          bigExamRecords: progress.bigExamRecords,
+          bigPackIdRecords: progress.bigPackIdRecords,
+          bigChartRecords: progress.bigChartRecords,
+        },
         formulaProgress: {
           cards: formulaProgress.cards,
           reviews: formulaProgress.reviews,
@@ -86,7 +95,7 @@ export function SettingsPage() {
     URL.revokeObjectURL(url);
     setBackupMsg({
       type: 'ok',
-      text: '已导出 JSON 备份文件（含小作文、公式默写与政治一页纸进度）。',
+      text: '已导出 JSON 备份文件（含大小作文、公式默写与政治一页纸进度）。',
     });
   };
 
@@ -101,12 +110,22 @@ export function SettingsPage() {
         return;
       }
       const nowIso = new Date().toISOString();
+      const bp = parsed.data.bigEssayProgress;
       useProgress.setState({
         cards: parsed.data.progress.cards,
         reviews: parsed.data.progress.reviews,
         dailyLearnedCount: parsed.data.progress.dailyLearnedCount,
         examRecords: parsed.data.progress.examRecords,
         idRecords: parsed.data.progress.idRecords,
+        ...(bp
+          ? {
+              bigDailyLearnedCount: bp.bigDailyLearnedCount,
+              bigPlanRecords: bp.bigPlanRecords,
+              bigExamRecords: bp.bigExamRecords,
+              bigPackIdRecords: bp.bigPackIdRecords,
+              bigChartRecords: bp.bigChartRecords,
+            }
+          : {}),
         updatedAt: nowIso,
         lastResetAt: parsed.data.resetAt ?? null,
       });
@@ -146,7 +165,7 @@ export function SettingsPage() {
         : 0;
       setBackupMsg({
         type: 'ok',
-        text: `恢复成功：已导入小作文 ${Object.keys(parsed.data.progress.cards).length} 张卡片${
+        text: `恢复成功：已导入大小作文 ${Object.keys(parsed.data.progress.cards).length} 张卡片${
           parsed.data.formulaProgress ? `、公式 ${formulaCount} 张卡片` : ''
         }${
           parsed.data.politicsProgress ? `、政治 ${politicsCount} 张卡片` : ''
@@ -163,13 +182,16 @@ export function SettingsPage() {
     if (resetConfirmText.trim() !== '重置') return;
     if (resetScope === 'essay') {
       progress.resetAll();
-      setResetDoneMsg('已重置英语小作文进度（公式与政治不受影响）');
+      setResetDoneMsg('已重置英语小作文进度（大作文、公式与政治不受影响）');
+    } else if (resetScope === 'big') {
+      progress.resetBigEssay();
+      setResetDoneMsg('已重置英语大作文进度（小作文、公式与政治不受影响）');
     } else if (resetScope === 'formula') {
       formulaProgress.resetFormulas();
-      setResetDoneMsg('已重置公式默写进度（小作文与政治不受影响）');
+      setResetDoneMsg('已重置公式默写进度（大小作文与政治不受影响）');
     } else {
       politicsProgress.resetPolitics();
-      setResetDoneMsg('已重置政治一页纸进度（小作文与公式不受影响）');
+      setResetDoneMsg('已重置政治一页纸进度（大小作文与公式不受影响）');
     }
     setResetConfirmText('');
     window.setTimeout(() => setResetDoneMsg(null), 3500);
@@ -225,6 +247,46 @@ export function SettingsPage() {
               />
               <span className="tabular-nums setting-val">{settings.dailyNewLimit} 句</span>
             </div>
+          </div>
+
+          <div className="setting-row">
+            <div>
+              <div className="setting-label">大作文 · 每日新句子上限</div>
+              <div className="setting-desc">范围 1–8 句，默认 3 句（与小作文独立计额）</div>
+            </div>
+            <div className="setting-range-wrap">
+              <input
+                type="range"
+                min={1}
+                max={8}
+                step={1}
+                value={settings.bigDailyNewLimit}
+                onChange={(e) =>
+                  settings.updateSettings({ bigDailyNewLimit: Number(e.target.value) })
+                }
+              />
+              <span className="tabular-nums setting-val">{settings.bigDailyNewLimit} 句</span>
+            </div>
+          </div>
+
+          <div className="setting-row">
+            <div>
+              <div className="setting-label">大作文 · 素材包加入 FSRS 复习队列</div>
+              <div className="setting-desc">
+                默认关闭；开启后可在「大作文 · 素材包」中将重点主题加入间隔复习
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`btn-secondary ${settings.enableBigPackCards ? 'active' : ''}`}
+              onClick={() =>
+                settings.updateSettings({
+                  enableBigPackCards: !settings.enableBigPackCards,
+                })
+              }
+            >
+              {settings.enableBigPackCards ? '已开启' : '未开启'}
+            </button>
           </div>
 
           <div className="setting-row">
@@ -469,7 +531,7 @@ export function SettingsPage() {
             重置学习进度
           </h2>
           <p className="setting-desc" style={{ marginBottom: 12 }}>
-            三科进度相互独立，可按需单独清空。选择目标并输入「重置」两个字后方可确认执行。
+            四块进度相互独立，可按需单独清空。选择目标并输入「重置」两个字后方可确认执行。
           </p>
           <div className="toolbar-group" style={{ marginBottom: 12 }}>
             <button
@@ -478,6 +540,13 @@ export function SettingsPage() {
               onClick={() => setResetScope('essay')}
             >
               仅重置小作文进度
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary ${resetScope === 'big' ? 'active' : ''}`}
+              onClick={() => setResetScope('big')}
+            >
+              仅重置大作文进度
             </button>
             <button
               type="button"
@@ -514,9 +583,11 @@ export function SettingsPage() {
             >
               {resetScope === 'essay'
                 ? '确认重置小作文'
-                : resetScope === 'formula'
-                  ? '确认重置公式'
-                  : '确认重置政治'}
+                : resetScope === 'big'
+                  ? '确认重置大作文'
+                  : resetScope === 'formula'
+                    ? '确认重置公式'
+                    : '确认重置政治'}
             </button>
             {resetDoneMsg && (
               <span style={{ fontSize: 13, color: 'var(--ok)' }}>{resetDoneMsg}</span>

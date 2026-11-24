@@ -1,19 +1,47 @@
-import { AlertCircle, BookOpen, Eye, EyeOff, ListChecks } from 'lucide-react';
+import {
+  AlertCircle,
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  FileText,
+  Link2,
+  ListChecks,
+  Volume2,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Layout } from '../components/Layout';
-import { LetterView, type LetterFilter } from '../components/LetterView';
+import { LetterView, speakEnglish, type LetterFilter } from '../components/LetterView';
 import { StoryLine } from '../components/StoryLine';
+import { BigLogicChain } from '../components/big/BigLogicChain';
+import {
+  BigVarHoverProvider,
+  renderBigSentenceRich,
+} from '../components/big/BigVarHighlight';
+import { DYNAMIC_CHART_BLOCKS, STATIC_CHART_BLOCKS } from '../data/bigChart';
+import {
+  BIG_SENTENCES,
+  renderBigSentenceText,
+  type BigSentence,
+} from '../data/bigEssay';
 import { SLOT_LIST } from '../data/fillers';
 import { TEMPLATES, TEMPLATE_MAP } from '../data/templates';
 import type { POS, TemplateId } from '../data/types';
 import './pages.css';
 
-type LibraryTab = 'letters' | 'fillers' | 'cues';
+type LibraryTab = 'letters' | 'big' | 'fillers' | 'cues';
 
 const POS_GROUPS: { pos: POS; title: string }[] = [
   { pos: 'noun', title: '名词短语槽位' },
   { pos: 'verb', title: '动词原形槽位（前接 to / can / could）' },
   { pos: 'doing', title: 'doing 形式槽位（前接介词 / such as）' },
+];
+
+const BIG_PARA_META: { para: 1 | 2 | 3; title: string; badge: string }[] = [
+  { para: 1, title: '第一段：看到什么 → 说明什么 → 有什么用', badge: '描述' },
+  { para: 2, title: '第二段：带来什么 → 为什么变普及 → 为什么受关注 → 反映了什么', badge: '论证' },
+  { para: 3, title: '第三段：关键在于 → 社会怎么做 → 个人怎么做 → 只有这样', badge: '建议' },
 ];
 
 export function LibraryPage() {
@@ -22,12 +50,24 @@ export function LibraryPage() {
   const [showZh, setShowZh] = useState(true);
   const [filter, setFilter] = useState<LetterFilter>('all');
   const [search, setSearch] = useState('');
+  const [showChartBlocks, setShowChartBlocks] = useState(false);
 
   const template = TEMPLATE_MAP[selectedId];
 
+  const bigByPara = useMemo(() => {
+    const map: Record<1 | 2 | 3, BigSentence[]> = { 1: [], 2: [], 3: [] };
+    for (const s of BIG_SENTENCES) {
+      map[s.paragraph].push(s);
+    }
+    return map;
+  }, []);
+
   useEffect(() => {
-    document.title = `模板库 · ${template.name} · 小作文`;
-  }, [template.name]);
+    document.title =
+      activeTab === 'big'
+        ? '模板库 · 大作文模板 · 考研英语一'
+        : `模板库 · ${template.name} · 小作文`;
+  }, [activeTab, template.name]);
 
   const filteredSlots = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -72,13 +112,45 @@ export function LibraryPage() {
     </div>
   );
 
+  const bigRightRail = (
+    <div>
+      <div className="rail-section-title">大作文变量体系</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, color: 'var(--ink-muted)', lineHeight: 1.65 }}>
+        <div>
+          <strong style={{ color: 'var(--slot)' }}>全局变量 X</strong> · 全文贯穿 7 次，只定一次（须为单数或不可数名词短语）
+        </div>
+        <div>
+          <strong style={{ color: 'var(--ink)' }}>4 个必填项</strong> · X、PIC、B1/B2、DO，其余 17 个局部槽位均有考场默认值
+        </div>
+        <div>
+          <strong style={{ color: 'var(--gold)' }}>P2.S4 可选句</strong> · 时间紧或全文超 200 词时直接删掉，段落仍连贯
+        </div>
+      </div>
+
+      <div className="rail-section-title" style={{ marginTop: 24 }}>
+        联动提示
+      </div>
+      <p style={{ fontSize: 13, color: 'var(--ink-muted)', lineHeight: 1.65, margin: 0 }}>
+        鼠标悬停正文任意红色变量胶囊，全文所有同名变量会同步高亮；点击胶囊可查看词性约束与默认值。
+      </p>
+    </div>
+  );
+
   return (
-    <Layout rightRail={activeTab === 'letters' ? rightRail : undefined}>
+    <Layout
+      rightRail={
+        activeTab === 'letters'
+          ? rightRail
+          : activeTab === 'big'
+            ? bigRightRail
+            : undefined
+      }
+    >
       <header className="page-header">
         <div>
           <h1 className="page-title">模板库</h1>
           <p className="page-sub">
-            7 套模板原文逐字收录 · 点击红色槽位可查看词性与万能填充词
+            7 套小作文模板 + 大作文三段通用骨架逐字收录 · 悬停红色变量可联动高亮全文位置
           </p>
         </div>
 
@@ -89,7 +161,15 @@ export function LibraryPage() {
             onClick={() => setActiveTab('letters')}
           >
             <BookOpen size={15} strokeWidth={1.5} />
-            信件模板
+            小作文模板
+          </button>
+          <button
+            type="button"
+            className={`btn-secondary ${activeTab === 'big' ? 'active' : ''}`}
+            onClick={() => setActiveTab('big')}
+          >
+            <FileText size={15} strokeWidth={1.5} />
+            大作文模板
           </button>
           <button
             type="button"
@@ -193,6 +273,147 @@ export function LibraryPage() {
         </>
       )}
 
+      {activeTab === 'big' && (
+        <div>
+          <div className="toolbar-row">
+            <div className="toolbar-group">
+              <button
+                type="button"
+                className="btn-secondary"
+                aria-pressed={showZh}
+                onClick={() => setShowZh((v) => !v)}
+              >
+                {showZh ? (
+                  <Eye size={15} strokeWidth={1.5} />
+                ) : (
+                  <EyeOff size={15} strokeWidth={1.5} />
+                )}
+                {showZh ? '隐藏中文' : '显示中文'}
+              </button>
+            </div>
+            <span className="page-sub">
+              悬停红色变量胶囊，全文所有同名变量联动高亮；点击胶囊可查看默认值与词性约束
+            </span>
+          </div>
+
+          <div className="card-surface story-card">
+            <BigLogicChain />
+          </div>
+
+          <BigVarHoverProvider>
+            <div className="big-lib-paper card-surface">
+              {BIG_PARA_META.map((pm) => (
+                <section key={pm.para} className="big-lib-para">
+                  <div className="big-lib-para-head">
+                    <span className="big-logic-para-badge">{pm.badge}</span>
+                    <h2 className="big-lib-para-title">{pm.title}</h2>
+                  </div>
+
+                  <div className="big-lib-sentences">
+                    {bigByPara[pm.para].map((sent) => (
+                      <div key={sent.id} className="big-lib-sent-row">
+                        <div className="big-lib-sent-meta">
+                          <span className="drill-tag">
+                            P{sent.paragraph}.S{sent.order} · {sent.role}
+                          </span>
+                          {sent.optional && (
+                            <span className="drill-tag">可选句（超字数可删）</span>
+                          )}
+                          <button
+                            type="button"
+                            className="icon-btn"
+                            title="朗读本句"
+                            aria-label={`朗读 P${sent.paragraph}.S${sent.order}`}
+                            onClick={() =>
+                              speakEnglish(
+                                renderBigSentenceText(sent, {
+                                  X: 'traditional culture',
+                                  PIC: 'an old craftsman is teaching children to make paper-cuttings',
+                                  B1: 'a sense of cultural identity',
+                                  B2: 'spiritual enrichment',
+                                  DO: 'appreciate the charm of history in daily life',
+                                })
+                              )
+                            }
+                          >
+                            <Volume2 size={14} strokeWidth={1.5} />
+                          </button>
+                        </div>
+
+                        <p className="big-lib-en en-text">
+                          {renderBigSentenceRich(sent.en, {
+                            capitalizeFirst: true,
+                          })}
+                        </p>
+
+                        {showZh && <p className="big-lib-zh zh-text">{sent.zh}</p>}
+
+                        {sent.note && (
+                          <div className="big-lib-note">{sent.note}</div>
+                        )}
+
+                        {sent.smallEssayLink && (
+                          <div className="big-link-callout">
+                            <Link2 size={14} strokeWidth={1.5} />
+                            <span>{sent.smallEssayLink}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </BigVarHoverProvider>
+
+          <div className="card-surface today-section-card" style={{ marginTop: 18 }}>
+            <button
+              type="button"
+              className="big-collapse-trigger"
+              aria-expanded={showChartBlocks}
+              onClick={() => setShowChartBlocks((v) => !v)}
+            >
+              {showChartBlocks ? (
+                <ChevronDown size={16} strokeWidth={1.5} />
+              ) : (
+                <ChevronRight size={16} strokeWidth={1.5} />
+              )}
+              <span>图表作文句型积木参考（静态 + 动态，英语一备用 / 英语二常考）</span>
+            </button>
+
+            {showChartBlocks && (
+              <div className="big-chart-ref-wrap" style={{ marginTop: 14 }}>
+                <div className="big-chart-ref-group">
+                  <h3 className="big-chart-ref-title">静态图句型（饼图 / 静态柱图）</h3>
+                  <ul className="big-chart-ref-list">
+                    {STATIC_CHART_BLOCKS.map((b) => (
+                      <li key={b.id}>
+                        <span className="drill-tag">{b.label}</span>
+                        <div className="en-text">{b.en}</div>
+                        <div className="zh-text">{b.zh}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="big-chart-ref-group">
+                  <h3 className="big-chart-ref-title">动态图句型（折线图 / 跨年柱图）</h3>
+                  <ul className="big-chart-ref-list">
+                    {DYNAMIC_CHART_BLOCKS.map((b) => (
+                      <li key={b.id}>
+                        <span className="drill-tag">{b.label}</span>
+                        <div className="en-text">{b.en}</div>
+                        <div className="zh-text">{b.zh}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'fillers' && (
         <div>
           <input
@@ -246,6 +467,26 @@ export function LibraryPage() {
           <p className="page-sub" style={{ marginBottom: 16 }}>
             只看首词链，尝试在纸上或脑中把整篇模板完整默写出来。
           </p>
+
+          <div className="card-surface cue-chain-card">
+            <div className="cue-chain-head">
+              <h3>大作文 · 三段 11 句通用骨架</h3>
+              <span className="drill-tag">图画描述 → 价值论证 → 行动建议</span>
+            </div>
+            <div className="big-lib-cues-paras">
+              {BIG_PARA_META.map((pm) => (
+                <div key={pm.para} className="big-lib-cue-row">
+                  <span className="big-logic-para-badge">{pm.badge}</span>
+                  <p className="cue-chain-text" style={{ margin: 0 }}>
+                    {bigByPara[pm.para]
+                      .map((s) => `${s.cue}${s.optional ? '（可选）' : ''}`)
+                      .join('  →  ')}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {TEMPLATES.map((tpl) => (
             <div key={tpl.id} className="card-surface cue-chain-card">
               <div className="cue-chain-head">

@@ -70,6 +70,8 @@ export function readLocalSyncPayload(now = new Date()): BackupPayload {
     },
     {
       dailyNewLimit: s.dailyNewLimit,
+      bigDailyNewLimit: s.bigDailyNewLimit,
+      enableBigPackCards: s.enableBigPackCards,
       requestRetention: s.requestRetention,
       examDate: s.examDate,
       strictPunctuation: s.strictPunctuation,
@@ -84,6 +86,13 @@ export function readLocalSyncPayload(now = new Date()): BackupPayload {
       updatedAt: p.updatedAt,
       settingsUpdatedAt: s.updatedAt,
       resetAt: p.lastResetAt,
+      bigEssayProgress: {
+        bigDailyLearnedCount: p.bigDailyLearnedCount,
+        bigPlanRecords: p.bigPlanRecords,
+        bigExamRecords: p.bigExamRecords,
+        bigPackIdRecords: p.bigPackIdRecords,
+        bigChartRecords: p.bigChartRecords,
+      },
       formulaProgress: {
         cards: f.cards,
         reviews: f.reviews,
@@ -118,11 +127,26 @@ function applyPayloadToLocalStores(payload: BackupPayload): void {
       dailyLearnedCount: payload.progress.dailyLearnedCount,
       examRecords: payload.progress.examRecords,
       idRecords: payload.progress.idRecords,
+      ...(payload.bigEssayProgress
+        ? {
+            bigDailyLearnedCount: payload.bigEssayProgress.bigDailyLearnedCount,
+            bigPlanRecords: payload.bigEssayProgress.bigPlanRecords,
+            bigExamRecords: payload.bigEssayProgress.bigExamRecords,
+            bigPackIdRecords: payload.bigEssayProgress.bigPackIdRecords,
+            bigChartRecords: payload.bigEssayProgress.bigChartRecords,
+          }
+        : {}),
       updatedAt: payload.updatedAt ?? payload.exportedAt,
       lastResetAt: payload.resetAt ?? null,
     });
     useSettings.setState({
       dailyNewLimit: payload.settings.dailyNewLimit,
+      ...(typeof payload.settings.bigDailyNewLimit === 'number'
+        ? { bigDailyNewLimit: payload.settings.bigDailyNewLimit }
+        : {}),
+      ...(typeof payload.settings.enableBigPackCards === 'boolean'
+        ? { enableBigPackCards: payload.settings.enableBigPackCards }
+        : {}),
       requestRetention: payload.settings.requestRetention,
       examDate: payload.settings.examDate,
       strictPunctuation: payload.settings.strictPunctuation,

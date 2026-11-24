@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Cloud,
   CloudOff,
+  FileText,
   GraduationCap,
   Layers,
   Monitor,
@@ -34,6 +35,7 @@ import {
   getPoliticsMasteryLevel,
   getStarredPoliticsIds,
 } from '../core/politicsStats';
+import { BIG_SENTENCE_IDS } from '../data/bigEssay';
 import { FORMULA_IDS } from '../data/formulas';
 import { POLITICS_CARD_IDS } from '../data/politics';
 import { STUDYABLE_SENTENCE_IDS } from '../data/templates';
@@ -65,9 +67,15 @@ interface LayoutProps {
   children: ReactNode;
   rightRail?: ReactNode;
   focusMode?: boolean;
+  wideColumn?: boolean;
 }
 
-export function Layout({ children, rightRail, focusMode = false }: LayoutProps) {
+export function Layout({
+  children,
+  rightRail,
+  focusMode = false,
+  wideColumn = false,
+}: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -89,6 +97,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
 
   const cards = useProgress((s) => s.cards);
   const reviews = useProgress((s) => s.reviews);
+  const enableBigPackCards = useSettings((s) => s.enableBigPackCards);
 
   const formulaCards = useFormulaProgress((s) => s.cards);
   const formulaReviews = useFormulaProgress((s) => s.reviews);
@@ -104,12 +113,20 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
 
   const dueCount = useMemo(() => {
     const nowMs = Date.now();
-    return Object.values(cards).filter(
-      (c) => new Date(c.due).getTime() <= nowMs
-    ).length;
-  }, [cards]);
+    return Object.entries(cards).filter(([id, c]) => {
+      if (!enableBigPackCards && id.startsWith('big.pack.')) return false;
+      return new Date(c.due).getTime() <= nowMs;
+    }).length;
+  }, [cards, enableBigPackCards]);
 
-  const learnedCount = Object.keys(cards).length;
+  const learnedCount = useMemo(
+    () => STUDYABLE_SENTENCE_IDS.filter((id) => Boolean(cards[id])).length,
+    [cards]
+  );
+  const bigLearnedCount = useMemo(
+    () => BIG_SENTENCE_IDS.filter((id) => Boolean(cards[id])).length,
+    [cards]
+  );
   const mistakeCount = useMemo(() => collectMistakes(reviews).length, [reviews]);
 
   const formulaDueCount = useMemo(
@@ -223,7 +240,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
     return (
       <div className="app-shell">
         <main className="main-area">
-          <div className="main-column">{children}</div>
+          <div className={`main-column ${wideColumn ? 'main-column-wide' : ''}`}>{children}</div>
         </main>
         <ShortcutsModal />
       </div>
@@ -247,14 +264,14 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
                 ? '公式默写'
                 : activeModule === 'politics'
                   ? '政治一页纸'
-                  : '小作文'}
+                  : '英语作文'}
             </div>
             <div className="brand-sub">
               {activeModule === 'formula'
                 ? '高数·线代·概率·信号'
                 : activeModule === 'politics'
                   ? '马原·史纲·高频考点'
-                  : '考研英语一'}
+                  : '考研英语一 · 大小作文'}
             </div>
           </div>
         </div>
@@ -266,9 +283,9 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             aria-selected={activeModule === 'essay'}
             className={`module-switch-btn ${activeModule === 'essay' ? 'active' : ''}`}
             onClick={() => switchModule('essay')}
-            title="英语一小作文"
+            title="考研英语一 · 小作文与大作文"
           >
-            <span className="module-switch-full">小作文</span>
+            <span className="module-switch-full">作文</span>
             <span className="module-switch-short">文</span>
           </button>
           <button
@@ -310,9 +327,20 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <GraduationCap size={18} strokeWidth={1.5} />
-              <span className="nav-label">学习新句</span>
+              <span className="nav-label">小作文新句</span>
               <span className="nav-badge tabular-nums">
                 {learnedCount}/{STUDYABLE_SENTENCE_IDS.length}
+              </span>
+            </NavLink>
+
+            <NavLink
+              to="/big"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <FileText size={18} strokeWidth={1.5} />
+              <span className="nav-label">大作文</span>
+              <span className="nav-badge tabular-nums">
+                {bigLearnedCount}/{BIG_SENTENCE_IDS.length}
               </span>
             </NavLink>
 
@@ -332,7 +360,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <PenLine size={18} strokeWidth={1.5} />
-              <span className="nav-label">实战模式</span>
+              <span className="nav-label">小作文实战</span>
             </NavLink>
 
             <NavLink
@@ -551,7 +579,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
               ? `已搞定 ${formulaDoneCount} / ${FORMULA_IDS.length} 题`
               : activeModule === 'politics'
                 ? `已搞定 ${politicsDoneCount} / ${POLITICS_CARD_IDS.length} 卡`
-                : `已掌握 ${learnedCount} / ${STUDYABLE_SENTENCE_IDS.length} 句`}
+                : `小 ${learnedCount}/${STUDYABLE_SENTENCE_IDS.length} · 大 ${bigLearnedCount}/${BIG_SENTENCE_IDS.length}`}
           </div>
         </div>
       </aside>
@@ -566,7 +594,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             className={`mobile-mode-pill ${activeModule === 'essay' ? 'active' : ''}`}
             onClick={() => switchModule('essay')}
           >
-            小作文
+            作文
           </button>
           <button
             type="button"
@@ -590,7 +618,7 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
       </div>
 
       <main className="main-area">
-        <div className="main-column">{children}</div>
+        <div className={`main-column ${wideColumn ? 'main-column-wide' : ''}`}>{children}</div>
       </main>
 
       {rightRail && <aside className="right-rail">{rightRail}</aside>}
@@ -616,7 +644,17 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             }
           >
             <GraduationCap size={18} strokeWidth={1.5} />
-            <span>学习</span>
+            <span>小作文</span>
+          </NavLink>
+          <NavLink
+            to="/big"
+            onClick={() => setMoreOpen(false)}
+            className={({ isActive }) =>
+              `mobile-nav-item ${isActive ? 'active' : ''}`
+            }
+          >
+            <FileText size={18} strokeWidth={1.5} />
+            <span>大作文</span>
           </NavLink>
           <NavLink
             to="/review"
@@ -627,16 +665,6 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
           >
             <RotateCcw size={18} strokeWidth={1.5} />
             <span>复习{dueCount > 0 ? `(${dueCount})` : ''}</span>
-          </NavLink>
-          <NavLink
-            to="/exam"
-            onClick={() => setMoreOpen(false)}
-            className={({ isActive }) =>
-              `mobile-nav-item ${isActive ? 'active' : ''}`
-            }
-          >
-            <PenLine size={18} strokeWidth={1.5} />
-            <span>实战</span>
           </NavLink>
           <button
             type="button"
@@ -784,6 +812,9 @@ export function Layout({ children, rightRail, focusMode = false }: LayoutProps) 
             )}
             {activeModule === 'essay' ? (
               <>
+                <NavLink to="/exam" onClick={() => setMoreOpen(false)} className="mobile-more-link">
+                  <PenLine size={16} strokeWidth={1.5} /> 小作文实战
+                </NavLink>
                 <NavLink to="/drills" onClick={() => setMoreOpen(false)} className="mobile-more-link">
                   <Layers size={16} strokeWidth={1.5} /> 专项卡片
                 </NavLink>

@@ -496,5 +496,107 @@ describe('GitHub 私有 Gist 多端同步：智能合并与配对码单元测试
     expect(Object.keys(afterReset.politicsProgress!.mastered)).toHaveLength(0);
     expect(afterReset.politicsProgress!.drillStats.meetingTotal).toBe(0);
   });
+
+  it('大作文进度（big.* 卡片、规划/实战/选包/图表记录与大作文设置）独立合并且保留小作文进度', () => {
+    const t1 = new Date('2026-11-23T08:00:00Z');
+    const t2 = new Date('2026-11-23T09:00:00Z');
+
+    const smallCard = serializeCard(reviewCard(createInitialCard(t1), Rating.Good, t1), 'small');
+    const bigCard = serializeCard(reviewCard(createInitialCard(t2), Rating.Easy, t2), 'big');
+
+    const desktop = buildBackupPayload(
+      {
+        cards: { 'shared.closing': smallCard },
+        reviews: [],
+        dailyLearnedCount: { '2026-11-23': 4 },
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings({ bigDailyNewLimit: 4, enableBigPackCards: false }),
+      t1,
+      {
+        updatedAt: t1.toISOString(),
+        settingsUpdatedAt: t1.toISOString(),
+        bigEssayProgress: {
+          bigDailyLearnedCount: { '2026-11-23': 2 },
+          bigPlanRecords: [
+            {
+              id: 'bp-1',
+              promptId: 'prompt-culture',
+              durationSec: 120,
+              allRequiredFilled: true,
+              grammarPassed: true,
+              wordCount: 196,
+              timestamp: t1.toISOString(),
+            },
+          ],
+          bigExamRecords: [],
+          bigPackIdRecords: [],
+          bigChartRecords: [],
+        },
+      }
+    );
+
+    const phone = buildBackupPayload(
+      {
+        cards: { 'big.p1.s1': bigCard },
+        reviews: [],
+        dailyLearnedCount: {},
+        examRecords: [],
+        idRecords: [],
+      },
+      makeBaseSettings({ bigDailyNewLimit: 5, enableBigPackCards: true }),
+      t2,
+      {
+        updatedAt: t2.toISOString(),
+        settingsUpdatedAt: t2.toISOString(),
+        bigEssayProgress: {
+          bigDailyLearnedCount: { '2026-11-23': 3 },
+          bigPlanRecords: [],
+          bigExamRecords: [
+            {
+              id: 'be-1',
+              promptId: 'prompt-ai',
+              level: 'independent',
+              durationSec: 1180,
+              wordCount: 202,
+              fixedAccuracy: 0.94,
+              timestamp: t2.toISOString(),
+            },
+          ],
+          bigPackIdRecords: [
+            {
+              promptId: 'prompt-ai',
+              expectedPackId: 'tech-ai',
+              chosenPackId: 'tech-ai',
+              correct: true,
+              durationSec: 4,
+              timestamp: t2.toISOString(),
+            },
+          ],
+          bigChartRecords: [
+            {
+              kind: 'pie',
+              selectionCorrect: true,
+              fillCorrect: true,
+              timestamp: t2.toISOString(),
+            },
+          ],
+        },
+      }
+    );
+
+    const merged = mergeSyncPayloads(phone, desktop, t2);
+    expect(Object.keys(merged.progress.cards).sort()).toEqual(['big.p1.s1', 'shared.closing']);
+    expect(merged.progress.cards['shared.closing'].deck).toBe('small');
+    expect(merged.progress.cards['big.p1.s1'].deck).toBe('big');
+    expect(merged.bigEssayProgress?.bigDailyLearnedCount['2026-11-23']).toBe(3);
+    expect(merged.bigEssayProgress?.bigPlanRecords).toHaveLength(1);
+    expect(merged.bigEssayProgress?.bigExamRecords).toHaveLength(1);
+    expect(merged.bigEssayProgress?.bigPackIdRecords).toHaveLength(1);
+    expect(merged.bigEssayProgress?.bigChartRecords).toHaveLength(1);
+    expect(merged.settings.bigDailyNewLimit).toBe(5);
+    expect(merged.settings.enableBigPackCards).toBe(true);
+  });
 });
 

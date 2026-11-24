@@ -87,15 +87,40 @@ export function previewIntervals(
 }
 
 /**
- * 交错排布复习队列：保证连续两张卡不属于同一模板（共用卡除外）。
+ * 交错排布复习队列：保证连续两张卡不属于同一模板（共用卡除外），并在大小作文混刷时交替出现。
  */
 export function interleaveQueue(sentenceIds: string[]): string[] {
   const getGroup = (id: string): string => {
+    if (id.startsWith('big.')) return 'big';
     if (id.startsWith('shared.')) return 'shared';
     const tpls = getTemplatesUsingSentence(id);
     if (tpls.length !== 1) return 'shared';
     return tpls[0].id;
   };
+
+  // If queue mixes both small and big cards, strictly alternate between big and small buckets first
+  const bigIds = sentenceIds.filter((id) => id.startsWith('big.'));
+  const smallIds = sentenceIds.filter((id) => !id.startsWith('big.'));
+  if (bigIds.length > 0 && smallIds.length > 0) {
+    const interleavedSmall = interleaveQueue(smallIds);
+    const merged: string[] = [];
+    let bi = 0;
+    let si = 0;
+    let pickSmall = interleavedSmall.length >= bigIds.length;
+    while (bi < bigIds.length || si < interleavedSmall.length) {
+      if (pickSmall && si < interleavedSmall.length) {
+        merged.push(interleavedSmall[si++]);
+      } else if (!pickSmall && bi < bigIds.length) {
+        merged.push(bigIds[bi++]);
+      } else if (si < interleavedSmall.length) {
+        merged.push(interleavedSmall[si++]);
+      } else {
+        merged.push(bigIds[bi++]);
+      }
+      pickSmall = !pickSmall;
+    }
+    return merged;
+  }
 
   const buckets = new Map<string, string[]>();
   for (const id of sentenceIds) {

@@ -9,6 +9,8 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 export interface SettingsState {
   schemaVersion: number;
   dailyNewLimit: number;
+  bigDailyNewLimit: number;
+  enableBigPackCards: boolean;
   requestRetention: number;
   examDate: string | null;
   strictPunctuation: boolean;
@@ -27,8 +29,10 @@ export interface SettingsState {
 export const useSettings = create<SettingsState>()(
   persist(
     (set) => ({
-      schemaVersion: 2,
+      schemaVersion: 3,
       dailyNewLimit: 8,
+      bigDailyNewLimit: 3,
+      enableBigPackCards: false,
       requestRetention: 0.9,
       examDate: null,
       strictPunctuation: false,
@@ -50,13 +54,15 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: 'kaoyan-essay-settings',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => safeIdbStorage),
       migrate: (persisted: unknown) => {
         const data = (persisted ?? {}) as Partial<SettingsState>;
         return {
-          schemaVersion: 2,
+          schemaVersion: 3,
           dailyNewLimit: data.dailyNewLimit ?? 8,
+          bigDailyNewLimit: data.bigDailyNewLimit ?? 3,
+          enableBigPackCards: data.enableBigPackCards ?? false,
           requestRetention: data.requestRetention ?? 0.9,
           examDate: data.examDate ?? null,
           strictPunctuation: data.strictPunctuation ?? false,

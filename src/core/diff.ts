@@ -322,18 +322,20 @@ export interface DiffWithSlotsOptions {
   mode: 'framework' | 'fill';
   slotPOSMap: Record<string, POS>;
   slotLabelMap: Record<string, string>;
+  maxSlotWords?: number;
 }
 
 /**
  * Align target sentence containing {{slot}} wildcards against user tokens.
  * Splits target into alternating fixed word segments and slot placeholders,
- * anchors fixed segments in user input, and matches 0-6 words for each slot.
+ * anchors fixed segments in user input, and matches 0..maxSlotWords words for each slot.
  */
 export function diffWithSlots(
   targetParts: TargetPart[],
   userTokens: UserWordToken[],
   options: DiffWithSlotsOptions
 ): DiffToken[] {
+  const maxSlot = options.maxSlotWords ?? 6;
   // Split targetParts into fixed segments and slots
   type Segment =
     | { kind: 'fixed'; parts: TargetPart[] }
@@ -435,7 +437,11 @@ export function diffWithSlots(
 
         // Guard: don't overshoot into segAfterSlot
         if (segAfterSlot && segAfterSlot.kind === 'fixed') {
-          const afterAnchor = findAnchor(segAfterSlot.parts, userCursor + 1, seg.parts.length + 7);
+          const afterAnchor = findAnchor(
+            segAfterSlot.parts,
+            userCursor + 1,
+            seg.parts.length + maxSlot + 1
+          );
           if (afterAnchor && segEnd > afterAnchor.start) {
             segEnd = afterAnchor.start;
           }
@@ -446,7 +452,7 @@ export function diffWithSlots(
         userCursor = segEnd;
       }
     } else {
-      // Slot segment: find where the next fixed segment starts (0-6 words ahead)
+      // Slot segment: find where the next fixed segment starts
       const nextSeg = segments[sIdx + 1];
       const slotId = seg.part.slotId!;
       const slotLabel = options.slotLabelMap[slotId] ?? slotId;
@@ -454,10 +460,10 @@ export function diffWithSlots(
 
       let slotEnd = userCursor;
       if (!nextSeg) {
-        // Slot at the end of sentence: consume up to 6 words (or all if <= 6)
-        slotEnd = Math.min(userTokens.length, userCursor + 6);
+        // Slot at the end of sentence: consume up to maxSlot words
+        slotEnd = Math.min(userTokens.length, userCursor + maxSlot);
       } else if (nextSeg.kind === 'fixed') {
-        const anchor = findAnchor(nextSeg.parts, userCursor, 7);
+        const anchor = findAnchor(nextSeg.parts, userCursor, maxSlot + 1);
         if (anchor) {
           slotEnd = anchor.start;
         } else if (userCursor < userTokens.length && userTokens[userCursor].isPlaceholder) {

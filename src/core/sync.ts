@@ -14,6 +14,11 @@ import {
   type PoliticsReviewRecord,
 } from '../store/usePoliticsProgress';
 import type {
+  BigChartRecord,
+  BigEssayBackupData,
+  BigExamRecord,
+  BigPackIdRecord,
+  BigPlanRecord,
   ExamRecord,
   IdentificationRecord,
   SerializedCard,
@@ -217,6 +222,10 @@ export function mergeSyncPayloads(
     }
   }
 
+  const mergedBig = mergeBigEssayProgress(
+    local.bigEssayProgress,
+    remote.bigEssayProgress
+  );
   const mergedFormula = mergeFormulaProgress(
     local.formulaProgress,
     remote.formulaProgress
@@ -228,7 +237,7 @@ export function mergeSyncPayloads(
 
   const out: BackupPayload = {
     app: 'kaoyan-essay',
-    schemaVersion: 3,
+    schemaVersion: 4,
     exportedAt: now.toISOString(),
     updatedAt: mergedUpdatedAt,
     settingsUpdatedAt: mergedSettingsUpdatedAt,
@@ -236,6 +245,9 @@ export function mergeSyncPayloads(
     progress: mergedProgress,
     settings: mergedSettings,
   };
+  if (mergedBig) {
+    out.bigEssayProgress = mergedBig;
+  }
   if (mergedFormula) {
     out.formulaProgress = mergedFormula;
   }
@@ -484,7 +496,94 @@ function sortRecord<T>(rec: Record<string, T>): Record<string, T> {
   return out;
 }
 
+function hasAnyBigEssayData(b?: BigEssayBackupData): boolean {
+  if (!b) return false;
+  return (
+    Object.keys(b.bigDailyLearnedCount).length > 0 ||
+    b.bigPlanRecords.length > 0 ||
+    b.bigExamRecords.length > 0 ||
+    b.bigPackIdRecords.length > 0 ||
+    b.bigChartRecords.length > 0
+  );
+}
+
+function mergeByKey<T extends { timestamp: string }>(
+  a: T[],
+  b: T[],
+  keyFn: (item: T) => string
+): T[] {
+  const map = new Map<string, T>();
+  for (const item of [...a, ...b]) {
+    const k = keyFn(item);
+    if (!map.has(k)) map.set(k, item);
+  }
+  return Array.from(map.values()).sort((x, y) =>
+    x.timestamp.localeCompare(y.timestamp)
+  );
+}
+
+function mergeBigEssayProgress(
+  local?: BigEssayBackupData,
+  remote?: BigEssayBackupData
+): BigEssayBackupData | undefined {
+  if (!local && !remote) return undefined;
+  if (!hasAnyBigEssayData(local) && !hasAnyBigEssayData(remote)) {
+    return undefined;
+  }
+  const a: BigEssayBackupData = local ?? {
+    bigDailyLearnedCount: {},
+    bigPlanRecords: [],
+    bigExamRecords: [],
+    bigPackIdRecords: [],
+    bigChartRecords: [],
+  };
+  const b: BigEssayBackupData = remote ?? {
+    bigDailyLearnedCount: {},
+    bigPlanRecords: [],
+    bigExamRecords: [],
+    bigPackIdRecords: [],
+    bigChartRecords: [],
+  };
+  return {
+    bigDailyLearnedCount: mergeDailyLearned(
+      a.bigDailyLearnedCount,
+      b.bigDailyLearnedCount
+    ),
+    bigPlanRecords: mergeByKey<BigPlanRecord>(
+      a.bigPlanRecords,
+      b.bigPlanRecords,
+      (x) => `${x.id}|${x.timestamp}`
+    ),
+    bigExamRecords: mergeByKey<BigExamRecord>(
+      a.bigExamRecords,
+      b.bigExamRecords,
+      (x) => `${x.id}|${x.timestamp}`
+    ),
+    bigPackIdRecords: mergeByKey<BigPackIdRecord>(
+      a.bigPackIdRecords,
+      b.bigPackIdRecords,
+      (x) => `${x.timestamp}|${x.promptId}|${x.chosenPackId}`
+    ),
+    bigChartRecords: mergeByKey<BigChartRecord>(
+      a.bigChartRecords,
+      b.bigChartRecords,
+      (x) => `${x.timestamp}|${x.kind}`
+    ),
+  };
+}
+
 function canonicalSnapshot(p: BackupPayload): string {
+  const bp = p.bigEssayProgress;
+  const bigSnap = hasAnyBigEssayData(bp) && bp
+    ? {
+        bigDailyLearnedCount: sortRecord(bp.bigDailyLearnedCount),
+        bigPlanRecords: bp.bigPlanRecords,
+        bigExamRecords: bp.bigExamRecords,
+        bigPackIdRecords: bp.bigPackIdRecords,
+        bigChartRecords: bp.bigChartRecords,
+      }
+    : null;
+
   const fp = p.formulaProgress;
   const formulaSnap = hasAnyFormulaData(fp) && fp
     ? {
@@ -521,6 +620,7 @@ function canonicalSnapshot(p: BackupPayload): string {
     examRecords: p.progress.examRecords,
     idRecords: p.progress.idRecords,
     settings: p.settings,
+    bigEssayProgress: bigSnap,
     formulaProgress: formulaSnap,
     politicsProgress: politicsSnap,
   });

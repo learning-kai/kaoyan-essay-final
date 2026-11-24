@@ -2,6 +2,7 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronRight,
+  FileText,
   Lock,
   Play,
 } from 'lucide-react';
@@ -15,8 +16,13 @@ import {
   getMasteryLevel,
   isExamSprintActive,
 } from '../core/scheduler';
+import { BIG_SENTENCE_IDS } from '../data/bigEssay';
 import { LESSONS, SENTENCES, STUDYABLE_SENTENCE_IDS } from '../data/templates';
-import { deserializeCard, useProgress } from '../store/useProgress';
+import {
+  deserializeCard,
+  inferCardDeck,
+  useProgress,
+} from '../store/useProgress';
 import { useSettings } from '../store/useSettings';
 import './pages.css';
 
@@ -33,41 +39,67 @@ export function TodayPage() {
   const cards = useProgress((s) => s.cards);
   const reviews = useProgress((s) => s.reviews);
   const dailyLearnedCount = useProgress((s) => s.dailyLearnedCount);
+  const bigDailyLearnedCount = useProgress((s) => s.bigDailyLearnedCount);
 
   const dailyNewLimit = useSettings((s) => s.dailyNewLimit);
+  const bigDailyNewLimit = useSettings((s) => s.bigDailyNewLimit);
+  const enableBigPackCards = useSettings((s) => s.enableBigPackCards);
   const examDate = useSettings((s) => s.examDate);
   const unlockAllLessons = useSettings((s) => s.unlockAllLessons);
 
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
 
   useEffect(() => {
-    document.title = '今日 · 小作文';
+    document.title = '今日 · 考研英语作文';
   }, []);
 
-  const dueIds = useMemo(() => {
+  const { smallDueIds, bigDueIds } = useMemo(() => {
     const nowMs = Date.now();
-    return Object.entries(cards)
-      .filter(([, card]) => new Date(card.due).getTime() <= nowMs)
-      .map(([id]) => id);
-  }, [cards]);
+    const small: string[] = [];
+    const big: string[] = [];
+    for (const [id, card] of Object.entries(cards)) {
+      if (!enableBigPackCards && id.startsWith('big.pack.')) continue;
+      if (new Date(card.due).getTime() <= nowMs) {
+        if (inferCardDeck(id, card.deck) === 'big') big.push(id);
+        else small.push(id);
+      }
+    }
+    return { smallDueIds: small, bigDueIds: big };
+  }, [cards, enableBigPackCards]);
 
-  const todayLearned = useMemo(
-    () => dailyLearnedCount[formatLocalDateKey(new Date())] ?? 0,
-    [dailyLearnedCount]
-  );
+  const totalDueCount = smallDueIds.length + bigDueIds.length;
+
+  const todayKey = formatLocalDateKey(new Date());
+  const todayLearned = dailyLearnedCount[todayKey] ?? 0;
+  const todayBigLearned = bigDailyLearnedCount[todayKey] ?? 0;
 
   const daysLeft = useMemo(() => getDaysUntilExam(examDate, new Date()), [examDate]);
   const sprintActive = useMemo(() => isExamSprintActive(examDate, new Date()), [examDate]);
 
-  const remainingUnlearned = STUDYABLE_SENTENCE_IDS.filter((id) => !cards[id]).length;
+  const smallLearnedCount = useMemo(
+    () => STUDYABLE_SENTENCE_IDS.filter((id) => Boolean(cards[id])).length,
+    [cards]
+  );
+  const bigLearnedCount = useMemo(
+    () => BIG_SENTENCE_IDS.filter((id) => Boolean(cards[id])).length,
+    [cards]
+  );
+
+  const remainingUnlearned = STUDYABLE_SENTENCE_IDS.length - smallLearnedCount;
   const newTodayQuota = Math.min(
     Math.max(0, dailyNewLimit - todayLearned),
     remainingUnlearned
   );
-  const totalTodayCards = dueIds.length + newTodayQuota;
+  const bigUnlearned = BIG_SENTENCE_IDS.length - bigLearnedCount;
+  const bigNewTodayQuota = Math.min(
+    Math.max(0, bigDailyNewLimit - todayBigLearned),
+    bigUnlearned
+  );
+
+  const totalTodayCards = totalDueCount + newTodayQuota + bigNewTodayQuota;
   const estimatedMinutes = Math.max(
     totalTodayCards > 0 ? 1 : 0,
-    Math.round((totalTodayCards * 40) / 60)
+    Math.round((totalTodayCards * 45) / 60)
   );
 
   const heatmap = useMemo(() => getWeeklyHeatmap(reviews), [reviews]);
@@ -81,10 +113,12 @@ export function TodayPage() {
   const handleStartToday = () => {
     if (sprintActive) {
       navigate('/review?mode=sprint');
-    } else if (dueIds.length > 0) {
+    } else if (totalDueCount > 0) {
       navigate('/review');
-    } else {
+    } else if (newTodayQuota > 0) {
       navigate('/learn');
+    } else {
+      navigate('/big?tab=learn');
     }
   };
 
@@ -135,20 +169,32 @@ export function TodayPage() {
         </section>
       )}
 
-      {/* Core Today Task Card */}
+      {/* Core Today Task Card (Both Small & Big Decks) */}
       <section className="card-surface today-task-card">
         <div className="today-task-head">
-          <div>
-            <div className="today-task-label">今日任务</div>
-            <div className="today-metrics">
+          <div style={{ width: '100%' }}>
+            <div className="today-task-label">今日英语作文任务（小作文 + 大作文交错复习）</div>
+            <div className="today-metrics formula-today-metrics">
               <div className="today-metric">
-                <span className="today-metric-num tabular-nums">{dueIds.length}</span>
-                <span className="today-metric-cap">待复习句</span>
+                <span className="today-metric-num tabular-nums">{smallDueIds.length}</span>
+                <span className="today-metric-cap">小作文待复习</span>
               </div>
               <div className="today-metric-sep" />
               <div className="today-metric">
-                <span className="today-metric-num tabular-nums">{newTodayQuota}</span>
-                <span className="today-metric-cap">今日新句</span>
+                <span
+                  className="today-metric-num tabular-nums"
+                  style={{ color: bigDueIds.length > 0 ? 'var(--gold)' : undefined }}
+                >
+                  {bigDueIds.length}
+                </span>
+                <span className="today-metric-cap">大作文待复习</span>
+              </div>
+              <div className="today-metric-sep" />
+              <div className="today-metric">
+                <span className="today-metric-num tabular-nums">
+                  {newTodayQuota} / {bigNewTodayQuota}
+                </span>
+                <span className="today-metric-cap">今日新句（小 / 大）</span>
               </div>
               <div className="today-metric-sep" />
               <div className="today-metric">
@@ -170,22 +216,51 @@ export function TodayPage() {
             <Play size={15} strokeWidth={1.5} />
             {sprintActive
               ? '进入考前冲刺复习'
-              : dueIds.length > 0
-                ? '开始今天的练习（先复习）'
+              : totalDueCount > 0
+                ? `开始交错复习（共 ${totalDueCount} 句）`
                 : newTodayQuota > 0
-                  ? '开始学习今日新句'
-                  : '查看课程或巩固已学'}
+                  ? '开始学习小作文新句'
+                  : '进入大作文学习'}
           </button>
-          {dueIds.length > 0 && newTodayQuota > 0 && (
+
+          {smallDueIds.length > 0 && bigDueIds.length > 0 && (
+            <>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => navigate('/review?deck=small')}
+              >
+                只复习小作文（{smallDueIds.length}）
+              </button>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => navigate('/review?deck=big')}
+              >
+                只复习大作文（{bigDueIds.length}）
+              </button>
+            </>
+          )}
+
+          {totalDueCount > 0 && newTodayQuota > 0 && (
             <button
               type="button"
               className="btn-secondary"
               onClick={() => navigate('/learn')}
             >
-              直接学新句
+              小作文新句
               <ArrowRight size={14} strokeWidth={1.5} />
             </button>
           )}
+
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => navigate('/big?tab=learn')}
+          >
+            <FileText size={14} strokeWidth={1.5} />
+            大作文（{bigLearnedCount}/{BIG_SENTENCE_IDS.length} 句）
+          </button>
         </div>
       </section>
 
@@ -214,12 +289,12 @@ export function TodayPage() {
         </div>
       </section>
 
-      {/* 9-Lesson Course Progress */}
+      {/* 9-Lesson Small Essay Course Progress */}
       <section className="card-surface today-section-card">
         <div className="section-row-head">
-          <h2 className="section-small-title">课程进度（9 课）</h2>
+          <h2 className="section-small-title">小作文课程进度（9 课）</h2>
           <span className="page-sub tabular-nums">
-            已学 {Object.keys(cards).length} / {STUDYABLE_SENTENCE_IDS.length} 句
+            已学 {smallLearnedCount} / {STUDYABLE_SENTENCE_IDS.length} 句
           </span>
         </div>
 

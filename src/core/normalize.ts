@@ -26,25 +26,30 @@ export interface TargetPart {
   raw: string;
   normalized: string; // lowercase word without punctuation, or slot id
   slotId?: string;
+  defaultValue?: string;
   trailingPunct?: string;
 }
 
 export function parseTargetSentence(en: string): TargetPart[] {
   const unified = unifyPunctuation(en);
   const parts: TargetPart[] = [];
-  const regex = /(\{\{\w+\}\}|[^\s]+)/g;
+  // Match {{VAR}} or {{VAR|multi word default}} plus optional trailing punctuation, or regular whitespace-separated tokens
+  const regex = /(\{\{[^}]+\}\}[.,;:!?]*|[^\s]+)/g;
   let match: RegExpExecArray | null;
 
   while ((match = regex.exec(unified)) !== null) {
     const token = match[0];
-    const slotMatch = token.match(/^\{\{(\w+)\}\}([.,;:!?]*)$/);
+    const slotMatch = token.match(/^\{\{(\w+)(?:\|([^}]+))?\}\}([.,;:!?]*)$/);
     if (slotMatch) {
       parts.push({
         kind: 'slot',
-        raw: `{{${slotMatch[1]}}}`,
+        raw: slotMatch[2]
+          ? `{{${slotMatch[1]}|${slotMatch[2]}}}`
+          : `{{${slotMatch[1]}}}`,
         normalized: slotMatch[1],
         slotId: slotMatch[1],
-        trailingPunct: slotMatch[2] || undefined,
+        defaultValue: slotMatch[2] || undefined,
+        trailingPunct: slotMatch[3] || undefined,
       });
     } else {
       const punctMatch = token.match(/^([A-Za-z0-9'-]+)([.,;:!?]*)$/);
