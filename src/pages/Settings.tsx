@@ -1,9 +1,10 @@
-import { Download, Upload } from 'lucide-react';
+import { Download, RefreshCw, Share, Smartphone, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { CloudSyncCard } from '../components/CloudSyncCard';
 import { Layout } from '../components/Layout';
 import { parseBackup, serializeBackup } from '../core/backup';
 import { formatLocalDateKey } from '../core/mistakes';
+import { checkAndApplyPwaUpdate, isStandaloneApp } from '../core/pwa';
 import { useFormulaProgress } from '../store/useFormulaProgress';
 import { usePoliticsProgress } from '../store/usePoliticsProgress';
 import { useProgress } from '../store/useProgress';
@@ -22,7 +23,20 @@ export function SettingsPage() {
   const [backupMsg, setBackupMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(
     null
   );
+  const [pwaMsg, setPwaMsg] = useState<string | null>(null);
+  const [pwaChecking, setPwaChecking] = useState(false);
+  const runningStandalone = isStandaloneApp();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleCheckPwaUpdate = async () => {
+    setPwaChecking(true);
+    setPwaMsg(null);
+    const res = await checkAndApplyPwaUpdate();
+    setPwaChecking(false);
+    if (res === 'up-to-date') {
+      setPwaMsg('当前已是最新版本（已支持离线访问）。');
+    }
+  };
 
   useEffect(() => {
     document.title = '设置 · 考研背诵';
@@ -208,6 +222,61 @@ export function SettingsPage() {
 
       <div className="settings-stack">
         <CloudSyncCard />
+
+        <section className="card-surface settings-card">
+          <div className="sync-card-head" style={{ marginBottom: 10 }}>
+            <div className="sync-card-title-row">
+              <Smartphone size={17} strokeWidth={1.6} />
+              <h2 className="section-small-title" style={{ margin: 0 }}>
+                iPhone 桌面 App 与离线模式（PWA）
+              </h2>
+            </div>
+            <span
+              className={`sync-status-pill ${
+                runningStandalone ? 'sync-pill-ok' : 'sync-pill-idle'
+              }`}
+            >
+              {runningStandalone ? '已以 App 模式运行' : '浏览器模式'}
+            </span>
+          </div>
+
+          <div className="sync-steps-box" style={{ marginBottom: 12 }}>
+            <div>
+              <strong>添加到 iPhone 主屏幕：</strong>在 <strong>Safari</strong> 中打开本站 → 点击底部{' '}
+              <Share
+                size={13}
+                strokeWidth={1.8}
+                style={{ verticalAlign: '-2px', margin: '0 2px' }}
+              />
+              「分享」→ 下滑选「添加到主屏幕」→ 点击右上角「添加」。
+            </div>
+            <div>
+              <strong>已适配原生体验：</strong>高清桌面图标、灵动岛/底部小白条安全区、浅/深色启动页与状态栏适配、点击输入框防自动缩放、无网离线背诵。
+            </div>
+            <div style={{ color: 'var(--warn)' }}>
+              <strong>进度同步提醒：</strong>iOS 桌面 App 与 Safari 浏览器的本地缓存相互独立。首次从桌面图标打开后，请在上方「多端云同步」扫码或粘贴同步码，即可一键拉取全部记录。
+            </div>
+          </div>
+
+          <div className="toolbar-group">
+            <button
+              type="button"
+              className="btn-secondary"
+              disabled={pwaChecking}
+              onClick={() => void handleCheckPwaUpdate()}
+            >
+              <RefreshCw
+                size={15}
+                strokeWidth={1.5}
+                className={pwaChecking ? 'spin-icon' : ''}
+              />
+              {pwaChecking ? '检查更新中…' : '检查并更新到最新版'}
+            </button>
+          </div>
+          {pwaMsg && (
+            <p style={{ marginTop: 8, fontSize: 13, color: 'var(--ok)' }}>{pwaMsg}</p>
+          )}
+        </section>
 
         <section className="card-surface settings-card">
           <h2 className="section-small-title">学习与调度</h2>

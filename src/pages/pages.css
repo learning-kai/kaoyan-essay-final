@@ -991,7 +991,7 @@
   z-index: 45;
   display: flex;
   align-items: flex-end;
-  padding: 12px 12px 72px;
+  padding: 12px 12px calc(70px + env(safe-area-inset-bottom, 0px));
 }
 
 .mobile-more-sheet {
@@ -1018,10 +1018,6 @@
 }
 
 @media (max-width: 639px) {
-  .mobile-nav {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(60px + env(safe-area-inset-bottom, 0px));
-  }
   .drill-textarea {
     scroll-margin-bottom: 120px;
   }

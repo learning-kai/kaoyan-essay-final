@@ -184,7 +184,13 @@
     display: none;
   }
   .main-area {
-    padding: 20px 16px 84px;
+    padding: 18px calc(16px + env(safe-area-inset-right, 0px))
+      calc(86px + env(safe-area-inset-bottom, 0px))
+      calc(16px + env(safe-area-inset-left, 0px));
+  }
+  .app-shell-focus .main-area {
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .mobile-nav {
     display: flex;
@@ -192,8 +198,12 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 60px;
-    background: var(--surface);
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
+      env(safe-area-inset-left, 0px);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
     border-top: 1px solid var(--line);
     z-index: 30;
   }
@@ -207,6 +217,10 @@
     text-decoration: none;
     color: var(--ink-muted);
     font-size: 11px;
+    transition: color 140ms var(--ease), transform 120ms var(--ease);
+  }
+  .mobile-nav-item:active {
+    transform: scale(0.92);
   }
   .mobile-nav-item.active {
     color: var(--gold);
@@ -745,10 +759,9 @@
   border-color: var(--gold);
 }
 
-@media (max-width: 639px) {
+@media (max-width: 639px), (hover: none) and (pointer: coarse) {
   .help-fab {
-    bottom: 72px;
-    right: 14px;
+    display: none;
   }
 }
 
@@ -916,8 +929,13 @@
     position: sticky;
     top: 0;
     z-index: 25;
-    padding: 8px 16px;
-    background: var(--surface);
+    padding: calc(8px + env(safe-area-inset-top, 0px))
+      calc(16px + env(safe-area-inset-right, 0px))
+      8px
+      calc(16px + env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
     border-bottom: 1px solid var(--line);
   }
   .mobile-mode-pills {
@@ -947,6 +965,51 @@
     font-weight: 600;
     box-shadow: 0 1px 2px rgba(31, 29, 26, 0.08);
   }
+}
+
+.ios-a2hs-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-s);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 32%, transparent);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ios-a2hs-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ios-a2hs-text svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--gold);
+}
+
+.ios-a2hs-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.ios-a2hs-close:hover {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--ink);
 }
 
 /* ========== MathText / KaTeX Styling ========== */

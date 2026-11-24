@@ -15,6 +15,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
 }
 
 button,
@@ -23,10 +26,39 @@ textarea,
 select {
   font-family: inherit;
   color: inherit;
+  touch-action: manipulation;
+}
+
+a,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 button {
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+nav,
+aside {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent iOS Safari / Standalone Web App auto-zoom when focusing inputs < 16px */
+@media (max-width: 639px) {
+  input[type="text"],
+  input[type="search"],
+  input[type="password"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 :focus-visible {

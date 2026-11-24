@@ -15,9 +15,11 @@ import {
   RefreshCw,
   RotateCcw,
   Settings,
+  Share,
   Sigma,
   Star,
   Sun,
+  X,
   Zap,
 } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
@@ -35,6 +37,11 @@ import {
   getPoliticsMasteryLevel,
   getStarredPoliticsIds,
 } from '../core/politicsStats';
+import {
+  checkAndApplyPwaUpdate,
+  isIosDevice,
+  isStandaloneApp,
+} from '../core/pwa';
 import { BIG_SENTENCE_IDS } from '../data/bigEssay';
 import { FORMULA_IDS } from '../data/formulas';
 import { POLITICS_CARD_IDS } from '../data/politics';
@@ -110,6 +117,33 @@ export function Layout({
   const politicsStarred = usePoliticsProgress((s) => s.starred);
 
   const [moreOpen, setMoreOpen] = useState(false);
+  const [pwaCheckStatus, setPwaCheckStatus] = useState<'idle' | 'checking' | 'latest'>('idle');
+  const [showIosTip, setShowIosTip] = useState<boolean>(() => {
+    try {
+      if (!isIosDevice() || isStandaloneApp()) return false;
+      return window.localStorage.getItem('kaoyan-ios-a2hs-dismissed') !== '1';
+    } catch {
+      return false;
+    }
+  });
+
+  const dismissIosTip = () => {
+    setShowIosTip(false);
+    try {
+      window.localStorage.setItem('kaoyan-ios-a2hs-dismissed', '1');
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  const handleMobileUpdateCheck = async () => {
+    setPwaCheckStatus('checking');
+    const res = await checkAndApplyPwaUpdate();
+    if (res === 'up-to-date') {
+      setPwaCheckStatus('latest');
+      window.setTimeout(() => setPwaCheckStatus('idle'), 2800);
+    }
+  };
 
   const dueCount = useMemo(() => {
     const nowMs = Date.now();
@@ -194,6 +228,23 @@ export function Layout({
             : 'light'
           : theme;
       document.documentElement.setAttribute('data-theme', resolved);
+
+      // Keep iOS Safari & standalone PWA status bar color seamlessly matched
+      const barColor =
+        resolved === 'dark'
+          ? focusMode
+            ? '#171613'
+            : '#201E1A'
+          : focusMode
+            ? '#F7F4EE'
+            : '#FFFDF9';
+      let metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+      if (!metaTheme) {
+        metaTheme = document.createElement('meta');
+        metaTheme.name = 'theme-color';
+        document.head.appendChild(metaTheme);
+      }
+      metaTheme.content = barColor;
     };
     applyTheme();
 
@@ -202,7 +253,7 @@ export function Layout({
       mq.addEventListener('change', applyTheme);
       return () => mq.removeEventListener('change', applyTheme);
     }
-  }, [theme]);
+  }, [theme, focusMode]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--body-size', `${bodyFontSize}px`);
@@ -238,7 +289,7 @@ export function Layout({
 
   if (focusMode) {
     return (
-      <div className="app-shell">
+      <div className="app-shell app-shell-focus">
         <main className="main-area">
           <div className={`main-column ${wideColumn ? 'main-column-wide' : ''}`}>{children}</div>
         </main>
@@ -618,7 +669,27 @@ export function Layout({
       </div>
 
       <main className="main-area">
-        <div className={`main-column ${wideColumn ? 'main-column-wide' : ''}`}>{children}</div>
+        <div className={`main-column ${wideColumn ? 'main-column-wide' : ''}`}>
+          {showIosTip && (
+            <div className="ios-a2hs-banner" role="region" aria-label="添加到主屏幕提示">
+              <div className="ios-a2hs-text">
+                <Share size={15} strokeWidth={1.7} />
+                <span>
+                  在 Safari 底部点「分享」→「添加到主屏幕」，即可全屏离线像 App 一样背诵
+                </span>
+              </div>
+              <button
+                type="button"
+                className="ios-a2hs-close"
+                aria-label="关闭提示"
+                onClick={dismissIosTip}
+              >
+                <X size={15} strokeWidth={1.7} />
+              </button>
+            </div>
+          )}
+          {children}
+        </div>
       </main>
 
       {rightRail && <aside className="right-rail">{rightRail}</aside>}
@@ -840,6 +911,37 @@ export function Layout({
             <NavLink to="/settings" onClick={() => setMoreOpen(false)} className="mobile-more-link">
               <Settings size={16} strokeWidth={1.5} /> 设置与多端同步
             </NavLink>
+            <button
+              type="button"
+              className="mobile-more-link mobile-sync-btn"
+              onClick={cycleTheme}
+            >
+              {theme === 'light' && <Sun size={16} strokeWidth={1.5} />}
+              {theme === 'dark' && <Moon size={16} strokeWidth={1.5} />}
+              {theme === 'system' && <Monitor size={16} strokeWidth={1.5} />}
+              <span>
+                外观：{theme === 'light' ? '浅色纸面' : theme === 'dark' ? '深色夜读' : '跟随系统'}（点此切换）
+              </span>
+            </button>
+            <button
+              type="button"
+              className="mobile-more-link mobile-sync-btn"
+              disabled={pwaCheckStatus === 'checking'}
+              onClick={() => void handleMobileUpdateCheck()}
+            >
+              <RefreshCw
+                size={16}
+                strokeWidth={1.5}
+                className={pwaCheckStatus === 'checking' ? 'spin-icon' : ''}
+              />
+              <span>
+                {pwaCheckStatus === 'checking'
+                  ? '正在检查新版本…'
+                  : pwaCheckStatus === 'latest'
+                    ? '当前已是最新版本'
+                    : '检查更新 / 刷新 App'}
+              </span>
+            </button>
           </div>
         </div>
       )}

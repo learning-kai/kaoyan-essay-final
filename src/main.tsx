@@ -9,7 +9,10 @@ import './styles/base.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { requestPersistentStorage } from './core/pwa';
 import App from './App';
+
+void requestPersistentStorage();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
