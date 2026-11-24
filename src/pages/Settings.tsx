@@ -11,6 +11,98 @@ import { useProgress } from '../store/useProgress';
 import { useSettings, type InputMode, type ThemeMode } from '../store/useSettings';
 import './pages.css';
 
+interface EditableLimitValueProps {
+  value: number;
+  unit: string;
+  sliderMax: number;
+  minInput?: number;
+  maxInput?: number;
+  ariaLabel: string;
+  onCommit: (next: number) => void;
+}
+
+function EditableLimitValue({
+  value,
+  unit,
+  sliderMax,
+  minInput = 1,
+  maxInput = 999,
+  ariaLabel,
+  onCommit,
+}: EditableLimitValueProps) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editing]);
+
+  const startEdit = () => {
+    setDraft(String(value));
+    setEditing(true);
+  };
+
+  const commit = () => {
+    const parsed = Number.parseInt(draft.trim(), 10);
+    if (Number.isFinite(parsed) && !Number.isNaN(parsed)) {
+      const clamped = Math.max(minInput, Math.min(maxInput, parsed));
+      onCommit(clamped);
+    }
+    setEditing(false);
+  };
+
+  const cancel = () => {
+    setDraft(String(value));
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <span className="setting-val-edit">
+        <input
+          ref={inputRef}
+          type="number"
+          inputMode="numeric"
+          min={minInput}
+          max={maxInput}
+          step={1}
+          aria-label={ariaLabel}
+          className="setting-val-input tabular-nums"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              commit();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              cancel();
+            }
+          }}
+        />
+        <span className="setting-val-unit">{unit}</span>
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={`setting-val-btn tabular-nums ${value > sliderMax ? 'is-custom' : ''}`}
+      onClick={startEdit}
+      title="点击手动输入自定义上限"
+      aria-label={`${ariaLabel}：当前 ${value} ${unit}，点击手动输入`}
+    >
+      {value} {unit}
+    </button>
+  );
+}
+
 export function SettingsPage() {
   const settings = useSettings();
   const progress = useProgress();
@@ -301,7 +393,9 @@ export function SettingsPage() {
           <div className="setting-row">
             <div>
               <div className="setting-label">小作文 · 每日新句子上限</div>
-              <div className="setting-desc">范围 4–15 句，默认 8 句</div>
+              <div className="setting-desc">
+                滑块 4–15 句，默认 8 句（点右侧数字可手动输入更大上限）
+              </div>
             </div>
             <div className="setting-range-wrap">
               <input
@@ -309,19 +403,27 @@ export function SettingsPage() {
                 min={4}
                 max={15}
                 step={1}
-                value={settings.dailyNewLimit}
+                value={Math.min(15, Math.max(4, settings.dailyNewLimit))}
                 onChange={(e) =>
                   settings.updateSettings({ dailyNewLimit: Number(e.target.value) })
                 }
               />
-              <span className="tabular-nums setting-val">{settings.dailyNewLimit} 句</span>
+              <EditableLimitValue
+                value={settings.dailyNewLimit}
+                unit="句"
+                sliderMax={15}
+                ariaLabel="小作文每日新句子上限"
+                onCommit={(next) => settings.updateSettings({ dailyNewLimit: next })}
+              />
             </div>
           </div>
 
           <div className="setting-row">
             <div>
               <div className="setting-label">大作文 · 每日新句子上限</div>
-              <div className="setting-desc">范围 1–8 句，默认 3 句（与小作文独立计额）</div>
+              <div className="setting-desc">
+                滑块 1–8 句，默认 3 句（与小作文独立计额，点右侧数字可手动输入）
+              </div>
             </div>
             <div className="setting-range-wrap">
               <input
@@ -329,12 +431,18 @@ export function SettingsPage() {
                 min={1}
                 max={8}
                 step={1}
-                value={settings.bigDailyNewLimit}
+                value={Math.min(8, Math.max(1, settings.bigDailyNewLimit))}
                 onChange={(e) =>
                   settings.updateSettings({ bigDailyNewLimit: Number(e.target.value) })
                 }
               />
-              <span className="tabular-nums setting-val">{settings.bigDailyNewLimit} 句</span>
+              <EditableLimitValue
+                value={settings.bigDailyNewLimit}
+                unit="句"
+                sliderMax={8}
+                ariaLabel="大作文每日新句子上限"
+                onCommit={(next) => settings.updateSettings({ bigDailyNewLimit: next })}
+              />
             </div>
           </div>
 
@@ -361,7 +469,9 @@ export function SettingsPage() {
           <div className="setting-row">
             <div>
               <div className="setting-label">公式默写 · 每日新公式上限</div>
-              <div className="setting-desc">范围 5–40 题，默认 15 题（已标熟记不占名额）</div>
+              <div className="setting-desc">
+                滑块 5–40 题，默认 15 题（已标熟记不占名额，点右侧数字可手动输入更大上限）
+              </div>
             </div>
             <div className="setting-range-wrap">
               <input
@@ -369,21 +479,27 @@ export function SettingsPage() {
                 min={5}
                 max={40}
                 step={1}
-                value={formulaProgress.dailyNewLimit}
+                value={Math.min(40, Math.max(5, formulaProgress.dailyNewLimit))}
                 onChange={(e) =>
                   formulaProgress.setDailyNewLimit(Number(e.target.value))
                 }
               />
-              <span className="tabular-nums setting-val">
-                {formulaProgress.dailyNewLimit} 题
-              </span>
+              <EditableLimitValue
+                value={formulaProgress.dailyNewLimit}
+                unit="题"
+                sliderMax={40}
+                ariaLabel="公式默写每日新公式上限"
+                onCommit={(next) => formulaProgress.setDailyNewLimit(next)}
+              />
             </div>
           </div>
 
           <div className="setting-row">
             <div>
               <div className="setting-label">政治一页纸 · 每日新卡上限</div>
-              <div className="setting-desc">范围 3–30 张，默认 10 张（已标熟记不占名额）</div>
+              <div className="setting-desc">
+                滑块 3–30 张，默认 10 张（已标熟记不占名额，点右侧数字可手动输入更大上限）
+              </div>
             </div>
             <div className="setting-range-wrap">
               <input
@@ -391,14 +507,18 @@ export function SettingsPage() {
                 min={3}
                 max={30}
                 step={1}
-                value={politicsProgress.dailyNewLimit}
+                value={Math.min(30, Math.max(3, politicsProgress.dailyNewLimit))}
                 onChange={(e) =>
                   politicsProgress.setDailyNewLimit(Number(e.target.value))
                 }
               />
-              <span className="tabular-nums setting-val">
-                {politicsProgress.dailyNewLimit} 张
-              </span>
+              <EditableLimitValue
+                value={politicsProgress.dailyNewLimit}
+                unit="张"
+                sliderMax={30}
+                ariaLabel="政治一页纸每日新卡上限"
+                onCommit={(next) => politicsProgress.setDailyNewLimit(next)}
+              />
             </div>
           </div>
 

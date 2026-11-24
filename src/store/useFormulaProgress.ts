@@ -176,7 +176,8 @@ export const useFormulaProgress = create<FormulaProgressState>()(
       },
 
       setDailyNewLimit: (limit) => {
-        const clamped = Math.max(5, Math.min(40, Math.round(limit)));
+        if (!Number.isFinite(limit)) return;
+        const clamped = Math.max(1, Math.min(999, Math.round(limit)));
         const iso = new Date().toISOString();
         set({ dailyNewLimit: clamped, updatedAt: iso });
       },

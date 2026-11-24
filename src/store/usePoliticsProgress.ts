@@ -199,7 +199,8 @@ export const usePoliticsProgress = create<PoliticsProgressState>()(
       },
 
       setDailyNewLimit: (limit) => {
-        const clamped = Math.max(3, Math.min(30, Math.round(limit)));
+        if (!Number.isFinite(limit)) return;
+        const clamped = Math.max(1, Math.min(999, Math.round(limit)));
         const iso = new Date().toISOString();
         set({ dailyNewLimit: clamped, updatedAt: iso });
       },

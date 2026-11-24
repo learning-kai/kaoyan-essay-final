@@ -792,10 +792,67 @@
   color: var(--gold);
 }
 
+.setting-val-btn {
+  min-width: 58px;
+  padding: 4px 8px;
+  border-radius: var(--radius-s);
+  border: 1px dashed color-mix(in srgb, var(--gold) 45%, var(--line));
+  background: transparent;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 140ms var(--ease), border-color 140ms var(--ease);
+}
+
+.setting-val-btn:hover {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  border-style: solid;
+}
+
+.setting-val-btn.is-custom {
+  background: var(--gold-soft);
+  border: 1px solid var(--gold);
+}
+
+.setting-val-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.setting-val-input {
+  width: 68px;
+  padding: 4px 7px;
+  border-radius: var(--radius-s);
+  border: 1.5px solid var(--gold);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.setting-val-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 24%, transparent);
+}
+
+.setting-val-unit {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
 @media (max-width: 639px) {
   .setting-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .setting-val-input {
+    width: 78px;
   }
 }
 
