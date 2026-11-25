@@ -530,25 +530,32 @@ export const FORMULA_SECTIONS: FormulaSection[] = [
     "fullTitle": "信号 04｜三大变换的常用变换对",
     "questionIds": [
       "f-278",
-      "f-279",
-      "f-280",
-      "f-281",
-      "f-282",
-      "f-283",
-      "f-284",
-      "f-285",
       "f-286",
+      "f-279",
+      "f-329",
+      "f-297",
+      "f-280",
       "f-287",
+      "f-330",
+      "f-281",
       "f-288",
-      "f-289",
-      "f-290",
-      "f-291",
-      "f-292",
-      "f-293",
       "f-294",
+      "f-331",
+      "f-282",
+      "f-289",
       "f-295",
       "f-296",
-      "f-297"
+      "f-283",
+      "f-290",
+      "f-291",
+      "f-285",
+      "f-293",
+      "f-284",
+      "f-292",
+      "f-332",
+      "f-333",
+      "f-334",
+      "f-335"
     ]
   },
   {
@@ -558,25 +565,38 @@ export const FORMULA_SECTIONS: FormulaSection[] = [
     "title": "三大变换性质及卷积",
     "fullTitle": "信号 05｜三大变换性质及卷积",
     "questionIds": [
-      "f-298",
-      "f-299",
       "f-300",
+      "f-336",
+      "f-313",
+      "f-298",
+      "f-337",
+      "f-306",
+      "f-338",
+      "f-312",
+      "f-299",
+      "f-307",
       "f-301",
       "f-302",
-      "f-303",
-      "f-304",
-      "f-305",
-      "f-306",
-      "f-307",
       "f-308",
+      "f-314",
+      "f-339",
+      "f-340",
+      "f-303",
       "f-309",
       "f-310",
-      "f-311",
-      "f-312",
-      "f-313",
-      "f-314",
+      "f-341",
+      "f-342",
+      "f-343",
+      "f-344",
+      "f-304",
+      "f-345",
       "f-315",
+      "f-346",
+      "f-347",
+      "f-348",
+      "f-311",
       "f-316",
+      "f-305",
       "f-317",
       "f-318"
     ]
@@ -4327,11 +4347,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "280",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "单位阶跃 $u(t)$ 的双边拉普拉斯变换（含 ROC）。",
+    "question": "单位阶跃 $u(t)$ 的单边拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$\\frac{1}{s}$，$\\operatorname{Re}s>0$",
+    "answer": "$\\frac{1}{s}$（$\\operatorname{Re}s>0$）",
     "answerParts": [
-      "$\\frac{1}{s}$，$\\operatorname{Re}s>0$"
+      "$\\frac{1}{s}$（$\\operatorname{Re}s>0$）"
     ]
   },
   {
@@ -4340,7 +4360,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "281",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$tu(t)$ 与 $t^2u(t)$ 的拉普拉斯变换。",
+    "question": "$t$ 与 $t^2$（$t\\ge0$）的单边拉普拉斯变换。",
     "hasBlank": false,
     "answer": "$\\frac{1}{s^2}$；$\\frac{2}{s^3}$（$\\operatorname{Re}s>0$）",
     "answerParts": [
@@ -4354,11 +4374,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "282",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$e^{at}u(t)$ 的拉普拉斯变换和 ROC。",
+    "question": "$e^{at}$（$t\\ge0$）的单边拉普拉斯变换。",
     "hasBlank": false,
-    "answer": "$\\frac{1}{s-a}$，$\\operatorname{Re}s>a$",
+    "answer": "$\\frac{1}{s-a}$（$\\operatorname{Re}s>a$）",
     "answerParts": [
-      "$\\frac{1}{s-a}$，$\\operatorname{Re}s>a$"
+      "$\\frac{1}{s-a}$（$\\operatorname{Re}s>a$）"
     ]
   },
   {
@@ -4367,7 +4387,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "283",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$\\cos(\\beta t)u(t)$、$\\sin(\\beta t)u(t)$ 的拉普拉斯变换。",
+    "question": "$\\cos(\\beta t)$、$\\sin(\\beta t)$（$t\\ge0$）的单边拉普拉斯变换。",
     "hasBlank": false,
     "answer": "$\\frac{s}{s^2+\\beta^2}$；$\\frac{\\beta}{s^2+\\beta^2}$",
     "answerParts": [
@@ -4381,7 +4401,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "284",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$e^{-at}\\cos\\beta t\\,u(t)$ 的拉普拉斯变换。",
+    "question": "$e^{-at}\\cos\\beta t$（$t\\ge0$）的单边拉普拉斯变换。",
     "hasBlank": false,
     "answer": "$\\frac{s+a}{(s+a)^2+\\beta^2}$",
     "answerParts": [
@@ -4394,7 +4414,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "285",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$e^{-at}\\sin\\beta t\\,u(t)$ 的拉普拉斯变换。",
+    "question": "$e^{-at}\\sin\\beta t$（$t\\ge0$）的单边拉普拉斯变换。",
     "hasBlank": false,
     "answer": "$\\frac{\\beta}{(s+a)^2+\\beta^2}$",
     "answerParts": [
@@ -4407,7 +4427,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "286",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "离散 $\\delta[n]$ 的双边 $Z$ 变换。",
+    "question": "离散冲激 $\\delta(k)$ 的 $Z$ 变换（$k\\ge0$）。",
     "hasBlank": false,
     "answer": "$1$",
     "answerParts": [
@@ -4420,11 +4440,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "287",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "离散阶跃 $u[n]$ 的 $Z$ 变换及 ROC。",
+    "question": "离散阶跃 $u(k)$ 的 $Z$ 变换（$k\\ge0$）。",
     "hasBlank": false,
-    "answer": "$\\frac{z}{z-1}$，$|z|>1$",
+    "answer": "$\\frac{z}{z-1}$（$|z|>1$）",
     "answerParts": [
-      "$\\frac{z}{z-1}$，$|z|>1$"
+      "$\\frac{z}{z-1}$（$|z|>1$）"
     ]
   },
   {
@@ -4433,12 +4453,12 @@ export const FORMULAS: FormulaItem[] = [
     "code": "288",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$nu[n]$、$n^2u[n]$ 的 $Z$ 变换。",
+    "question": "$k$、$k^2$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{z}{(z-1)^2}$；$\\frac{z(z+1)}{(z-1)^3}$",
+    "answer": "$\\frac{z}{(z-1)^2}$；$\\frac{z^2+z}{(z-1)^3}$",
     "answerParts": [
       "$\\frac{z}{(z-1)^2}$",
-      "$\\frac{z(z+1)}{(z-1)^3}$"
+      "$\\frac{z^2+z}{(z-1)^3}$"
     ]
   },
   {
@@ -4447,11 +4467,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "289",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$a^nu[n]$ 的 $Z$ 变换与 ROC。",
+    "question": "$a^k$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{z}{z-a}$，$|z|>|a|$",
+    "answer": "$\\frac{z}{z-a}$（$|z|>|a|$）",
     "answerParts": [
-      "$\\frac{z}{z-a}$，$|z|>|a|$"
+      "$\\frac{z}{z-a}$（$|z|>|a|$）"
     ]
   },
   {
@@ -4460,11 +4480,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "290",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$\\cos(\\Omega n)u[n]$ 的 $Z$ 变换。",
+    "question": "$\\cos(\\beta k)$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{z(z-\\cos\\Omega)}{z^2-2z\\cos\\Omega+1}$",
+    "answer": "$\\frac{z(z-\\cos\\beta)}{z^2-2z\\cos\\beta+1}$",
     "answerParts": [
-      "$\\frac{z(z-\\cos\\Omega)}{z^2-2z\\cos\\Omega+1}$"
+      "$\\frac{z(z-\\cos\\beta)}{z^2-2z\\cos\\beta+1}$"
     ]
   },
   {
@@ -4473,11 +4493,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "291",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$\\sin(\\Omega n)u[n]$ 的 $Z$ 变换。",
+    "question": "$\\sin(\\beta k)$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{z\\sin\\Omega}{z^2-2z\\cos\\Omega+1}$",
+    "answer": "$\\frac{z\\sin\\beta}{z^2-2z\\cos\\beta+1}$",
     "answerParts": [
-      "$\\frac{z\\sin\\Omega}{z^2-2z\\cos\\Omega+1}$"
+      "$\\frac{z\\sin\\beta}{z^2-2z\\cos\\beta+1}$"
     ]
   },
   {
@@ -4486,11 +4506,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "292",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$a^n\\cos(\\Omega n)u[n]$ 的 $Z$ 变换。",
+    "question": "$a^k\\cos(\\beta k)$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{z(z-a\\cos\\Omega)}{z^2-2az\\cos\\Omega+a^2}$",
+    "answer": "$\\frac{z(z-a\\cos\\beta)}{z^2-2az\\cos\\beta+a^2}$",
     "answerParts": [
-      "$\\frac{z(z-a\\cos\\Omega)}{z^2-2az\\cos\\Omega+a^2}$"
+      "$\\frac{z(z-a\\cos\\beta)}{z^2-2az\\cos\\beta+a^2}$"
     ]
   },
   {
@@ -4499,11 +4519,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "293",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "$a^n\\sin(\\Omega n)u[n]$ 的 $Z$ 变换。",
+    "question": "$a^k\\sin(\\beta k)$（$k\\ge0$）的 $Z$ 变换。",
     "hasBlank": false,
-    "answer": "$\\frac{az\\sin\\Omega}{z^2-2az\\cos\\Omega+a^2}$",
+    "answer": "$\\frac{az\\sin\\beta}{z^2-2az\\cos\\beta+a^2}$",
     "answerParts": [
-      "$\\frac{az\\sin\\Omega}{z^2-2az\\cos\\Omega+a^2}$"
+      "$\\frac{az\\sin\\beta}{z^2-2az\\cos\\beta+a^2}$"
     ]
   },
   {
@@ -4512,7 +4532,7 @@ export const FORMULAS: FormulaItem[] = [
     "code": "294",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "傅里叶变换对 $e^{j\\omega_0t}$（分布意义）。",
+    "question": "傅里叶变换对 $e^{j\\omega_0t}$。",
     "hasBlank": false,
     "answer": "$2\\pi\\delta(\\omega-\\omega_0)$",
     "answerParts": [
@@ -4527,9 +4547,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "傅里叶变换对 $\\cos\\omega_0t$。",
     "hasBlank": false,
-    "answer": "$\\pi[\\delta(\\omega-\\omega_0)+\\delta(\\omega+\\omega_0)]$",
+    "answer": "$\\pi[\\delta(\\omega+\\omega_0)+\\delta(\\omega-\\omega_0)]$",
     "answerParts": [
-      "$\\pi[\\delta(\\omega-\\omega_0)+\\delta(\\omega+\\omega_0)]$"
+      "$\\pi[\\delta(\\omega+\\omega_0)+\\delta(\\omega-\\omega_0)]$"
     ]
   },
   {
@@ -4540,9 +4560,9 @@ export const FORMULAS: FormulaItem[] = [
     "sectionId": "sig-04",
     "question": "傅里叶变换对 $\\sin\\omega_0t$。",
     "hasBlank": false,
-    "answer": "$\\frac{\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]}{j}$",
+    "answer": "$j\\pi[\\delta(\\omega+\\omega_0)-\\delta(\\omega-\\omega_0)]$",
     "answerParts": [
-      "$\\frac{\\pi[\\delta(\\omega-\\omega_0)-\\delta(\\omega+\\omega_0)]}{j}$"
+      "$j\\pi[\\delta(\\omega+\\omega_0)-\\delta(\\omega-\\omega_0)]$"
     ]
   },
   {
@@ -4551,11 +4571,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "297",
     "subject": "signals",
     "sectionId": "sig-04",
-    "question": "傅里叶变换对 $u(t)$（广义函数意义）。",
+    "question": "傅里叶变换对 $u(t)$。",
     "hasBlank": false,
-    "answer": "$\\pi\\delta(\\omega)+\\operatorname{PV}\\left(\\frac{1}{j\\omega}\\right)$",
+    "answer": "$\\pi\\delta(\\omega)+\\frac{1}{j\\omega}$",
     "answerParts": [
-      "$\\pi\\delta(\\omega)+\\operatorname{PV}\\left(\\frac{1}{j\\omega}\\right)$"
+      "$\\pi\\delta(\\omega)+\\frac{1}{j\\omega}$"
     ]
   },
   {
@@ -4564,11 +4584,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "298",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时移：$f(t-t_0)\\longleftrightarrow$ ________________",
+    "question": "傅里叶时移性：$f(t\\pm t_0)\\longleftrightarrow$ ________________（口诀：同时移，反频移）",
     "hasBlank": true,
-    "answer": "$e^{-j\\omega t_0}F(j\\omega)$",
+    "answer": "$e^{\\pm j\\omega t_0}F(j\\omega)$",
     "answerParts": [
-      "$e^{-j\\omega t_0}F(j\\omega)$"
+      "$e^{\\pm j\\omega t_0}F(j\\omega)$"
     ]
   },
   {
@@ -4577,11 +4597,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "299",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶频移：$f(t)e^{j\\omega_0t}\\longleftrightarrow$ ________________",
+    "question": "傅里叶频移性：$f(t)e^{\\pm j\\omega_0t}\\longleftrightarrow$ ________________（口诀：同时移，反频移）",
     "hasBlank": true,
-    "answer": "$F(j(\\omega-\\omega_0))$",
+    "answer": "$F[j(\\omega\\mp\\omega_0)]$",
     "answerParts": [
-      "$F(j(\\omega-\\omega_0))$"
+      "$F[j(\\omega\\mp\\omega_0)]$"
     ]
   },
   {
@@ -4590,11 +4610,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "300",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时域尺度变换：$f(at)\\longleftrightarrow$ ________________",
+    "question": "傅里叶尺度变换：$f(at)\\longleftrightarrow$ ________________",
     "hasBlank": true,
-    "answer": "$\\frac{1}{|a|}F\\left(\\frac{j\\omega}{a}\\right)$",
+    "answer": "$\\frac{1}{|a|}F\\left(j\\frac{\\omega}{a}\\right)$",
     "answerParts": [
-      "$\\frac{1}{|a|}F\\left(\\frac{j\\omega}{a}\\right)$"
+      "$\\frac{1}{|a|}F\\left(j\\frac{\\omega}{a}\\right)$"
     ]
   },
   {
@@ -4603,11 +4623,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "301",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时域卷积的变换性质。",
-    "hasBlank": false,
-    "answer": "$f_1*f_2\\longleftrightarrow F_1F_2$",
+    "question": "傅里叶时域卷积定理：$f_1(t)*f_2(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F_1(j\\omega)F_2(j\\omega)$",
     "answerParts": [
-      "$f_1*f_2\\longleftrightarrow F_1F_2$"
+      "$F_1(j\\omega)F_2(j\\omega)$"
     ]
   },
   {
@@ -4616,11 +4636,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "302",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时域乘积的变换性质。",
-    "hasBlank": false,
-    "answer": "$f_1f_2\\longleftrightarrow\\frac1{2\\pi}(F_1*F_2)$",
+    "question": "傅里叶频域卷积定理（时域乘积）：$f_1(t)f_2(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\frac{1}{2\\pi}F_1(j\\omega)*F_2(j\\omega)$",
     "answerParts": [
-      "$f_1f_2\\longleftrightarrow\\frac1{2\\pi}(F_1*F_2)$"
+      "$\\frac{1}{2\\pi}F_1(j\\omega)*F_2(j\\omega)$"
     ]
   },
   {
@@ -4629,8 +4649,8 @@ export const FORMULAS: FormulaItem[] = [
     "code": "303",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时域微分：$f^{(n)}(t)$ 对应的频域表达。",
-    "hasBlank": false,
+    "question": "傅里叶时域微分：$f^{(n)}(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
     "answer": "$(j\\omega)^nF(j\\omega)$",
     "answerParts": [
       "$(j\\omega)^nF(j\\omega)$"
@@ -4642,11 +4662,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "304",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶时域乘 $t$ 与频域微分的关系。",
-    "hasBlank": false,
-    "answer": "$tf(t)\\longleftrightarrow j\\frac{dF(j\\omega)}{d\\omega}$",
+    "question": "傅里叶频域微分：$(-jt)^nf(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F^{(n)}(j\\omega)$",
     "answerParts": [
-      "$tf(t)\\longleftrightarrow j\\frac{dF(j\\omega)}{d\\omega}$"
+      "$F^{(n)}(j\\omega)$"
     ]
   },
   {
@@ -4655,11 +4675,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "305",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "傅里叶对偶性：若 $f(t)\\leftrightarrow F(j\\omega)$，则 $F(jt)\\leftrightarrow$ ________________",
+    "question": "傅里叶对称性：若 $f(t)\\leftrightarrow F(j\\omega)$，则 $F(jt)\\longleftrightarrow$ ________________",
     "hasBlank": true,
-    "answer": "$2\\pi f(-\\omega)$（变量记号对应）",
+    "answer": "$2\\pi f(-\\omega)$",
     "answerParts": [
-      "$2\\pi f(-\\omega)$（变量记号对应）"
+      "$2\\pi f(-\\omega)$"
     ]
   },
   {
@@ -4668,12 +4688,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "306",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "拉普拉斯时移：$f(t-t_0)u(t-t_0)$ 的单边变换。",
-    "hasBlank": false,
-    "answer": "$e^{-st_0}F(s)$（$t_0\\ge0$；适用条件下）",
+    "question": "单边拉普拉斯时移性：$f(t-t_0)u(t-t_0)$（$t_0>0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$e^{-t_0s}F(s)$",
     "answerParts": [
-      "$e^{-st_0}F(s)$（$t_0\\ge0$",
-      "适用条件下）"
+      "$e^{-t_0s}F(s)$"
     ]
   },
   {
@@ -4682,11 +4701,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "307",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "拉普拉斯频移：$e^{at}f(t)$ 的变换。",
-    "hasBlank": false,
-    "answer": "$F(s-a)$",
+    "question": "单边拉普拉斯频移性：$f(t)e^{-at}\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F(s+a)$",
     "answerParts": [
-      "$F(s-a)$"
+      "$F(s+a)$"
     ]
   },
   {
@@ -4695,11 +4714,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "308",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "拉普拉斯卷积：$(f*g)(t)$ 的变换。",
-    "hasBlank": false,
-    "answer": "$F(s)G(s)$",
+    "question": "拉普拉斯卷积定理：$f_1(t)*f_2(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F_1(s)F_2(s)$",
     "answerParts": [
-      "$F(s)G(s)$"
+      "$F_1(s)F_2(s)$"
     ]
   },
   {
@@ -4708,8 +4727,8 @@ export const FORMULAS: FormulaItem[] = [
     "code": "309",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "单边拉普拉斯：$f^{\\prime}(t)$ 的变换。",
-    "hasBlank": false,
+    "question": "单边拉普拉斯时域微分：$f^{\\prime}(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
     "answer": "$sF(s)-f(0^-)$",
     "answerParts": [
       "$sF(s)-f(0^-)$"
@@ -4721,8 +4740,8 @@ export const FORMULAS: FormulaItem[] = [
     "code": "310",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "单边拉普拉斯：$f^{\\prime\\prime}(t)$ 的变换。",
-    "hasBlank": false,
+    "question": "单边拉普拉斯二阶时域微分：$f^{\\prime\\prime}(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
     "answer": "$s^2F(s)-sf(0^-)-f^{\\prime}(0^-)$",
     "answerParts": [
       "$s^2F(s)-sf(0^-)-f^{\\prime}(0^-)$"
@@ -4734,12 +4753,12 @@ export const FORMULAS: FormulaItem[] = [
     "code": "311",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "单边拉普拉斯初值定理、终值定理。",
+    "question": "单边拉普拉斯初值定理与终值定理。",
     "hasBlank": false,
-    "answer": "$f(0^+)=\\lim_{s\\to\\infty}sF(s)$；$f(\\infty)=\\lim_{s\\to0}sF(s)$（满足极点条件）",
+    "answer": "$f(0^+)=\\lim_{t\\to0^+}f(t)=\\lim_{s\\to\\infty}sF(s)$；$f(\\infty)=\\lim_{t\\to\\infty}f(t)=\\lim_{s\\to0}sF(s)$",
     "answerParts": [
-      "$f(0^+)=\\lim_{s\\to\\infty}sF(s)$",
-      "$f(\\infty)=\\lim_{s\\to0}sF(s)$（满足极点条件）"
+      "$f(0^+)=\\lim_{t\\to0^+}f(t)=\\lim_{s\\to\\infty}sF(s)$",
+      "$f(\\infty)=\\lim_{t\\to\\infty}f(t)=\\lim_{s\\to0}sF(s)$"
     ]
   },
   {
@@ -4748,11 +4767,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "312",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "$Z$ 变换右移：$x[n-n_0]$ 的双边变换。",
-    "hasBlank": false,
-    "answer": "$z^{-n_0}X(z)$",
+    "question": "$Z$ 变换双边移位：$f(n\\pm m)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$z^{\\pm m}F(z)$",
     "answerParts": [
-      "$z^{-n_0}X(z)$"
+      "$z^{\\pm m}F(z)$"
     ]
   },
   {
@@ -4761,11 +4780,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "313",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "$Z$ 变换尺度：$a^nx[n]$ 的变换。",
-    "hasBlank": false,
-    "answer": "$X\\left(\\frac{z}{a}\\right)$",
+    "question": "$Z$ 变换尺度变换：$a^kf(k)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F\\left(\\frac{z}{a}\\right)$",
     "answerParts": [
-      "$X\\left(\\frac{z}{a}\\right)$"
+      "$F\\left(\\frac{z}{a}\\right)$"
     ]
   },
   {
@@ -4774,11 +4793,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "314",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "$Z$ 变换卷积：$(x*y)[n]$ 的变换。",
-    "hasBlank": false,
-    "answer": "$X(z)Y(z)$",
+    "question": "$Z$ 变换卷积定理：$f_1(k)*f_2(k)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F_1(z)F_2(z)$",
     "answerParts": [
-      "$X(z)Y(z)$"
+      "$F_1(z)F_2(z)$"
     ]
   },
   {
@@ -4787,11 +4806,11 @@ export const FORMULAS: FormulaItem[] = [
     "code": "315",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "$Z$ 变换时域乘 $n$ 的性质。",
-    "hasBlank": false,
-    "answer": "$nx[n]\\longleftrightarrow -z\\frac{dX(z)}{dz}$",
+    "question": "$Z$ 变换 $z$ 域微分：$k^mf(k)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\left(-z\\frac{d}{dz}\\right)^mF(z)$",
     "answerParts": [
-      "$nx[n]\\longleftrightarrow -z\\frac{dX(z)}{dz}$"
+      "$\\left(-z\\frac{d}{dz}\\right)^mF(z)$"
     ]
   },
   {
@@ -4800,12 +4819,13 @@ export const FORMULAS: FormulaItem[] = [
     "code": "316",
     "subject": "signals",
     "sectionId": "sig-05",
-    "question": "$Z$ 变换初值 / 终值公式（因果序列且条件满足）。",
+    "question": "单边 $Z$ 变换初值定理（$f(0)$、$x(1)$）与终值定理（$x(\\infty)$）。",
     "hasBlank": false,
-    "answer": "$x[0]=\\lim_{z\\to\\infty}X(z)$；$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}\\frac{(z-1)X(z)}{z}$",
+    "answer": "$f(0)=\\lim_{z\\to\\infty}F(z)$；$x(1)=\\lim_{z\\to\\infty}[zX(z)-zx(0)]$；$x(\\infty)=\\lim_{z\\to1}(z-1)X(z)$",
     "answerParts": [
-      "$x[0]=\\lim_{z\\to\\infty}X(z)$",
-      "$\\lim_{n\\to\\infty}x[n]=\\lim_{z\\to1}\\frac{(z-1)X(z)}{z}$"
+      "$f(0)=\\lim_{z\\to\\infty}F(z)$",
+      "$x(1)=\\lim_{z\\to\\infty}[zX(z)-zx(0)]$",
+      "$x(\\infty)=\\lim_{z\\to1}(z-1)X(z)$"
     ]
   },
   {
@@ -4972,6 +4992,267 @@ export const FORMULAS: FormulaItem[] = [
       "$e^{j\\Omega n}$ 关于 $\\Omega$ 以 $2\\pi$ 周期",
       "$e^{j\\omega t}$ 不以 $\\omega$ 周期"
     ]
+  },
+  {
+    "id": "f-329",
+    "num": 329,
+    "code": "329",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "离散延时冲激 $\\delta(k-m)$ 的 $Z$ 变换（$k\\ge0,\\ m\\ge0$）。",
+    "hasBlank": false,
+    "answer": "$z^{-m}$",
+    "answerParts": [
+      "$z^{-m}$"
+    ]
+  },
+  {
+    "id": "f-330",
+    "num": 330,
+    "code": "330",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "傅里叶变换对 $t$ 与 $t^2$。",
+    "hasBlank": false,
+    "answer": "$2\\pi j\\delta^{\\prime}(\\omega)$；$-2\\pi\\delta^{\\prime\\prime}(\\omega)$",
+    "answerParts": [
+      "$2\\pi j\\delta^{\\prime}(\\omega)$",
+      "$-2\\pi\\delta^{\\prime\\prime}(\\omega)$"
+    ]
+  },
+  {
+    "id": "f-331",
+    "num": 331,
+    "code": "331",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "单边衰减指数 $e^{-at}u(t)$（$a>0$）的傅里叶变换。",
+    "hasBlank": false,
+    "answer": "$\\frac{1}{a+j\\omega}$",
+    "answerParts": [
+      "$\\frac{1}{a+j\\omega}$"
+    ]
+  },
+  {
+    "id": "f-332",
+    "num": 332,
+    "code": "332",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "符号函数 $\\operatorname{sgn}(t)$ 的傅里叶变换。",
+    "hasBlank": false,
+    "answer": "$\\frac{2}{j\\omega}$",
+    "answerParts": [
+      "$\\frac{2}{j\\omega}$"
+    ]
+  },
+  {
+    "id": "f-333",
+    "num": 333,
+    "code": "333",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "周期冲激序列（梳状函数）$\\sum_{n=-\\infty}^{+\\infty}\\delta(t-nT)$ 的傅里叶变换。",
+    "hasBlank": false,
+    "answer": "$\\omega_0\\sum_{n=-\\infty}^{+\\infty}\\delta(\\omega-n\\omega_0)$（$\\omega_0=\\frac{2\\pi}{T}$）",
+    "answerParts": [
+      "$\\omega_0\\sum_{n=-\\infty}^{+\\infty}\\delta(\\omega-n\\omega_0)$（$\\omega_0=\\frac{2\\pi}{T}$）"
+    ]
+  },
+  {
+    "id": "f-334",
+    "num": 334,
+    "code": "334",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "门函数（矩形脉冲）$g_\\tau(t)$ 的傅里叶变换。",
+    "hasBlank": false,
+    "answer": "$\\tau\\operatorname{Sa}\\left(\\frac{\\omega\\tau}{2}\\right)$",
+    "answerParts": [
+      "$\\tau\\operatorname{Sa}\\left(\\frac{\\omega\\tau}{2}\\right)$"
+    ]
+  },
+  {
+    "id": "f-335",
+    "num": 335,
+    "code": "335",
+    "subject": "signals",
+    "sectionId": "sig-04",
+    "question": "抽样函数 $\\operatorname{Sa}(at)$（$a>0$）的傅里叶变换。",
+    "hasBlank": false,
+    "answer": "$\\frac{\\pi}{a}g_{2a}(\\omega)$",
+    "answerParts": [
+      "$\\frac{\\pi}{a}g_{2a}(\\omega)$"
+    ]
+  },
+  {
+    "id": "f-336",
+    "num": 336,
+    "code": "336",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边拉普拉斯尺度变换：$f(at)$（$a>0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\frac{1}{a}F\\left(\\frac{s}{a}\\right)$",
+    "answerParts": [
+      "$\\frac{1}{a}F\\left(\\frac{s}{a}\\right)$"
+    ]
+  },
+  {
+    "id": "f-337",
+    "num": 337,
+    "code": "337",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "傅里叶尺度与时移综合：$f(at-b)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\frac{1}{|a|}e^{-j\\frac{b}{a}\\omega}F\\left(j\\frac{\\omega}{a}\\right)$",
+    "answerParts": [
+      "$\\frac{1}{|a|}e^{-j\\frac{b}{a}\\omega}F\\left(j\\frac{\\omega}{a}\\right)$"
+    ]
+  },
+  {
+    "id": "f-338",
+    "num": 338,
+    "code": "338",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边拉普拉斯尺度与时移综合：$f(at-b)u(at-b)$（$a>0,\\ b\\ge0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\frac{1}{a}e^{-\\frac{b}{a}s}F\\left(\\frac{s}{a}\\right)$",
+    "answerParts": [
+      "$\\frac{1}{a}e^{-\\frac{b}{a}s}F\\left(\\frac{s}{a}\\right)$"
+    ]
+  },
+  {
+    "id": "f-339",
+    "num": 339,
+    "code": "339",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "傅里叶反转性：$f(-t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F(-j\\omega)$",
+    "answerParts": [
+      "$F(-j\\omega)$"
+    ]
+  },
+  {
+    "id": "f-340",
+    "num": 340,
+    "code": "340",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "$Z$ 变换反转性（双边）：$f(-k)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F\\left(\\frac{1}{z}\\right)$",
+    "answerParts": [
+      "$F\\left(\\frac{1}{z}\\right)$"
+    ]
+  },
+  {
+    "id": "f-341",
+    "num": 341,
+    "code": "341",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边 $Z$ 变换序列右移：$f(k-m)$（$m>0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$z^{-m}\\left[F(z)+\\sum_{k=-m}^{-1}f(k)z^{-k}\\right]$",
+    "answerParts": [
+      "$z^{-m}\\left[F(z)+\\sum_{k=-m}^{-1}f(k)z^{-k}\\right]$"
+    ]
+  },
+  {
+    "id": "f-342",
+    "num": 342,
+    "code": "342",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边 $Z$ 变换序列左移：$f(k+m)$（$m>0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$z^m\\left[F(z)-\\sum_{k=0}^{m-1}f(k)z^{-k}\\right]$",
+    "answerParts": [
+      "$z^m\\left[F(z)-\\sum_{k=0}^{m-1}f(k)z^{-k}\\right]$"
+    ]
+  },
+  {
+    "id": "f-343",
+    "num": 343,
+    "code": "343",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "傅里叶时域积分：$f^{(-1)}(t)=\\int_{-\\infty}^tf(\\tau)\\,d\\tau\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\pi F(0)\\delta(\\omega)+\\frac{1}{j\\omega}F(j\\omega)$",
+    "answerParts": [
+      "$\\pi F(0)\\delta(\\omega)+\\frac{1}{j\\omega}F(j\\omega)$"
+    ]
+  },
+  {
+    "id": "f-344",
+    "num": 344,
+    "code": "344",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边拉普拉斯时域积分：$f^{(-1)}(t)=\\int_{-\\infty}^tf(\\tau)\\,d\\tau\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\frac{1}{s}F(s)+\\frac{1}{s}f^{(-1)}(0^-)$",
+    "answerParts": [
+      "$\\frac{1}{s}F(s)+\\frac{1}{s}f^{(-1)}(0^-)$"
+    ]
+  },
+  {
+    "id": "f-345",
+    "num": 345,
+    "code": "345",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边拉普拉斯 $s$ 域微分：$(-t)^nf(t)\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$F^{(n)}(s)$",
+    "answerParts": [
+      "$F^{(n)}(s)$"
+    ]
+  },
+  {
+    "id": "f-346",
+    "num": 346,
+    "code": "346",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "傅里叶频域积分：$F^{(-1)}(j\\omega)$ 对应的时域表达为 ________________",
+    "hasBlank": true,
+    "answer": "$\\pi f(0)\\delta(t)+\\frac{-1}{jt}f(t)$",
+    "answerParts": [
+      "$\\pi f(0)\\delta(t)+\\frac{-1}{jt}f(t)$"
+    ]
+  },
+  {
+    "id": "f-347",
+    "num": 347,
+    "code": "347",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边拉普拉斯 $s$ 域积分：$\\frac{f(t)}{t}\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$\\int_s^\\infty F(\\lambda)\\,d\\lambda$",
+    "answerParts": [
+      "$\\int_s^\\infty F(\\lambda)\\,d\\lambda$"
+    ]
+  },
+  {
+    "id": "f-348",
+    "num": 348,
+    "code": "348",
+    "subject": "signals",
+    "sectionId": "sig-05",
+    "question": "单边 $Z$ 变换 $z$ 域积分：$\\frac{f(k)}{k+m}$（$k+m>0$）$\\longleftrightarrow$ ________________",
+    "hasBlank": true,
+    "answer": "$z^m\\int_z^\\infty\\frac{F(x)}{x^{m+1}}\\,dx$",
+    "answerParts": [
+      "$z^m\\int_z^\\infty\\frac{F(x)}{x^{m+1}}\\,dx$"
+    ]
   }
 ];
 
@@ -4979,7 +5260,7 @@ export const FORMULA_MAP: Record<string, FormulaItem> = Object.fromEntries(
   FORMULAS.map((f) => [f.id, f])
 );
 
-export const FORMULA_IDS: string[] = FORMULAS.map((f) => f.id);
+export const FORMULA_IDS: string[] = FORMULA_SECTIONS.flatMap((s) => s.questionIds);
 
 export const FORMULA_VERIFICATION_NOTES: FormulaVerificationNote[] = [
   {

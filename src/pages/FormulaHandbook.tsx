@@ -20,11 +20,11 @@ import {
 } from '../core/formulaStats';
 import {
   FORMULAS,
+  FORMULA_MAP,
   FORMULA_SECTIONS,
   FORMULA_SECTION_MAP,
   FORMULA_SUBJECTS,
   FORMULA_VERIFICATION_NOTES,
-  type FormulaItem,
   type FormulaSubjectId,
 } from '../data/formulas';
 import { useFormulaProgress } from '../store/useFormulaProgress';
@@ -93,16 +93,13 @@ export function FormulaHandbookPage() {
   }, [subjectFilter, sectionFilter, statusFilter, query, cards, mastered, starred]);
 
   const groupedBySection = useMemo(() => {
-    const map = new Map<string, FormulaItem[]>();
-    for (const item of filteredItems) {
-      const list = map.get(item.sectionId) ?? [];
-      list.push(item);
-      map.set(item.sectionId, list);
-    }
-    return FORMULA_SECTIONS.filter((s) => map.has(s.id)).map((sec) => ({
+    const allowed = new Set(filteredItems.map((item) => item.id));
+    return FORMULA_SECTIONS.map((sec) => ({
       section: sec,
-      items: map.get(sec.id)!,
-    }));
+      items: sec.questionIds
+        .filter((id) => allowed.has(id))
+        .map((id) => FORMULA_MAP[id]),
+    })).filter((g) => g.items.length > 0);
   }, [filteredItems]);
 
   const toggleRevealItem = (id: string) => {
@@ -120,7 +117,7 @@ export function FormulaHandbookPage() {
         <div>
           <h1 className="page-title">公式默写手册</h1>
           <p className="page-sub">
-            共 328 题 · 25 个板块。浏览时可直接一键勾选「已熟记」快速剔除已掌握的基础公式
+            共 {FORMULAS.length} 题 · {FORMULA_SECTIONS.length} 个板块。浏览时可直接一键勾选「已熟记」快速剔除已掌握的基础公式
           </p>
         </div>
         <button
@@ -145,7 +142,7 @@ export function FormulaHandbookPage() {
             setSectionFilter('');
           }}
         >
-          全部（328）
+          全部（{FORMULAS.length}）
         </button>
         {FORMULA_SUBJECTS.map((subj) => {
           const count = FORMULAS.filter((f) => f.subject === subj.id).length;

@@ -345,7 +345,7 @@ export function Layout({
             aria-selected={activeModule === 'formula'}
             className={`module-switch-btn ${activeModule === 'formula' ? 'active' : ''}`}
             onClick={() => switchModule('formula')}
-            title="公式默写手册（328题）"
+            title={`公式默写手册（${FORMULA_IDS.length}题）`}
           >
             <span className="module-switch-full">公式</span>
             <span className="module-switch-short">∑</span>

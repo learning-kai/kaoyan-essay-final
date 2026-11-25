@@ -18,9 +18,9 @@ import {
   FORMULA_VERIFICATION_NOTES,
 } from './formulas';
 
-describe('公式默写手册（328题）数据完整性、KaTeX 渲染与熟记逻辑单元测试', () => {
-  it('完整转录 328 道题、25 个板块、4 大科目与 8 条校订说明', () => {
-    expect(FORMULAS).toHaveLength(328);
+describe('公式默写手册（348题）数据完整性、KaTeX 渲染与熟记逻辑单元测试', () => {
+  it('完整转录 348 道题、25 个板块、4 大科目与 8 条校订说明', () => {
+    expect(FORMULAS).toHaveLength(348);
     expect(FORMULA_SECTIONS).toHaveLength(25);
     expect(FORMULA_VERIFICATION_NOTES).toHaveLength(8);
 
@@ -38,17 +38,36 @@ describe('公式默写手册（328题）数据完整性、KaTeX 渲染与熟记�
       calculus: 144,
       linalg: 45,
       probstat: 46,
-      signals: 93,
+      signals: 113,
     });
+
+    // All section questionIds must bijectively match FORMULAS
+    const allSectionIds = FORMULA_SECTIONS.flatMap((s) => s.questionIds);
+    expect(allSectionIds).toHaveLength(FORMULAS.length);
+    expect(new Set(allSectionIds).size).toBe(FORMULAS.length);
 
     // (1+x)^a 展开（f-034）使用三阶分式展开形式
     const f034 = FORMULAS.find((f) => f.id === 'f-034');
     expect(f034?.answer).toBe(
       '$(1+x)^a=1+ax+\\frac{a(a-1)}{2!}x^2+\\frac{a(a-1)(a-2)}{3!}x^3+o(x^3)$'
     );
+
+    // 核对照片新增与对齐项（sin ω0 t、Z 终值、门/抽样函数、单边 Z 移位与 z 域积分）
+    expect(FORMULAS.find((f) => f.id === 'f-296')?.answer).toBe(
+      '$j\\pi[\\delta(\\omega+\\omega_0)-\\delta(\\omega-\\omega_0)]$'
+    );
+    expect(FORMULAS.find((f) => f.id === 'f-316')?.answer).toContain(
+      '$x(\\infty)=\\lim_{z\\to1}(z-1)X(z)$'
+    );
+    expect(FORMULAS.find((f) => f.id === 'f-334')?.answer).toBe(
+      '$\\tau\\operatorname{Sa}\\left(\\frac{\\omega\\tau}{2}\\right)$'
+    );
+    expect(FORMULAS.find((f) => f.id === 'f-348')?.answer).toBe(
+      '$z^m\\int_z^\\infty\\frac{F(x)}{x^{m+1}}\\,dx$'
+    );
   });
 
-  it('全部 328 道题干、答案、板块标题与校订说明的 LaTeX 均可通过 KaTeX 严格渲染（0 报错，且数学公式内无斜杠分式）', () => {
+  it('全部 348 道题干、答案、板块标题与校订说明的 LaTeX 均可通过 KaTeX 严格渲染（0 报错，且数学公式内无斜杠分式）', () => {
     const texts: string[] = [
       ...FORMULA_SECTIONS.map((s) => s.fullTitle),
       ...FORMULAS.flatMap((f) => [f.question, f.answer, ...f.answerParts]),
