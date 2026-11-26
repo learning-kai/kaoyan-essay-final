@@ -1,6 +1,39 @@
 import type { Slot } from './types';
 
 export const SLOTS: Record<string, Slot> = {
+  /* ========== 万能主体核心槽位（考场只填这几个空） ========== */
+  point1: {
+    id: 'point1',
+    label: '要点1',
+    pos: 'clause',
+    filler: 'the event starts in our hall on Saturday',
+    fillerZh: '直接把题目要点 1 写成简单完整句（如时间地点 / 核心建议 / 主要问题）',
+    hint: '写最稳妥的主谓宾即可，如 the activity will start at 9 a.m.',
+  },
+  point2: {
+    id: 'point2',
+    label: '要点2',
+    pos: 'clause',
+    filler: 'participants can gain valuable experience',
+    fillerZh: '把题目要点 2 写成简单完整句（如具体内容 / 原因 / 优势）',
+    hint: '照抄题目关键词，配简单情态动词（can / will / should）',
+  },
+  point3: {
+    id: 'point3',
+    label: '要点3/期待',
+    pos: 'clause',
+    filler: 'you can take this into consideration',
+    fillerZh: '题目有第 3 个要点就填要点 3；没给就填期待（参加 / 回复 / 解决 / 采纳）',
+    hint: '万能兜底：you can accept this invitation / you can resolve this issue soon',
+  },
+  expectedResult: {
+    id: 'expectedResult',
+    label: '预期结果',
+    pos: 'clause',
+    filler: 'everything can proceed smoothly',
+    fillerZh: '万金油兜底：一切顺利推进（考场赶时间可直接照抄，零思考）',
+    hint: '默认直接写 everything can proceed smoothly，任何题型都自然高分',
+  },
   salutation: {
     id: 'salutation',
     label: '称呼',

@@ -6,6 +6,7 @@ import './components.css';
 function posLabel(pos: POS): string {
   if (pos === 'verb') return '动词原形';
   if (pos === 'doing') return 'doing 形式';
+  if (pos === 'clause') return '简单完整句';
   return '名词短语';
 }
 

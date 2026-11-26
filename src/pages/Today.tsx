@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ExamDecisionCard } from '../components/ExamDecisionCard';
 import { Layout } from '../components/Layout';
 import { renderSentenceText } from '../components/LetterView';
 import { formatLocalDateKey, getWeeklyHeatmap } from '../core/mistakes';
@@ -17,7 +18,12 @@ import {
   isExamSprintActive,
 } from '../core/scheduler';
 import { BIG_SENTENCE_IDS } from '../data/bigEssay';
-import { LESSONS, SENTENCES, STUDYABLE_SENTENCE_IDS } from '../data/templates';
+import {
+  LESSONS,
+  SENTENCES,
+  STUDYABLE_SENTENCE_IDS,
+  STUDYABLE_SENTENCE_SET,
+} from '../data/templates';
 import {
   deserializeCard,
   inferCardDeck,
@@ -61,7 +67,7 @@ export function TodayPage() {
       if (!enableBigPackCards && id.startsWith('big.pack.')) continue;
       if (new Date(card.due).getTime() <= nowMs) {
         if (inferCardDeck(id, card.deck) === 'big') big.push(id);
-        else small.push(id);
+        else if (STUDYABLE_SENTENCE_SET.has(id)) small.push(id);
       }
     }
     return { smallDueIds: small, bigDueIds: big };
@@ -168,6 +174,9 @@ export function TodayPage() {
           </div>
         </section>
       )}
+
+      {/* 30-Second Small Essay Exam Decision Card (Most Prominent Hero) */}
+      <ExamDecisionCard />
 
       {/* Core Today Task Card (Both Small & Big Decks) */}
       <section className="card-surface today-task-card">
@@ -289,10 +298,12 @@ export function TodayPage() {
         </div>
       </section>
 
-      {/* 9-Lesson Small Essay Course Progress */}
+      {/* Fast-Track Small Essay Course Progress */}
       <section className="card-surface today-section-card">
         <div className="section-row-head">
-          <h2 className="section-small-title">小作文课程进度（9 课）</h2>
+          <h2 className="section-small-title">
+            小作文极速通关课程（{LESSONS.length} 课 · 共 {STUDYABLE_SENTENCE_IDS.length} 句）
+          </h2>
           <span className="page-sub tabular-nums">
             已学 {smallLearnedCount} / {STUDYABLE_SENTENCE_IDS.length} 句
           </span>

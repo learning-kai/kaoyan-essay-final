@@ -11,7 +11,7 @@ export interface ExamPrompt {
 }
 
 /**
- * 21 道原创模拟题（7 类 × 3 题），其中 6 道故意设计为易混淆题。
+ * 32 道原创模拟题（覆盖全部 12 类模板 / 14 种考研小作文题型，含 9 道易混淆题）。
  */
 export const EXAM_PROMPTS: ExamPrompt[] = [
   /* ===== 建议信 (suggest) ===== */
@@ -158,12 +158,12 @@ export const EXAM_PROMPTS: ExamPrompt[] = [
   {
     id: 'intro-1',
     templateId: 'intro',
-    title: '向外国友人推荐一本中国历史书',
+    title: '向外国友人介绍一本中国历史名著',
     directions:
-      'Directions: Your foreign friend Emily wants to learn more about Chinese history. Write a letter to recommend a classic history book to her and describe its main features. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+      'Directions: Your foreign friend Emily wants to learn more about Chinese history. Write a letter to introduce a classic history book to her and describe its main features. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
     suggestedKeywords: ['a classic Chinese history book', 'this book'],
     confusable: true,
-    confusableNote: '题干出现 recommend，但对象是具体事物（a classic history book），属于介绍类而非建议信。',
+    confusableNote: '题干核心动词是 introduce / describe（客观介绍书籍特点），选介绍信；若题目强调 recommend 则直接选推荐信。',
   },
   {
     id: 'intro-2',
@@ -206,5 +206,111 @@ export const EXAM_PROMPTS: ExamPrompt[] = [
     directions:
       'Directions: Your senior fellow student Liu recently published a paper in a top international journal. Write a letter to congratulate him on his research breakthrough. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
     suggestedKeywords: ['publishing your paper in a top journal', 'your research breakthrough'],
+  },
+
+  /* ===== 推荐信 (recommend) ===== */
+  {
+    id: 'recommend-1',
+    templateId: 'recommend',
+    title: '向外国朋友推荐一部中国电影',
+    directions:
+      'Directions: Your foreign friend Tom wants to watch a Chinese movie to learn about modern China. Write a letter to recommend a movie to him and explain the reasons for your recommendation. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['an inspiring Chinese movie', 'this film'],
+  },
+  {
+    id: 'recommend-2',
+    templateId: 'recommend',
+    title: '向公司推荐优秀同学担任实习生',
+    directions:
+      'Directions: Write a letter to the manager of a technology company to recommend your classmate Zhang Hua for a summer internship position, highlighting his strengths and experience. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['my classmate Zhang Hua for the internship', 'his professional strengths'],
+    confusable: true,
+    confusableNote: '题干出现 internship position，但是替同学写推荐信（recommend your classmate），属于推荐信而非自己求职的申请信。',
+  },
+
+  /* ===== 投诉信 (complaint) ===== */
+  {
+    id: 'complaint-1',
+    templateId: 'complaint',
+    title: '投诉网购电子词典存在质量问题',
+    directions:
+      'Directions: You recently bought an electronic dictionary from an online store, but found that its screen flickers and the battery drains quickly. Write a letter to the customer service center to make a complaint and ask for a replacement. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['the defective electronic dictionary', 'this product issue'],
+  },
+  {
+    id: 'complaint-2',
+    templateId: 'complaint',
+    title: '投诉餐厅服务质量与卫生问题',
+    directions:
+      'Directions: You had dinner at a campus restaurant yesterday and were dissatisfied with the slow service and noisy environment. Write a letter to the manager to complain about the experience and request improvements. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['the poor service at your restaurant', 'dining experience'],
+    confusable: true,
+    confusableNote: '题干末尾虽提 improvements，但核心前提是 dissatisfied / complain about，情绪句要用 regret，属于投诉信。',
+  },
+
+  /* ===== 咨询信 (inquiry) ===== */
+  {
+    id: 'inquiry-1',
+    templateId: 'inquiry',
+    title: '咨询暑期海外交流项目详情',
+    directions:
+      'Directions: You plan to attend a summer exchange program at a foreign university. Write a letter to the program office to ask for information about the course schedule, tuition fees, and accommodation. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['the summer exchange program', 'program arrangements'],
+  },
+  {
+    id: 'inquiry-2',
+    templateId: 'inquiry',
+    title: '向图书馆咨询电子数据库使用权限',
+    directions:
+      'Directions: Write a letter to the university library to inquire about how graduating students can access online academic databases off campus and whether registration is required. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['off-campus access to online databases', 'library resources'],
+  },
+
+  /* ===== 申请 / 求职信 (apply) ===== */
+  {
+    id: 'apply-1',
+    templateId: 'apply',
+    title: '申请成为国际马拉松赛事志愿者',
+    directions:
+      'Directions: An international marathon will be held in your city next month. Write a letter to the organizing committee to apply for a volunteer position, introducing your qualifications and relevant experience. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['the volunteer position for the international marathon', 'volunteer service'],
+  },
+  {
+    id: 'apply-2',
+    templateId: 'apply',
+    title: '求职信：应聘双语编辑实习岗位',
+    directions:
+      'Directions: You saw an advertisement for a part-time bilingual editor at an educational publisher. Write a letter to the HR manager to apply for the job and explain why you are qualified. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['the part-time bilingual editor position', 'my qualifications'],
+  },
+
+  /* ===== 慰问信 (condolence) ===== */
+  {
+    id: 'condolence-1',
+    templateId: 'condolence',
+    title: '慰问生病住院的外国好友',
+    directions:
+      'Directions: You just heard that your foreign friend Alex has been hospitalized due to a sudden illness. Write a letter to express your concern, wish him a speedy recovery, and offer your help. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['your recent illness', 'your health and recovery'],
+  },
+  {
+    id: 'condolence-2',
+    templateId: 'condolence',
+    title: '慰问未能通过考试的同学',
+    directions:
+      'Directions: Your classmate Wang Lei felt frustrated after failing an important qualification exam. Write a letter to comfort him, express your concern, and encourage him to stay confident. You should write about 100 words on the ANSWER SHEET. Do not use your own name. Use "Li Ming" instead.',
+    suggestedKeywords: ['your recent setback in the exam', 'your future preparation'],
+  },
+
+  /* ===== 备忘录（归入通知 / 备忘录） ===== */
+  {
+    id: 'notice-4',
+    templateId: 'notice',
+    title: '备忘录：通知项目组成员调整例会时间',
+    directions:
+      'Directions: Suppose you are the leader of a student research team. Write a memo to all team members to announce a change in the weekly meeting time, list the agenda items, and remind everyone to submit progress reports. You should write about 100 words on the ANSWER SHEET.',
+    suggestedKeywords: ['the adjusted weekly team meeting', 'our research project'],
+    confusable: true,
+    confusableNote: '题干要求写 memo（备忘录），直接套用「通知 / 备忘录」模板，抬头写 MEMO 即可。',
   },
 ];

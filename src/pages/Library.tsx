@@ -11,6 +11,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { LetterView, speakEnglish, type LetterFilter } from '../components/LetterView';
 import { StoryLine } from '../components/StoryLine';
@@ -33,6 +34,7 @@ import './pages.css';
 type LibraryTab = 'letters' | 'big' | 'fillers' | 'cues';
 
 const POS_GROUPS: { pos: POS; title: string }[] = [
+  { pos: 'clause', title: '万能主体要点槽位（简单完整句，零词性坑）' },
   { pos: 'noun', title: '名词短语槽位' },
   { pos: 'verb', title: '动词原形槽位（前接 to / can / could）' },
   { pos: 'doing', title: 'doing 形式槽位（前接介词 / such as）' },
@@ -45,12 +47,25 @@ const BIG_PARA_META: { para: 1 | 2 | 3; title: string; badge: string }[] = [
 ];
 
 export function LibraryPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<LibraryTab>('letters');
-  const [selectedId, setSelectedId] = useState<TemplateId>('suggest');
+  const [selectedId, setSelectedId] = useState<TemplateId>(() => {
+    const param = searchParams.get('template') as TemplateId | null;
+    return param && param in TEMPLATE_MAP ? param : 'suggest';
+  });
   const [showZh, setShowZh] = useState(true);
   const [filter, setFilter] = useState<LetterFilter>('all');
   const [search, setSearch] = useState('');
   const [showChartBlocks, setShowChartBlocks] = useState(false);
+
+  useEffect(() => {
+    const param = searchParams.get('template') as TemplateId | null;
+    if (param && param in TEMPLATE_MAP) {
+      setActiveTab('letters');
+      setSelectedId(param);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const template = TEMPLATE_MAP[selectedId];
 
@@ -82,14 +97,29 @@ export function LibraryPage() {
 
   const rightRail = (
     <div>
-      <div className="rail-section-title">故事线结构</div>
+      <div className="rail-section-title">本题型 3 空位填法</div>
       <StoryLine
         nodes={template.storyLine}
         detail={template.storyLineDetail}
         vertical
       />
+      <ul
+        style={{
+          margin: '12px 0 0',
+          paddingLeft: 16,
+          fontSize: 12.5,
+          color: 'var(--ink-muted)',
+          lineHeight: 1.6,
+        }}
+      >
+        {template.slotTips.map((tip, i) => (
+          <li key={i} style={{ marginBottom: 4 }}>
+            {tip}
+          </li>
+        ))}
+      </ul>
 
-      <div className="rail-section-title" style={{ marginTop: 28 }}>
+      <div className="rail-section-title" style={{ marginTop: 24 }}>
         题型识别关键词
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -100,7 +130,7 @@ export function LibraryPage() {
         ))}
       </div>
 
-      <div className="rail-section-title" style={{ marginTop: 28 }}>
+      <div className="rail-section-title" style={{ marginTop: 24 }}>
         颜色图例
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, color: 'var(--ink-muted)' }}>
@@ -150,7 +180,7 @@ export function LibraryPage() {
         <div>
           <h1 className="page-title">模板库</h1>
           <p className="page-sub">
-            7 套小作文模板 + 大作文三段通用骨架逐字收录 · 悬停红色变量可联动高亮全文位置
+            一套万能骨架通杀全部 14 类小作文（{TEMPLATES.length} 套一键切换，只换第 1 段目的句）+ 大作文三段通用骨架
           </p>
         </div>
 

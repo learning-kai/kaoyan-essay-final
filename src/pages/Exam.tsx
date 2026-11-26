@@ -7,6 +7,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DiffResult } from '../components/DiffResult';
 import { Layout } from '../components/Layout';
 import { renderSentenceText } from '../components/LetterView';
@@ -28,6 +29,7 @@ function formatClock(sec: number): string {
 }
 
 export function ExamPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const examRecords = useProgress((s) => s.examRecords);
   const recordExam = useProgress((s) => s.recordExam);
   const recordIdentification = useProgress((s) => s.recordIdentification);
@@ -42,6 +44,11 @@ export function ExamPage() {
   const [writeElapsed, setWriteElapsed] = useState(0);
   const [essay, setEssay] = useState('');
   const [evaluation, setEvaluation] = useState<EssayEvaluation | null>(null);
+
+  const confusableCount = useMemo(
+    () => EXAM_PROMPTS.filter((p) => p.confusable).length,
+    []
+  );
 
   useEffect(() => {
     document.title =
@@ -97,6 +104,15 @@ export function ExamPage() {
     startExamWithPrompt(picked);
   };
 
+  // Support deep link /exam?template=<TemplateId> from ExamDecisionCard
+  useEffect(() => {
+    const param = searchParams.get('template') as TemplateId | null;
+    if (param && param in TEMPLATE_MAP) {
+      pickRandomPrompt(param);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   const handleChooseType = (tid: TemplateId) => {
     if (!prompt || chosenType !== null) return;
     setChosenType(tid);
@@ -131,7 +147,7 @@ export function ExamPage() {
           <div>
             <h1 className="page-title">实战模式</h1>
             <p className="page-sub">
-              21 道原创考研模拟题（含 6 道易混淆题）· 20 秒识题 → 10 分钟目标信纸写作 → 逐句模板批改
+              {EXAM_PROMPTS.length} 道原创考研模拟题（覆盖 14 类题型 · 含 {confusableCount} 道易混淆题）· 20 秒识题 → 10 分钟目标信纸写作 → 逐句模板批改
             </p>
           </div>
         </header>
@@ -145,14 +161,14 @@ export function ExamPage() {
               onClick={() => pickRandomPrompt('all')}
             >
               <Shuffle size={15} strokeWidth={1.5} />
-              随机抽一道题（21 题）
+              随机抽一道题（{EXAM_PROMPTS.length} 题）
             </button>
             <button
               type="button"
               className="btn-secondary"
               onClick={() => pickRandomPrompt('confusable')}
             >
-              专攻易混淆题（6 题）
+              专攻易混淆题（{confusableCount} 题）
             </button>
           </div>
 

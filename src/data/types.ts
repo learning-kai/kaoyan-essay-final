@@ -1,4 +1,4 @@
-export type POS = 'noun' | 'verb' | 'doing';
+export type POS = 'noun' | 'verb' | 'doing' | 'clause';
 export type Deck = 'small' | 'big';
 
 export interface Slot {
@@ -40,13 +40,22 @@ export type TemplateId =
   | 'apology'
   | 'thanks'
   | 'intro'
-  | 'congrats';
+  | 'congrats'
+  | 'recommend'
+  | 'complaint'
+  | 'inquiry'
+  | 'apply'
+  | 'condolence';
 
 export interface Template {
   id: TemplateId;
   name: string;
   priority: number;
   isOptional?: boolean;
+  emotionType: 'good' | 'regret' | 'notice';
+  purposePhrase: string;
+  purposeCueZh: string;
+  slotTips: [string, string, string];
   storyLine: string[];
   storyLineDetail: string;
   keywords: string[];

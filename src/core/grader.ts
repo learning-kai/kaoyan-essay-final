@@ -72,7 +72,12 @@ export function gradeAnswer(
     mode,
     slotPOSMap: SLOT_POS_MAP,
     slotLabelMap: SLOT_LABEL_MAP,
-    maxSlotWords: sentence.deck === 'big' || sentence.id.startsWith('big.') ? 18 : 6,
+    maxSlotWords:
+      sentence.deck === 'big' ||
+      sentence.id.startsWith('big.') ||
+      sentence.id.startsWith('universal.')
+        ? 18
+        : 6,
   });
 
   const targetWordCount = Math.max(

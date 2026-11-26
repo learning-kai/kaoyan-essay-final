@@ -24,7 +24,11 @@ import {
   MATERIAL_PACK_MAP,
   bigSentenceToSentence,
 } from '../data/bigEssay';
-import { SENTENCES, getTemplatesUsingSentence } from '../data/templates';
+import {
+  SENTENCES,
+  STUDYABLE_SENTENCE_SET,
+  getTemplatesUsingSentence,
+} from '../data/templates';
 import type { Deck, Sentence } from '../data/types';
 import { inferCardDeck, useProgress } from '../store/useProgress';
 import { useSettings, type InputMode } from '../store/useSettings';
@@ -102,19 +106,23 @@ export function ReviewPage() {
   const buildQueueForDeck = (filter: DeckFilter): string[] => {
     const allowPack = (id: string) =>
       enableBigPackCards || !id.startsWith('big.pack.');
+    const allowActive = (id: string) =>
+      allowPack(id) &&
+      (inferCardDeck(id, cards[id]?.deck) === 'big' ||
+        STUDYABLE_SENTENCE_SET.has(id));
     if (isMistakesMode) {
       const mIds = collectMistakes(reviews)
         .map((m) => m.sentenceId)
-        .filter((id) => allowPack(id) && (filter === 'all' || inferCardDeck(id) === filter));
+        .filter((id) => allowActive(id) && (filter === 'all' || inferCardDeck(id) === filter));
       return interleaveQueue(mIds);
     }
     if (isSprintMode) {
       const learned = Object.keys(cards).filter(
-        (id) => allowPack(id) && (filter === 'all' || inferCardDeck(id, cards[id]?.deck) === filter)
+        (id) => allowActive(id) && (filter === 'all' || inferCardDeck(id, cards[id]?.deck) === filter)
       );
       return buildSprintSentenceQueue(reviews, learned, 10);
     }
-    const due = getDueSentenceIds(new Date(), filter).filter(allowPack);
+    const due = getDueSentenceIds(new Date(), filter).filter(allowActive);
     return interleaveQueue(due);
   };
 

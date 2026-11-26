@@ -18,6 +18,7 @@ import { SLOTS } from '../data/fillers';
 import {
   LESSONS,
   SENTENCES,
+  STUDYABLE_SENTENCE_IDS,
   TEMPLATE_MAP,
   getTemplatesUsingSentence,
 } from '../data/templates';
@@ -243,7 +244,7 @@ export function LearnPage() {
           <div>
             <h1 className="page-title">学习新句</h1>
             <p className="page-sub">
-              按「通用骨架 → 换用零件 → 专属主体」9 课顺序解锁 · 今日已学{' '}
+              按「固定骨架 → 万能主体 3 句 → 目的句替换 → 通知头尾」{LESSONS.length} 课极速通关（共 {STUDYABLE_SENTENCE_IDS.length} 句） · 今日已学{' '}
               <span className="tabular-nums">{todayLearned}</span> / {dailyNewLimit} 句
             </p>
           </div>

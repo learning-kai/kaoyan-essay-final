@@ -148,8 +148,8 @@ export function LetterView({ template, showZh, filter }: LetterViewProps) {
   const signoff = sentences[sentences.length - 1];
 
   const isDimmed = (s: Sentence) => {
-    if (filter === 'skeleton') return s.layer === 'L3';
-    if (filter === 'body') return s.layer === 'L1';
+    if (filter === 'skeleton') return s.role === 'body';
+    if (filter === 'body') return s.role !== 'body' && s.role !== 'lead';
     return false;
   };
 

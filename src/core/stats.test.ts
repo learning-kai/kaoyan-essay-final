@@ -11,15 +11,17 @@ import {
 import { serializeCard } from '../store/useProgress';
 
 describe('第四阶段：统计聚合与 JSON 备份恢复单元测试', () => {
-  it('模板掌握度统计覆盖全部 7 套模板并正确分类稳定度', () => {
+  it('模板掌握度统计覆盖全部 12 套模板并正确分类稳定度', () => {
     const now = new Date('2026-11-23T10:00:00Z');
     const c1 = reviewCard(createInitialCard(now), Rating.Good, now);
     const cards = { 'shared.closing': serializeCard(c1) };
     const rows = computeTemplateMastery(cards);
-    expect(rows).toHaveLength(7);
-    // shared.closing is used by suggest, invite, apology, thanks, intro (5 templates)
+    expect(rows).toHaveLength(12);
+    // shared.closing is used by all 11 letter templates
     const suggestRow = rows.find((r) => r.templateId === 'suggest')!;
     expect(suggestRow.learning + suggestRow.familiar + suggestRow.mastered).toBe(1);
+    const complaintRow = rows.find((r) => r.templateId === 'complaint')!;
+    expect(complaintRow.learning + complaintRow.familiar + complaintRow.mastered).toBe(1);
   });
 
   it('未来 14 天复习量预测返回 14 天并把已到期卡归入今天', () => {
