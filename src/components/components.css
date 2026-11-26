@@ -1118,13 +1118,19 @@
   height: 1.15em;
   width: auto;
   vertical-align: -0.18em;
-  margin: 0 2px;
+  margin: 0 3px 0 1px;
+}
+
+[data-theme="dark"] .politics-inline-icon[src*="sym-bf9a696f7c24a8"],
+[data-theme="dark"] .politics-inline-icon[src*="sym-4a68823f4d5149"] {
+  filter: brightness(1.75);
 }
 
 .politics-cloze-mask {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  max-width: 100%;
   height: 1.48em;
   padding: 0 8px;
   margin: 0 2px;

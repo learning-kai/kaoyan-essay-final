@@ -608,7 +608,7 @@ export function PoliticsPracticePage() {
             <div className="toolbar-group">
               {(
                 [
-                  { id: 'cloze', label: '彩字遮罩' },
+                  { id: 'cloze', label: '考点遮罩' },
                   { id: 'blind', label: '标题盲背' },
                   { id: 'read', label: '原色精读' },
                 ] as { id: PoliticsStudyStyle; label: string }[]
@@ -907,7 +907,7 @@ export function PoliticsPracticePage() {
             </span>
             {(
               [
-                { id: 'cloze', label: '彩字遮罩（推荐）' },
+                { id: 'cloze', label: '考点遮罩（推荐）' },
                 { id: 'blind', label: '标题盲背' },
                 { id: 'read', label: '原色精读' },
               ] as { id: PoliticsStudyStyle; label: string }[]

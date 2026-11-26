@@ -18069,8 +18069,8 @@ export const POLITICS_CARDS: PoliticsCard[] = [
           },
           {
             "type": "icon",
-            "src": "./politics-assets/sym-4a68823f4d5149.png",
-            "alt": ""
+            "src": "./politics-assets/sym-4c451bd04d38d5.png",
+            "alt": "❌"
           },
           {
             "type": "text",

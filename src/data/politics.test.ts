@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest';
 import {
   buildProcessedPoliticsLines,
   colorClassForHex,
+  resolveLineClozeSpans,
 } from '../components/PoliticsCardView';
+import { POLITICS_CLOZE_RULES } from './politicsCloze';
 import {
   collectPoliticsMistakes,
   computePoliticsMajorProgress,
@@ -113,12 +115,90 @@ describe('27考研政治一页纸（100张逐字彩色卡片）数据、原图�
     }
   });
 
-  it('彩字遮罩切分与直接标熟记（移出/恢复队列）逻辑正确', () => {
-    // Card 005 has colored highlights + mnemonic breakdown
+  it('语义考点遮罩规则覆盖全部可背卡片、100% 精确匹配且零字符丢失，不遮题干与标题', () => {
+    const exemptIds = new Set(['p-037', 'p-086']);
+
+    for (const card of POLITICS_CARDS) {
+      const cardRules = POLITICS_CLOZE_RULES[card.id];
+      if (cardRules) {
+        for (const [lineIdxStr, targets] of Object.entries(cardRules)) {
+          const lineIdx = Number(lineIdxStr);
+          expect(
+            lineIdx >= 0 && lineIdx < card.lines.length,
+            `${card.id} invalid lineIdx ${lineIdx}`
+          ).toBe(true);
+          const { unmatched } = resolveLineClozeSpans(card.lines[lineIdx], targets);
+          expect(
+            unmatched,
+            `${card.id} L${lineIdx} unmatched cloze targets: ${unmatched.join(', ')}`
+          ).toEqual([]);
+        }
+      }
+
+      const processed = buildProcessedPoliticsLines(card);
+      if (!exemptIds.has(card.id)) {
+        expect(
+          processed.totalClozeCount,
+          `${card.id} (${card.title}) should have at least 1 cloze`
+        ).toBeGreaterThanOrEqual(1);
+      }
+
+      // Verify zero character loss or duplication after splitting across color spans
+      expect(processed.lines).toHaveLength(card.lines.length);
+      processed.lines.forEach((pl, li) => {
+        const origPlain = card.lines[li].tokens
+          .map((t) => (t.type === 'text' ? t.text : ''))
+          .join('');
+        const rebuiltPlain = pl.parts
+          .map((p) =>
+            p.kind === 'cloze'
+              ? p.group.tokens.map((t) => t.text).join('')
+              : p.token.type === 'text'
+                ? p.token.text
+                : ''
+          )
+          .join('');
+        expect(rebuiltPlain, `${card.id} L${li} text mismatch`).toBe(origPlain);
+      });
+    }
+
+    // Spot check p-025 (private/social labor): question stems visible, answers masked
+    const p025 = buildProcessedPoliticsLines(POLITICS_CARD_MAP['p-025']);
+    const p025Masked = p025.lines.flatMap((l) =>
+      l.parts.filter((p) => p.kind === 'cloze').map((p) => p.group.plainText)
+    );
+    expect(p025Masked).toContain('生产社会化和生产资料资本主义私人占有之间的矛盾');
+    expect(p025Masked).toContain('私人劳动和社会劳动的矛盾');
+    expect(p025Masked).toContain('由社会分工决定的');
+    expect(p025Masked).toContain('私人劳动和社会劳动能否实现统一');
+    expect(p025Masked.some((m) => m.includes('资本主义的基本矛盾'))).toBe(false);
+    expect(p025Masked.some((m) => m.includes('私有制基础上商品经济的基本矛盾'))).toBe(false);
+    expect(p025Masked).not.toContain('根源于');
+
+    // Spot check p-035: headings visible, policies masked
+    const p035 = buildProcessedPoliticsLines(POLITICS_CARD_MAP['p-035']);
+    const p035Masked = p035.lines.flatMap((l) =>
+      l.parts.filter((p) => p.kind === 'cloze').map((p) => p.group.plainText)
+    );
+    expect(p035Masked).toContain('余粮收集制、取消商品货币关系');
+    expect(p035Masked).toContain('粮食税制取代余粮收集制');
+    expect(p035Masked).not.toContain('农业');
+    expect(p035Masked).not.toContain('战时共产主义');
+
+    // Spot check p-097: complete 2-char keywords masked across red+blue token split
+    const p097 = buildProcessedPoliticsLines(POLITICS_CARD_MAP['p-097']);
+    const p097Masked = p097.lines.flatMap((l) =>
+      l.parts.filter((p) => p.kind === 'cloze').map((p) => p.group.plainText)
+    );
+    expect(p097Masked).toEqual(['前提', '关键', '重点', '基础']);
+  });
+
+  it('考点遮罩切分与直接标熟记（移出/恢复队列）逻辑正确', () => {
+    // Card 005 has semantic cloze + mnemonic breakdown
     const card005 = POLITICS_CARD_MAP['p-005'];
     expect(card005).toBeDefined();
     const processed = buildProcessedPoliticsLines(card005);
-    expect(processed.totalClozeCount).toBeGreaterThan(0);
+    expect(processed.totalClozeCount).toBe(2);
 
     const now = new Date('2026-11-23T10:00:00Z');
     const dueCard = serializeCard(

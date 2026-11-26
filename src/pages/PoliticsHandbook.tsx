@@ -164,7 +164,7 @@ export function PoliticsHandbookPage() {
             }}
           >
             {clozeMode ? <EyeOff size={15} /> : <Eye size={15} />}
-            {clozeMode ? '彩字遮罩自查' : '原色全显'}
+            {clozeMode ? '考点遮罩自查' : '原色全显'}
           </button>
           <button
             type="button"
