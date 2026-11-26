@@ -27,7 +27,7 @@ describe('第三阶段：模拟题库、整篇批改与考前冲刺单元测试'
 
 It is a great pleasure for me to write this letter to you. With this letter, I would like to offer some suggestions on improving the reading room environment.
 
-To be more specific, several points need to be mentioned as follows. First and foremost, what needs to be highlighted is that students need longer opening hours in the library. Furthermore, it is equally worth noting that more quiet study seats should be provided, especially in terms of exam preparation. Last but not least, it is sincerely hoped that these suggestions can be adopted, ensuring that everything can proceed smoothly.
+To be more specific, several points need to be mentioned as follows. First and foremost, what needs to be highlighted is that students need longer opening hours in the library. Furthermore, another key aspect worth noting is that more quiet study seats should be provided, especially in the light of exam preparation. Last but not least, I sincerely hope that these suggestions can be adopted, ensuring that everything can proceed smoothly.
 
 I truly appreciate your sparing precious time to read this letter, and I look forward to your positive response.
 
@@ -44,7 +44,7 @@ Li Ming`;
 
 It is with deep regret that I write this letter to you. With this letter, I would like to make a complaint about the defective electronic dictionary.
 
-To be more specific, several points need to be mentioned as follows. First and foremost, what needs to be highlighted is that the screen stopped working yesterday. Furthermore, it is equally worth noting that the battery runs out very fast, especially in terms of my daily study. Last but not least, it is sincerely hoped that you can replace it promptly, ensuring that everything can proceed smoothly.
+To be more specific, several points need to be mentioned as follows. First and foremost, what needs to be highlighted is that the screen stopped working yesterday. Furthermore, another key aspect worth noting is that the battery runs out very fast, especially in the light of my daily study. Last but not least, I sincerely hope that you can replace it promptly, ensuring that everything can proceed smoothly.
 
 I truly appreciate your sparing precious time to read this letter, and I look forward to your positive response.
 

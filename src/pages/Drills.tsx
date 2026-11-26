@@ -132,7 +132,7 @@ export function DrillsPage() {
     {
       type: 'F',
       name: 'F · 词性易错卡',
-      desc: '专攻 sparing / their / highlighted / worth noting / ensuring that 等高频词形坑',
+      desc: '专攻 sparing / their / highlighted / worth noting / in the light of / ensuring that 等高频词形搭配坑',
       unlockHint: '对应句子卡毕业后解锁',
       unlocked: unlockStatus.F,
       count: unlockStatus.unlockedFormCards.length,

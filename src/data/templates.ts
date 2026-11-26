@@ -512,20 +512,20 @@ export const SENTENCES: Record<string, Sentence> = {
     id: 'universal.body2',
     layer: 'L2',
     role: 'body',
-    en: 'Furthermore, it is equally worth noting that {{point2}}, especially in terms of {{aspect}}.',
-    zh: '此外，同样值得注意的是{{point2}}，尤其是在{{aspect}}方面。',
-    cue: 'Furthermore, it is equally worth noting that',
-    resultWord: 'especially in terms of',
-    slots: ['point2', 'aspect'],
+    en: 'Furthermore, another key aspect worth noting is that {{point2}}, especially in the light of {{theme}}.',
+    zh: '此外，另一个值得注意的关键方面是{{point2}}，尤其是考虑到{{theme}}。',
+    cue: 'Furthermore, another key aspect worth noting is that',
+    resultWord: 'especially in the light of',
+    slots: ['point2', 'theme'],
     storyNodeIndex: 1,
   },
   'universal.body3': {
     id: 'universal.body3',
     layer: 'L2',
     role: 'body',
-    en: 'Last but not least, it is sincerely hoped that {{point3}}, ensuring that {{expectedResult}}.',
-    zh: '最后，真诚地希望{{point3}}，以确保{{expectedResult}}。',
-    cue: 'Last but not least, it is sincerely hoped that',
+    en: 'Last but not least, I sincerely hope that {{point3}}, ensuring that {{expectedResult}}.',
+    zh: '最后，我真诚地希望{{point3}}，以确保{{expectedResult}}。',
+    cue: 'Last but not least, I sincerely hope that',
     resultWord: 'ensuring that',
     slots: ['point3', 'expectedResult'],
     storyNodeIndex: 2,
@@ -565,7 +565,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['共用万能主体 3 句，只换第一段目的句「offer some suggestions on + 题目关键词」。'],
     cueChain:
-      'It is a great pleasure → With this letter… offer some suggestions on → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… offer some suggestions on → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'invite',
@@ -595,7 +595,7 @@ export const TEMPLATES: Template[] = [
       '共用万能主体 3 句，只换第一段目的句「invite you to + 活动名」。',
     ],
     cueChain:
-      'It is a great pleasure → With this letter… invite you to → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… invite you to → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'notice',
@@ -622,11 +622,11 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: [
       '首句是 all students… their precious time（不是 your）。',
-      "落款按题目写（没指定就写 The Students' Union）；主体 3 句与书信完全共用！",
+      "落款按题目写（没指定就写 The Students' Union）；主体 3 句与书信完全共用，通知以组织发文时把第 3 句 I sincerely hope 换成 we sincerely hope 即可。",
       '若考备忘录（Memo）：把抬头 NOTICE 换成 MEMO（下接 To / From / Subject），首句把 all students… this notice 改为 you… this memo 即可直接套用。',
     ],
     cueChain:
-      'NOTICE → We greatly appreciate all students → To ensure the smooth implementation → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → You are kindly requested',
+      'NOTICE → We greatly appreciate all students → To ensure the smooth implementation → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → You are kindly requested',
   },
   {
     id: 'intro',
@@ -653,7 +653,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['共用万能主体 3 句，只换第一段目的句「introduce + 事物 + to you」。'],
     cueChain:
-      'It is a great pleasure → With this letter… introduce… to you → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… introduce… to you → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'recommend',
@@ -680,7 +680,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['推荐具体事物或人用 recommend … to you；推荐“方法/做法”优先用建议信。'],
     cueChain:
-      'It is a great pleasure → With this letter… recommend… to you → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… recommend… to you → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'apology',
@@ -707,7 +707,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['情绪句必须用 It is with deep regret that I write this letter to you.，不要用 pleasure！'],
     cueChain:
-      'It is with deep regret → With this letter… apologize for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is with deep regret → With this letter… apologize for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'thanks',
@@ -734,7 +734,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['共用万能主体 3 句，只换第一段目的句「express my gratitude for + 题目关键词」。'],
     cueChain:
-      'It is a great pleasure → With this letter… express my gratitude for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… express my gratitude for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'complaint',
@@ -761,7 +761,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['投诉信属于负面情绪，首句用 It is with deep regret that I write this letter to you.。'],
     cueChain:
-      'It is with deep regret → With this letter… make a complaint about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is with deep regret → With this letter… make a complaint about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'inquiry',
@@ -788,7 +788,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['把题目要问的 2–3 个问题直接写成陈述句（I would like to know…）塞进要点 1、2，避免写错疑问句语序！'],
     cueChain:
-      'It is a great pleasure → With this letter… request some information about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… request some information about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'apply',
@@ -815,7 +815,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['申请项目、志愿者、奖学金与求职应聘全部共用 apply for + 题目关键词，一套通杀！'],
     cueChain:
-      'It is a great pleasure → With this letter… apply for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… apply for → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'congrats',
@@ -842,7 +842,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['结尾直接共用通用结尾，无需再单独背祝贺信专属结尾。'],
     cueChain:
-      'It is a great pleasure → With this letter… extend my warmest congratulations on → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is a great pleasure → With this letter… extend my warmest congratulations on → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
   {
     id: 'condolence',
@@ -869,7 +869,7 @@ export const TEMPLATES: Template[] = [
     ],
     warnings: ['慰问信首句用 It is with deep regret that I write this letter to you.，表达诚挚关切。'],
     cueChain:
-      'It is with deep regret → With this letter… express my sincere concern about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, it is equally worth noting → Last but not least, it is sincerely hoped → ensuring that → I truly appreciate',
+      'It is with deep regret → With this letter… express my sincere concern about → To be more specific → First and foremost, what needs to be highlighted → Furthermore, another key aspect worth noting → Last but not least, I sincerely hope → ensuring that → I truly appreciate',
   },
 ];
 
@@ -896,7 +896,7 @@ export const LESSONS: Lesson[] = [
   {
     id: 2,
     title: '第 2 课 · L2 万能主体 3 句（全题型通杀）',
-    subtitle: '要点1（what 从句）→ 要点2（worth noting）→ 要点3（ensuring that）',
+    subtitle: '要点1（what 从句）→ 要点2（worth noting + in the light of）→ 要点3（I sincerely hope + ensuring that）',
     layer: 'L2',
     sentenceIds: ['universal.body1', 'universal.body2', 'universal.body3'],
   },

@@ -241,7 +241,7 @@ export function ExamDecisionCard() {
                   </ul>
                   {tpl.id === 'notice' && (
                     <div className="edc-memo-note">
-                      备忘录（Memo）速改：抬头 <code>NOTICE</code> → <code>MEMO</code>（下接 To / From / Subject），首句 <code>all students… this notice</code> → <code>you… this memo</code>，其余原样直套！
+                      通知以组织发文时，将第 3 句 <code>I sincerely hope</code> 改为 <code>we sincerely hope</code>；若考备忘录（Memo），再把抬头 <code>NOTICE</code> → <code>MEMO</code>（下接 To / From / Subject），首句 <code>all students… this notice</code> → <code>you… this memo</code> 即可直套！
                     </div>
                   )}
                 </div>

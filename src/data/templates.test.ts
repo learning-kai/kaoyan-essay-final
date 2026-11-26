@@ -36,6 +36,11 @@ describe('万能小作文模板数据完整性、字数区间与向后兼容校�
       expect(tpl.sentenceIds).toContain('shared.lead.specific');
       expect(tpl.slotTips).toHaveLength(3);
     }
+
+    // 万能主体 3 句绝不重复使用 it is 句式，保持与第一段情绪句不同的句式层次
+    for (const bodyId of ['universal.body1', 'universal.body2', 'universal.body3']) {
+      expect(SENTENCES[bodyId].en.toLowerCase()).not.toContain('it is');
+    }
   });
 
   it('全部 11 类书信共用同一套固定骨架（称呼/情绪/引导/主体/结尾/落款），仅替换目的句', () => {
