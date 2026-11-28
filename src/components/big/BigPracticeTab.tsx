@@ -4,7 +4,9 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
+  RefreshCcw,
   RefreshCw,
+  ShieldCheck,
 } from 'lucide-react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -19,10 +21,13 @@ import {
   assemblePicClause,
   BIG_PROMPTS,
   BIG_PROMPT_MAP,
-  BIG_SENTENCES,
-  bigSentenceToSentence,
   MATERIAL_PACK_MAP,
   PLAN_VAR_MAP,
+  UNIVERSAL_FALLBACK_SETS,
+  bigSentenceToSentence,
+  getBigSentencesForFormat,
+  type BigFormatMode,
+  type BigPrompt,
 } from '../../data/bigEssay';
 import { useProgress } from '../../store/useProgress';
 import { BigEssayPaperEditor, BigEssayPaperPreview } from './BigEssayPaper';
@@ -34,13 +39,30 @@ interface BigPracticeTabProps {
   initialVars?: Record<string, string> | null;
 }
 
-const EXAM_LIMIT_SEC = 25 * 60; // 25 minutes
+const EXAM_LIMIT_SEC = 15 * 60; // 15-minute speedrun exam target
 
 function formatMMSS(sec: number): string {
   const s = Math.max(0, sec);
   const mm = String(Math.floor(s / 60)).padStart(2, '0');
   const ss = String(s % 60).padStart(2, '0');
   return `${mm}:${ss}`;
+}
+
+function getPromptVars(prompt: BigPrompt): Record<string, string> {
+  const pack = MATERIAL_PACK_MAP[prompt.recommendedPackId];
+  return {
+    X: prompt.sampleX ?? pack.vars.X,
+    PIC: assemblePicClause(prompt.samplePicParts),
+    CHART: prompt.sampleChartParts?.chart ?? 'bar chart',
+    TOPIC: prompt.sampleChartParts?.topic ?? 'this field',
+    T1: prompt.sampleChartParts?.t1 ?? '2020',
+    T2: prompt.sampleChartParts?.t2 ?? '2024',
+    COUNT: prompt.sampleChartParts?.count ?? 'four',
+    DATA: prompt.sampleChartParts?.data ?? '',
+    B1: prompt.sampleB1 ?? pack.vars.B1,
+    B2: prompt.sampleB2 ?? pack.vars.B2,
+    DO: prompt.sampleDO ?? pack.vars.DO,
+  };
 }
 
 export function BigPracticeTab({
@@ -50,26 +72,39 @@ export function BigPracticeTab({
   const recordBigExam = useProgress((s) => s.recordBigExam);
 
   const [promptId, setPromptId] = useState(initialPromptId ?? BIG_PROMPTS[0].id);
-  const [level, setLevel] = useState<FadingLevel>('completion');
+  const [level, setLevel] = useState<FadingLevel>('semi');
   const [paragraphs, setParagraphs] = useState<[string, string, string]>(['', '', '']);
   const [grade, setGrade] = useState<BigEssayGradeResult | null>(null);
   const [showRefEssay, setShowRefEssay] = useState(false);
 
-  // Independent level quick plan sheet before writing
+  // Independent level quick 5-blank plan sheet before writing
   const [indPhase, setIndPhase] = useState<'plan' | 'write'>('plan');
   const [indX, setIndX] = useState('');
   const [indPic, setIndPic] = useState('');
+  const [indData, setIndData] = useState('');
   const [indB1, setIndB1] = useState('');
   const [indB2, setIndB2] = useState('');
   const [indDO, setIndDO] = useState('');
 
-  // 25-min timer for independent exam (also tracks elapsed seconds for all levels)
   const [remainSec, setRemainSec] = useState(EXAM_LIMIT_SEC);
   const startedAtRef = useRef(Date.now());
 
   useEffect(() => {
-    if (initialPromptId) setPromptId(initialPromptId);
+    if (initialPromptId && BIG_PROMPT_MAP[initialPromptId]) {
+      setPromptId(initialPromptId);
+    }
   }, [initialPromptId]);
+
+  useEffect(() => {
+    if (initialVars && initialVars.X) {
+      setIndX(initialVars.X ?? '');
+      setIndPic(initialVars.PIC ?? '');
+      setIndData(initialVars.DATA ?? '');
+      setIndB1(initialVars.B1 ?? '');
+      setIndB2(initialVars.B2 ?? '');
+      setIndDO(initialVars.DO ?? '');
+    }
+  }, [initialVars]);
 
   useEffect(() => {
     if (level !== 'independent' || grade) return;
@@ -80,29 +115,31 @@ export function BigPracticeTab({
   }, [level, grade]);
 
   const prompt = BIG_PROMPT_MAP[promptId] ?? BIG_PROMPTS[0];
+  const promptFormat: BigFormatMode = prompt.format ?? 'picture';
+  const promptChartKind = prompt.chartKind ?? 'dynamic';
 
   const activeVars: Record<string, string> = useMemo(() => {
+    const base = getPromptVars(prompt);
     if (level === 'independent') {
       return {
+        ...base,
         X: indX.trim(),
         PIC: indPic.trim(),
+        DATA: indData.trim(),
         B1: indB1.trim(),
         B2: indB2.trim(),
         DO: indDO.trim(),
       };
     }
     if (initialVars && initialPromptId === prompt.id && initialVars.X) {
-      return initialVars;
+      return { ...base, ...initialVars };
     }
-    const pack = MATERIAL_PACK_MAP[prompt.recommendedPackId];
-    return {
-      ...pack.vars,
-      PIC: assemblePicClause(prompt.samplePicParts),
-    };
+    return base;
   }, [
     level,
     indX,
     indPic,
+    indData,
     indB1,
     indB2,
     indDO,
@@ -112,8 +149,12 @@ export function BigPracticeTab({
   ]);
 
   const activeSentences = useMemo(
-    () => BIG_SENTENCES.filter((s) => !s.optional),
-    []
+    () =>
+      getBigSentencesForFormat(promptFormat, {
+        includeOptionalP2S4: false,
+        chartKind: promptChartKind,
+      }),
+    [promptFormat, promptChartKind]
   );
 
   // Level 1: 50% fixed-words cloze with filled variables
@@ -152,6 +193,8 @@ export function BigPracticeTab({
     );
     const res = gradeBigEssayAlignment(fullText, {
       includeOptionalP2S4: false,
+      format: promptFormat,
+      chartKind: promptChartKind,
       planVars: level === 'independent' ? activeVars : undefined,
     });
     setGrade(res);
@@ -164,31 +207,38 @@ export function BigPracticeTab({
     });
   };
 
+  const formatBadge =
+    promptFormat === 'hybrid'
+      ? '图文结合 · 2024风'
+      : promptFormat === 'chart'
+        ? promptChartKind === 'static'
+          ? '纯图表 · 静态占比'
+          : '纯图表 · 2025风'
+        : prompt.isNegativeFlip
+          ? '纯图画 · 负题正转'
+          : '纯图画';
+
+  const visibleSummaryKeys =
+    promptFormat === 'chart'
+      ? (['X', 'DATA', 'B1', 'B2', 'DO'] as const)
+      : promptFormat === 'hybrid'
+        ? (['X', 'PIC', 'DATA', 'B1', 'B2', 'DO'] as const)
+        : (['X', 'PIC', 'B1', 'B2', 'DO'] as const);
+
   return (
     <div>
       {/* Controls & Fading Level Selector */}
       <section className="card-surface today-section-card">
         <div className="big-plan-head">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <span className="drill-tag">渐隐迁移实战</span>
-            <select
-              className="setting-input"
-              value={promptId}
-              onChange={(e) => resetSession(undefined, e.target.value)}
-              aria-label="选择实战题目"
-            >
-              {BIG_PROMPTS.map((p, idx) => (
-                <option key={p.id} value={p.id}>
-                  模拟题 {idx + 1}：{p.title}
-                </option>
-              ))}
-            </select>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span className="drill-tag">Step 3 · Day 4–5 · 15 分钟整篇实战</span>
+            <span className="edc-emo-tag edc-emo-good">{formatBadge}</span>
           </div>
 
           {level === 'independent' && (
             <div
               className={`big-plan-timer tabular-nums ${remainSec <= 180 ? 'is-amber' : ''}`}
-              title="25 分钟考场大作文倒计时"
+              title="15 分钟考场大作文速写倒计时"
             >
               <Clock size={14} strokeWidth={1.7} />
               <span>{formatMMSS(remainSec)}</span>
@@ -196,27 +246,41 @@ export function BigPracticeTab({
           )}
         </div>
 
+        <select
+          className="setting-input"
+          style={{ width: '100%', marginTop: 10 }}
+          value={promptId}
+          onChange={(e) => resetSession(undefined, e.target.value)}
+          aria-label="选择实战题目"
+        >
+          {BIG_PROMPTS.map((p, idx) => (
+            <option key={p.id} value={p.id}>
+              第 {idx + 1} 题 · {p.title}
+            </option>
+          ))}
+        </select>
+
         <div className="tab-bar" style={{ marginTop: 12, marginBottom: 12 }}>
           <button
             type="button"
             className={`tab-pill ${level === 'completion' ? 'active' : ''}`}
             onClick={() => resetSession('completion')}
           >
-            1. 补全（变量已填，固定句挖空 50%）
+            1. 补全（骨架挖空 50%）
           </button>
           <button
             type="button"
             className={`tab-pill ${level === 'semi' ? 'active' : ''}`}
             onClick={() => resetSession('semi')}
           >
-            2. 半独立（规划卡 + 首词链）
+            2. 半独立（5 空 + 10 句首词链）
           </button>
           <button
             type="button"
             className={`tab-pill ${level === 'independent' ? 'active' : ''}`}
             onClick={() => resetSession('independent')}
           >
-            3. 独立实战（25 分钟计时）
+            3. 独立实战（15 分钟计时）
           </button>
         </div>
 
@@ -231,14 +295,22 @@ export function BigPracticeTab({
             {prompt.requirementsZh}
           </p>
         </div>
+
+        {prompt.isNegativeFlip && prompt.negativeFlipTip && (
+          <div className="edc-memo-note" style={{ marginTop: 10 }}>
+            <RefreshCcw size={13} style={{ verticalAlign: -2, marginRight: 5 }} />
+            <strong>负题正转：</strong>
+            {prompt.negativeFlipTip}
+          </div>
+        )}
       </section>
 
-      {/* Level 1: Completion prompt (variables filled, fixed words 50% blanked) */}
+      {/* Level 1: Completion prompt */}
       {level === 'completion' && (
         <section className="card-surface today-section-card">
           <div className="section-row-head" style={{ marginBottom: 10 }}>
             <h3 className="section-small-title">
-              补全提示（红色变量已代好，补全被挖空的 50% 固定句型）
+              补全提示（5 个空位已代好，补全挖空的 50% 固定骨架）
             </h3>
             <span className="page-sub" style={{ margin: 0 }}>
               在下方考场作文纸写出完整三段
@@ -251,7 +323,7 @@ export function BigPracticeTab({
                   {pg.roleLabel}
                 </span>
                 {pg.sentences.map(({ bs, parts }, si) => (
-                  <Fragment key={bs.id}>
+                  <Fragment key={`${bs.id}-${si}`}>
                     {si > 0 ? ' ' : ''}
                     {parts.map((cp, pi) => {
                       if (cp.kind === 'slot') {
@@ -294,15 +366,15 @@ export function BigPracticeTab({
         </section>
       )}
 
-      {/* Level 2: Semi-independent (Plan Sheet summary + 10-sentence Cue Chain) */}
+      {/* Level 2: Semi-independent (5 core blanks + 10-sentence Cue Chain) */}
       {level === 'semi' && (
         <section className="card-surface today-section-card">
           <h3 className="section-small-title" style={{ marginBottom: 10 }}>
-            半独立支架：规划卡变量 + 10 句首词链
+            半独立支架：5 个考场空位 + 本题型 10 句首词链
           </h3>
           <div className="big-semi-vars">
-            {(['X', 'PIC', 'B1', 'B2', 'DO', 'G', 'LIMIT'] as const).map((k) => {
-              const val = activeVars[k] || PLAN_VAR_MAP[k]?.defaultValue;
+            {visibleSummaryKeys.map((k) => {
+              const val = activeVars[k];
               if (!val) return null;
               return (
                 <div key={k} className="big-semi-var-item">
@@ -314,7 +386,7 @@ export function BigPracticeTab({
           </div>
           <div className="big-cue-chain-box">
             {activeSentences.map((s, idx) => (
-              <span key={s.id} className="big-cue-pill">
+              <span key={`${s.id}-${idx}`} className="big-cue-pill">
                 <strong className="tabular-nums">{idx + 1}.</strong> {s.cue}…
               </span>
             ))}
@@ -322,17 +394,41 @@ export function BigPracticeTab({
         </section>
       )}
 
-      {/* Level 3: Independent (Step 1 quick plan -> Step 2 25-min writing) */}
+      {/* Level 3: Independent (60s 5-blank plan -> 15-min writing) */}
       {level === 'independent' && indPhase === 'plan' && (
         <section className="card-surface today-section-card">
           <h3 className="section-small-title" style={{ marginBottom: 10 }}>
-            第一步：先定 4 项必填变量（3 分钟内定稿，随后进入答题纸书写）
+            第一步：60 秒先定 5 个空位（定完立刻在答题纸上默写三段）
           </h3>
+
+          <div className="big-fallback-bar" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600 }}>
+              <ShieldCheck size={14} style={{ color: 'var(--gold)' }} />
+              <span>卡壳防冷场 · 一键套入万金油兜底词（自动填 B1/B2/DO）：</span>
+            </div>
+            <div className="toolbar-group" style={{ marginTop: 6 }}>
+              {UNIVERSAL_FALLBACK_SETS.map((fb) => (
+                <button
+                  key={fb.id}
+                  type="button"
+                  className="btn-secondary formula-mini-btn"
+                  onClick={() => {
+                    setIndB1(fb.B1);
+                    setIndB2(fb.B2);
+                    setIndDO(fb.DO);
+                  }}
+                >
+                  {fb.category}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="big-plan-form">
             <input
               type="text"
               className="setting-input big-plan-input"
-              placeholder="主题词 X（单数或不可数名词短语，如 traditional culture）"
+              placeholder="主题词 X（单数或不可数正面名词短语，如 public green space）"
               value={indX}
               onChange={(e) => setIndX(e.target.value)}
             />
@@ -342,13 +438,24 @@ export function BigPracticeTab({
                 <span>{checkPlanVarX(indX).hint}</span>
               </div>
             )}
-            <input
-              type="text"
-              className="setting-input big-plan-input"
-              placeholder="图片描述 PIC（主体 + 动作，可选 while / resulting in）"
-              value={indPic}
-              onChange={(e) => setIndPic(e.target.value)}
-            />
+            {(promptFormat === 'picture' || promptFormat === 'hybrid') && (
+              <input
+                type="text"
+                className="setting-input big-plan-input"
+                placeholder="画面描述 PIC（主体 + 动作，可选 while / resulting in）"
+                value={indPic}
+                onChange={(e) => setIndPic(e.target.value)}
+              />
+            )}
+            {(promptFormat === 'chart' || promptFormat === 'hybrid') && (
+              <input
+                type="text"
+                className="setting-input big-plan-input"
+                placeholder="核心数据句 DATA（如 the number of city parks rose from 406 to 670）"
+                value={indData}
+                onChange={(e) => setIndData(e.target.value)}
+              />
+            )}
             <div className="big-pic-grid">
               <input
                 type="text"
@@ -393,7 +500,7 @@ export function BigPracticeTab({
                 className="btn-primary"
                 onClick={() => setIndPhase('write')}
               >
-                规划完成，开始在答题纸上写整篇
+                5 空定完，开始 15 分钟写整篇 →
               </button>
             </div>
           </div>
@@ -406,17 +513,17 @@ export function BigPracticeTab({
           {level === 'independent' && (
             <section className="card-surface today-section-card" style={{ padding: '12px 16px' }}>
               <div className="section-row-head" style={{ marginBottom: 6 }}>
-                <span className="setting-label">我的考场规划速记</span>
+                <span className="setting-label">我的考场 5 空速记</span>
                 <button
                   type="button"
                   className="btn-ghost formula-mini-btn"
                   onClick={() => setIndPhase('plan')}
                 >
-                  修改规划
+                  修改 5 空
                 </button>
               </div>
               <div className="big-semi-vars">
-                {(['X', 'PIC', 'B1', 'B2', 'DO'] as const).map((k) =>
+                {visibleSummaryKeys.map((k) =>
                   activeVars[k] ? (
                     <div key={k} className="big-semi-var-item">
                       <span className="slot-chip">{k}</span>
@@ -534,7 +641,7 @@ export function BigPracticeTab({
           {grade.missingFragments.length === 0 ? (
             <div style={{ color: 'var(--ok)', display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
               <CheckCircle2 size={16} />
-              <span>太稳了！10 句核心固定句型全部准确对齐。</span>
+              <span>太稳了！本题型 10 句核心固定句型全部准确对齐。</span>
             </div>
           ) : (
             <div>
@@ -554,7 +661,7 @@ export function BigPracticeTab({
 
           <div className="big-sentence-score-grid">
             {grade.sentenceResults.map((sr) => (
-              <div key={sr.sentenceId} className="big-sent-score-chip tabular-nums">
+              <div key={`${sr.sentenceId}-${sr.sentenceNumber}`} className="big-sent-score-chip tabular-nums">
                 <span>
                   第 {sr.sentenceNumber} 句·{sr.role}
                 </span>
@@ -579,10 +686,9 @@ export function BigPracticeTab({
       {showRefEssay && (
         <div style={{ marginTop: 14 }}>
           <BigEssayPaperPreview
-            vars={{
-              ...MATERIAL_PACK_MAP[prompt.recommendedPackId].vars,
-              PIC: assemblePicClause(prompt.samplePicParts),
-            }}
+            vars={getPromptVars(prompt)}
+            format={promptFormat}
+            chartKind={promptChartKind}
             title={`参考范文 · ${prompt.title}`}
           />
         </div>

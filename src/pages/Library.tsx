@@ -144,16 +144,16 @@ export function LibraryPage() {
 
   const bigRightRail = (
     <div>
-      <div className="rail-section-title">大作文变量体系</div>
+      <div className="rail-section-title">真·万能 5 空体系</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, color: 'var(--ink-muted)', lineHeight: 1.65 }}>
         <div>
-          <strong style={{ color: 'var(--slot)' }}>全局变量 X</strong> · 全文贯穿 7 次，只定一次（须为单数或不可数名词短语）
+          <strong style={{ color: 'var(--slot)' }}>全局变量 X</strong> · 全文贯穿 7 次，只定一次（单数/不可数正面名词；负面漫画走“负题正转”）
         </div>
         <div>
-          <strong style={{ color: 'var(--ink)' }}>4 个必填项</strong> · X、PIC、B1/B2、DO，其余 17 个局部槽位均有考场默认值
+          <strong style={{ color: 'var(--ink)' }}>全篇仅填 5 空</strong> · X、PIC/DATA、B1、B2、DO，其余 100% 固定直抄，已全面泛化通杀全话题
         </div>
         <div>
-          <strong style={{ color: 'var(--gold)' }}>P2.S4 可选句</strong> · 时间紧或全文超 200 词时直接删掉，段落仍连贯
+          <strong style={{ color: 'var(--gold)' }}>3 壳第一段</strong> · 纯图画 / 纯图表（2025风）/ 图文结合（2024风）只换第 1 段外壳，二三段完全复用
         </div>
       </div>
 
@@ -161,7 +161,7 @@ export function LibraryPage() {
         联动提示
       </div>
       <p style={{ fontSize: 13, color: 'var(--ink-muted)', lineHeight: 1.65, margin: 0 }}>
-        鼠标悬停正文任意红色变量胶囊，全文所有同名变量会同步高亮；点击胶囊可查看词性约束与默认值。
+        鼠标悬停正文任意红色变量胶囊，全文所有同名变量会同步高亮；点击胶囊可查看词性约束与示例。
       </p>
     </div>
   );

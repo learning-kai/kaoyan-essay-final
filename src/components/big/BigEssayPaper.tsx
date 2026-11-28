@@ -2,9 +2,10 @@ import { Volume2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { getBigEssayWordCountStatus } from '../../core/grader';
 import {
-  BIG_SENTENCES,
   countEnglishWords,
+  getBigSentencesForFormat,
   renderFullBigEssay,
+  type BigFormatMode,
 } from '../../data/bigEssay';
 import { speakEnglish } from '../LetterView';
 import { BigVarHoverProvider, renderBigSentenceRich } from './BigVarHighlight';
@@ -13,6 +14,8 @@ import '../components.css';
 interface BigEssayPaperPreviewProps {
   vars: Record<string, string>;
   includeOptionalP2S4?: boolean;
+  format?: BigFormatMode;
+  chartKind?: 'dynamic' | 'static';
   fieldWarnings?: Record<string, string>;
   title?: string;
   showSpeak?: boolean;
@@ -21,15 +24,22 @@ interface BigEssayPaperPreviewProps {
 export function BigEssayPaperPreview({
   vars,
   includeOptionalP2S4 = false,
+  format = 'picture',
+  chartKind = 'dynamic',
   fieldWarnings,
   title = '考场答题纸预览',
   showSpeak = true,
 }: BigEssayPaperPreviewProps) {
-  const rendered = renderFullBigEssay(vars, { includeOptionalP2S4 });
+  const rendered = renderFullBigEssay(vars, {
+    includeOptionalP2S4,
+    format,
+    chartKind,
+  });
   const status = getBigEssayWordCountStatus(rendered.wordCount);
-  const activeSentences = BIG_SENTENCES.filter(
-    (s) => includeOptionalP2S4 || !s.optional
-  );
+  const activeSentences = getBigSentencesForFormat(format, {
+    includeOptionalP2S4,
+    chartKind,
+  });
 
   const paraGroups: { paragraph: 1 | 2 | 3; roleLabel: string }[] = [
     { paragraph: 1, roleLabel: '描述' },
@@ -111,17 +121,17 @@ export function BigEssayPaperEditor({
     {
       idx: 0,
       role: '描述',
-      placeholder: '第一段：描述图画 → 揭示深层主题 X → 积极意义…',
+      placeholder: '第一段：图画/图表/图文外壳 → 揭示深层主题 X →（纯图画加意义句）…',
     },
     {
       idx: 1,
       role: '论证',
-      placeholder: '第二段：带来好处 B1/B2 → 普及原因与 DO → 媒体关注 →（可选）反映…',
+      placeholder: '第二段：带来好处 B1/B2 → 日益受重视并使人们 DO → 现代媒体与教育推动…',
     },
     {
       idx: 2,
       role: '建议',
-      placeholder: '第三段：关键在于 → 社会怎么做 → 个人怎么做 → Only in this way…',
+      placeholder: '第三段：关键在于 → 社会提供支持应对挑战 → 个人不轻视不走极端 → Only in this way…',
     },
   ];
 

@@ -1,8 +1,9 @@
 import { Rating } from 'ts-fsrs';
 import {
-  BIG_SENTENCES,
   PLAN_VARS,
   countEnglishWords,
+  getBigSentencesForFormat,
+  type BigFormatMode,
   type BigSentence,
 } from '../data/bigEssay';
 import { SLOTS } from '../data/fillers';
@@ -389,13 +390,24 @@ export interface PlanSheetCheckReport {
   hints: string[];
 }
 
-export function checkPlanSheet(vars: Record<string, string>): PlanSheetCheckReport {
+export function checkPlanSheet(
+  vars: Record<string, string>,
+  format: BigFormatMode = 'picture'
+): PlanSheetCheckReport {
   const fieldHints: Record<string, string> = {};
-  const requiredIds = ['X', 'PIC', 'B1', 'B2', 'DO'];
+  const requiredIds =
+    format === 'chart'
+      ? ['X', 'DATA', 'B1', 'B2', 'DO']
+      : format === 'hybrid'
+        ? ['X', 'PIC', 'DATA', 'B1', 'B2', 'DO']
+        : ['X', 'PIC', 'B1', 'B2', 'DO'];
   const allRequiredFilled = requiredIds.every((id) => Boolean(vars[id]?.trim()));
 
-  if (!vars.PIC?.trim()) {
-    fieldHints.PIC = '请填写图片描述（主体 + 动作/状态）';
+  if ((format === 'picture' || format === 'hybrid') && !vars.PIC?.trim()) {
+    fieldHints.PIC = '请填写画面描述（主体 + 动作/状态）';
+  }
+  if ((format === 'chart' || format === 'hybrid') && !vars.DATA?.trim()) {
+    fieldHints.DATA = '请用一句英文写出核心数据变化或占比（如 the figure rose from 406 to 670）';
   }
   const xRes = checkPlanVarX(vars.X ?? '');
   if (!xRes.ok && xRes.hint) fieldHints.X = xRes.hint;
@@ -525,12 +537,18 @@ export function gradeBigEssayAlignment(
   options?: {
     sentences?: BigSentence[];
     includeOptionalP2S4?: boolean;
+    format?: BigFormatMode;
+    chartKind?: 'dynamic' | 'static';
     planVars?: Partial<Record<string, string>>;
   }
 ): BigEssayGradeResult {
   const includeOpt = options?.includeOptionalP2S4 ?? false;
   const activeSentences =
-    options?.sentences ?? BIG_SENTENCES.filter((s) => includeOpt || !s.optional);
+    options?.sentences ??
+    getBigSentencesForFormat(options?.format ?? 'picture', {
+      includeOptionalP2S4: includeOpt,
+      chartKind: options?.chartKind,
+    });
   const userTokens = tokenizeUserInput(userText);
   const wordCount = countEnglishWords(userText);
   const wordCountStatus = getBigEssayWordCountStatus(wordCount);

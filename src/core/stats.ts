@@ -1,6 +1,6 @@
 import { formatLocalDateKey } from './mistakes';
 import { getMasteryLevel } from './scheduler';
-import { BIG_SENTENCES } from '../data/bigEssay';
+import { BIG_CHART_SHELL_SENTENCES, BIG_SENTENCES } from '../data/bigEssay';
 import { SENTENCES, TEMPLATES } from '../data/templates';
 import {
   deserializeCard,
@@ -68,12 +68,13 @@ export function computeBigParagraphMastery(
   cards: Record<string, SerializedCard>
 ): BigParagraphMasteryRow[] {
   const specs: { paragraph: 1 | 2 | 3; name: string }[] = [
-    { paragraph: 1, name: '第一段（描述与意义）' },
-    { paragraph: 2, name: '第二段（价值与变化）' },
-    { paragraph: 3, name: '第三段（关键与行动）' },
+    { paragraph: 1, name: '第一段（描述与图表壳）' },
+    { paragraph: 2, name: '第二段（价值与普及）' },
+    { paragraph: 3, name: '第三段（辩证与收尾）' },
   ];
+  const studyPool = [...BIG_SENTENCES.filter((s) => !s.optional), ...BIG_CHART_SHELL_SENTENCES];
   return specs.map((spec) => {
-    const sents = BIG_SENTENCES.filter((s) => s.paragraph === spec.paragraph);
+    const sents = studyPool.filter((s) => s.paragraph === spec.paragraph);
     let unlearned = 0;
     let learning = 0;
     let familiar = 0;
