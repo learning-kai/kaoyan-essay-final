@@ -46,7 +46,11 @@ function formatMMSS(sec: number): string {
 
 function getFormatLabel(p: BigPrompt): string {
   if (p.format === 'hybrid') return '图文结合 · 2024风';
-  if (p.format === 'chart') return p.chartKind === 'static' ? '纯图表 · 静态占比' : '纯图表 · 2025动态风';
+  if (p.format === 'chart') {
+    if (p.chartKind === 'dual') return '纯图表 · 2026双图风';
+    if (p.chartKind === 'static') return '纯图表 · 静态占比';
+    return '纯图表 · 2025动态风';
+  }
   if (p.isNegativeFlip) return '纯图画 · 负题正转';
   return '纯图画';
 }
@@ -482,17 +486,19 @@ export function BigPlanTab({
 
               {promptFormat === 'chart' && (
                 <div className="big-pic-grid" style={{ marginBottom: 8 }}>
+                  {promptChartKind !== 'dual' && (
+                    <input
+                      type="text"
+                      className="setting-input big-plan-input"
+                      placeholder={`图表名（默认 ${prompt.sampleChartParts?.chart ?? 'table'}）`}
+                      value={varChart}
+                      onChange={(e) => setVarChart(e.target.value)}
+                    />
+                  )}
                   <input
                     type="text"
                     className="setting-input big-plan-input"
-                    placeholder={`图表名（默认 ${prompt.sampleChartParts?.chart ?? 'table'}）`}
-                    value={varChart}
-                    onChange={(e) => setVarChart(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="setting-input big-plan-input"
-                    placeholder={`图表主题（如 ${prompt.sampleChartParts?.topic ?? 'this field'}）`}
+                    placeholder={`图表调查主题（如 ${prompt.sampleChartParts?.topic ?? 'this survey'}）`}
                     value={varTopic}
                     onChange={(e) => setVarTopic(e.target.value)}
                   />
@@ -513,7 +519,7 @@ export function BigPlanTab({
                         onChange={(e) => setVarT2(e.target.value)}
                       />
                     </>
-                  ) : (
+                  ) : promptChartKind === 'static' ? (
                     <input
                       type="text"
                       className="setting-input big-plan-input"
@@ -521,7 +527,7 @@ export function BigPlanTab({
                       value={varCount}
                       onChange={(e) => setVarCount(e.target.value)}
                     />
-                  )}
+                  ) : null}
                 </div>
               )}
 

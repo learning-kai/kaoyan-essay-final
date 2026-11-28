@@ -15,7 +15,7 @@ interface BigEssayPaperPreviewProps {
   vars: Record<string, string>;
   includeOptionalP2S4?: boolean;
   format?: BigFormatMode;
-  chartKind?: 'dynamic' | 'static';
+  chartKind?: 'dynamic' | 'static' | 'dual';
   fieldWarnings?: Record<string, string>;
   title?: string;
   showSpeak?: boolean;
@@ -121,17 +121,17 @@ export function BigEssayPaperEditor({
     {
       idx: 0,
       role: '描述',
-      placeholder: '第一段：图画/图表/图文外壳 → 揭示深层主题 X →（纯图画加意义句）…',
+      placeholder: '第一段：图画/图表/双图/图文外壳 → 揭示深层主题 X →（纯图画加意义句）…',
     },
     {
       idx: 1,
       role: '论证',
-      placeholder: '第二段：带来好处 B1/B2 → 日益受重视并使人们 DO → 现代媒体与教育推动…',
+      placeholder: '第二段：带来好处 B1/B2 → 快节奏世界日益关键并使人们 DO → 回应真实需求…',
     },
     {
       idx: 2,
       role: '建议',
-      placeholder: '第三段：关键在于 → 社会提供支持应对挑战 → 个人不轻视不走极端 → Only in this way…',
+      placeholder: '第三段：不在表面形式而在践行 → 社会支持营造环境 → 个人理性并付诸行动 → Only in this way…',
     },
   ];
 

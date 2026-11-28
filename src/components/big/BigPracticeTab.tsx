@@ -211,9 +211,11 @@ export function BigPracticeTab({
     promptFormat === 'hybrid'
       ? '图文结合 · 2024风'
       : promptFormat === 'chart'
-        ? promptChartKind === 'static'
-          ? '纯图表 · 静态占比'
-          : '纯图表 · 2025风'
+        ? promptChartKind === 'dual'
+          ? '纯图表 · 2026双图风'
+          : promptChartKind === 'static'
+            ? '纯图表 · 静态占比'
+            : '纯图表 · 2025风'
         : prompt.isNegativeFlip
           ? '纯图画 · 负题正转'
           : '纯图画';

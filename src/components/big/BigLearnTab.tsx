@@ -447,7 +447,7 @@ export function BigLearnTab({ onNavigateTab }: BigLearnTabProps) {
       sprintPara === 1
         ? '第一段（描述 → 揭示 → 意义 · 3 句）'
         : sprintPara === 2
-          ? '第二段（好处 → 受重视 → 媒体教育 · 3 句）'
+          ? '第二段（好处 → 日益关键 → 回应需求 · 3 句）'
           : '第三段（关键 → 社会 → 个人 → 倒装 · 4 句）';
 
     return (

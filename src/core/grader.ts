@@ -538,7 +538,7 @@ export function gradeBigEssayAlignment(
     sentences?: BigSentence[];
     includeOptionalP2S4?: boolean;
     format?: BigFormatMode;
-    chartKind?: 'dynamic' | 'static';
+    chartKind?: 'dynamic' | 'static' | 'dual';
     planVars?: Partial<Record<string, string>>;
   }
 ): BigEssayGradeResult {

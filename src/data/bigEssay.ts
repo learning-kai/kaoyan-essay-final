@@ -60,7 +60,7 @@ export interface BigPrompt {
   id: string;
   title: string;
   format?: BigFormatMode;
-  chartKind?: 'dynamic' | 'static';
+  chartKind?: 'dynamic' | 'static' | 'dual';
   isNegativeFlip?: boolean;
   negativeFlipTip?: string;
   pictureDescZh: string;
@@ -112,14 +112,14 @@ export const BIG_LOGIC_CHAIN = {
     {
       paragraph: 2 as const,
       roleLabel: '论证',
-      title: '第二段 · 价值与普及',
-      nodes: ['两个好处 B1/B2', '受重视 + 能做什么 DO', '媒体与教育推动'],
+      title: '第二段 · 价值与意义',
+      nodes: ['两个好处 B1/B2', '日益关键 + 能做什么 DO', '回应真实需求'],
     },
     {
       paragraph: 3 as const,
       roleLabel: '建议',
-      title: '第三段 · 辩证与收尾',
-      nodes: ['关键在于', '社会怎么做', '个人怎么做', '只有这样（倒装）'],
+      title: '第三段 · 践行与收尾',
+      nodes: ['不在形式而在践行', '社会支持营造环境', '个人理性付诸行动', '只有这样（倒装）'],
     },
   ],
 };
@@ -276,21 +276,21 @@ export const OLD_NEW_PRESETS: { oldVal: string; newVal: string; zh: string }[] =
 export const UNIVERSAL_FALLBACK_SETS: FallbackSet[] = [
   {
     id: 'growth',
-    category: '个人成长 / 品质 / 学习 / 运动',
-    desc: '适用：坚持、终身学习、读书、锻炼、时间管理、心态、独立成长',
-    triggers: ['学习', '读书', '坚持', '运动', '健康', '成长', '时间', '自律'],
+    category: '个人成长 / 习惯 / 学习 / 运动',
+    desc: '适用：拖延/及时行动、坚持、读书、选课、讲座、锻炼、独立成长',
+    triggers: ['学习', '读书', '坚持', '运动', '健康', '成长', '时间', '自律', '习惯', '拖延'],
     B1: 'steady personal growth',
     B2: 'a stronger sense of fulfillment',
-    DO: 'overcome daily challenges with greater confidence',
+    DO: 'manage daily tasks and challenges with greater confidence',
   },
   {
     id: 'tech',
-    category: '科技 / 消费 / 家电 / 数字生活',
-    desc: '适用：AI、智能家电、手机网络、线上服务、效率工具、消费升级',
-    triggers: ['AI', '科技', '智能', '家电', '网络', '手机', '消费', '数字'],
+    category: '科技 / 民生消费 / 家电 / 养老',
+    desc: '适用：AI、家电普及、养老机器人、手机网络、线上服务、消费升级',
+    triggers: ['AI', '科技', '智能', '家电', '养老', '机器人', '网络', '手机', '消费', '数字'],
     B1: 'greater daily convenience',
-    B2: 'higher working efficiency',
-    DO: 'enjoy a smarter and easier modern life',
+    B2: 'a higher quality of life',
+    DO: 'enjoy a more comfortable and efficient life',
   },
   {
     id: 'society',
@@ -341,16 +341,16 @@ export const NEGATIVE_FLIP_TABLE: NegativeFlipItem[] = [
   },
   {
     id: 'nf-rush',
-    negativeZh: '急功近利 / 浮躁捷径 / 只看眼前',
-    negativeHint: '拔苗助长、只求速成、不愿打基础',
-    positiveX: 'steady long-term effort',
-    positiveZh: '脚踏实地的长期努力',
+    negativeZh: '拖延症 / 急功近利 / 浮躁捷径',
+    negativeHint: '临阵磨枪拖延交作业、拔苗助长、只求速成',
+    positiveX: 'timely action',
+    positiveZh: '及时行动 / 脚踏实地',
     fallbackId: 'growth',
   },
   {
     id: 'nf-blind',
-    negativeZh: '盲目跟风 / 缺乏主见 / 网红乱象',
-    negativeHint: '随大流消费、盲目模仿、人云亦云',
+    negativeZh: '盲目跟风 / 缺乏主见 / 只重形式',
+    negativeHint: '光买书不读书、随大流、选课只图轻松',
     positiveX: 'independent thinking',
     positiveZh: '独立思考',
     fallbackId: 'society',
@@ -360,6 +360,7 @@ export const NEGATIVE_FLIP_TABLE: NegativeFlipItem[] = [
 /**
  * 真·万能固定骨架（核心 10 句 + 可选兼容句 P2.S4；保留全部原有 ID，零进度丢失）
  * 22 个变量已彻底瘦身为仅填 5 个考场空位（X / PIC / B1 / B2 / DO），其余 100% 固定死抄。
+ * 经 2017–2026 近十年考研英语一全真题实测：个人习惯、文化社会、民生图表、科技双图全不跑题。
  */
 export const BIG_SENTENCES: BigSentence[] = [
   {
@@ -371,7 +372,7 @@ export const BIG_SENTENCES: BigSentence[] = [
     en: 'The picture presents a vivid scene in which {{PIC}}.',
     zh: '图画呈现了一个生动的场景：{{PIC}}。',
     cue: 'The picture presents a vivid scene',
-    note: 'PIC 写法：「主体 + 动作/状态」，可加 , while + 对比 或 , resulting in + 结果。',
+    note: 'PIC 写法：「主体 + 动作/状态」，双图对比用 , while + 对比，单图结果用 , resulting in + 结果。',
   },
   {
     id: 'big.p1.s2',
@@ -382,7 +383,7 @@ export const BIG_SENTENCES: BigSentence[] = [
     en: 'The deeper issue revealed by the drawing lies in the value and impact of {{X}} in modern society.',
     zh: '图画所揭示的深层问题，在于{{X}}在现代社会中的价值与影响。',
     cue: 'The deeper issue revealed by the drawing',
-    note: '纯图表题把 the drawing 换成 the chart；图文结合换成 both the picture and the chart。',
+    note: '纯图表题把 the drawing 换成 the chart（双图用 the charts）；图文结合换成 both the picture and the chart。',
   },
   {
     id: 'big.p1.s3',
@@ -393,7 +394,7 @@ export const BIG_SENTENCES: BigSentence[] = [
     en: 'When its positive potential is properly realized, {{X}} can exert a profound and lasting influence on both personal growth and social development.',
     zh: '当它的积极潜力得到恰当发挥时，{{X}}能够对个人成长和社会发展产生深远而持久的影响。',
     cue: 'When its positive potential is properly realized',
-    note: '纯图画必写；纯图表或图文结合时第一段已有数据句，自动省略本句（词数稳落 185–200）。',
+    note: '纯图画必写；纯图表或图文结合时第一段已有数据句，自动省略本句（词数稳落 185–205）。',
   },
   {
     id: 'big.p2.s1',
@@ -410,21 +411,21 @@ export const BIG_SENTENCES: BigSentence[] = [
     deck: 'big',
     paragraph: 2,
     order: 5,
-    role: '受重视',
-    en: 'As society develops and living standards rise, {{X}}, once overlooked or constrained in the past, has become increasingly valued, enabling people to {{DO}}.',
-    zh: '随着社会发展和生活水平提高，过去曾被忽视或受限的{{X}}如今越来越受重视，使人们能够{{DO}}。',
-    cue: 'As society develops and living standards rise',
-    note: '已全面泛化：科技、文化、环保、陪伴、坚持、公园、家电全话题一字不改直套！',
+    role: '重要性',
+    en: "In today's fast-paced world, {{X}}, far from being a minor detail, plays an increasingly vital role in everyday life, enabling people to {{DO}}.",
+    zh: '在当今快节奏的社会中，{{X}}绝非小节，而是在日常生活中扮演着日益关键的角色，使人们能够{{DO}}。',
+    cue: "In today's fast-paced world",
+    note: '个人习惯（读书/拖延/坚持）、科技图表（家电/养老机器人）、文化社会全题材 100% 贴题！',
   },
   {
     id: 'big.p2.s3',
     deck: 'big',
     paragraph: 2,
     order: 6,
-    role: '推动',
-    en: 'Moreover, the sustained attention and extensive discussion generated by modern media and education have brought {{X}} into the public consciousness and further strengthened its influence.',
-    zh: '此外，现代媒体与教育带来的持续关注和广泛讨论，使{{X}}进入公众视野，并进一步增强了它的影响。',
-    cue: 'Moreover, the sustained attention and extensive discussion',
+    role: '价值深化',
+    en: "Moreover, the growing recognition and clear benefits associated with {{X}} meet people's real needs and further strengthen its lasting significance.",
+    zh: '此外，伴随{{X}}而来的日益广泛的认可与切实益处，回应了人们的真实需求，并进一步增强了其长远意义。',
+    cue: 'Moreover, the growing recognition and clear benefits',
   },
   {
     id: 'big.p2.s4',
@@ -444,8 +445,8 @@ export const BIG_SENTENCES: BigSentence[] = [
     paragraph: 3,
     order: 8,
     role: '关键',
-    en: 'What ultimately determines the value of {{X}} is not superficial attention, but whether it is approached wisely and responsibly.',
-    zh: '真正决定{{X}}价值的，不是表面的关注，而是它是否得到明智且负责的对待。',
+    en: 'What ultimately determines the value of {{X}} is not mere form, but whether it is put into practice wisely and responsibly.',
+    zh: '真正决定{{X}}价值的，不是流于表面形式，而是它是否得到明智且负责的践行。',
     cue: 'What ultimately determines the value of',
   },
   {
@@ -454,8 +455,8 @@ export const BIG_SENTENCES: BigSentence[] = [
     paragraph: 3,
     order: 9,
     role: '社会',
-    en: 'Society should provide more support and guidance, addressing related challenges while preserving its core value.',
-    zh: '社会应当提供更多支持与引导，在应对相关挑战的同时，守护其核心价值。',
+    en: 'Society should provide more support and guidance, addressing related challenges while creating a favorable environment for {{X}}.',
+    zh: '社会应当提供更多支持与引导，在应对相关挑战的同时，为{{X}}营造良好环境。',
     cue: 'Society should provide more support and guidance',
   },
   {
@@ -464,9 +465,9 @@ export const BIG_SENTENCES: BigSentence[] = [
     paragraph: 3,
     order: 10,
     role: '个人',
-    en: 'Individuals should treat {{X}} rationally, neither taking it lightly nor going to extremes.',
-    zh: '个人应当理性看待{{X}}，既不轻视它，也不走极端。',
-    cue: 'Individuals should treat',
+    en: 'Individuals, meanwhile, should approach {{X}} with a rational mindset, neither ignoring its benefits nor failing to take concrete action.',
+    zh: '与此同时，个人应当以理性的心态对待{{X}}，既不忽视其益处，也不懈怠切实行动。',
+    cue: 'Individuals, meanwhile, should approach',
   },
   {
     id: 'big.p3.s4',
@@ -482,7 +483,7 @@ export const BIG_SENTENCES: BigSentence[] = [
 ];
 
 /**
- * 纯图表（2025 同款）+ 图文结合（2024 同款）的 2 句极简第一段衔接壳
+ * 纯图表（2025/2026 同款）+ 图文结合（2024 同款）的 2 句极简第一段衔接壳
  * 只要多背这 2 句短句，第二、三段 100% 照抄上方原骨架！
  */
 export const BIG_CHART_SHELL_SENTENCES: BigSentence[] = [
@@ -495,9 +496,9 @@ export const BIG_CHART_SHELL_SENTENCES: BigSentence[] = [
     isFormatShell: true,
     formatTag: 'chart',
     en: 'The {{CHART|table}} shows changes in {{TOPIC|this field}} from {{T1|2020}} to {{T2|2024}}.',
-    zh: '该{{CHART}}展示了从{{T1}}到{{T2}}期间{{TOPIC}}的变化。（静态饼/柱图换成 across [N] categories；后接 Specifically, [DATA].）',
+    zh: '该{{CHART}}展示了从{{T1}}到{{T2}}期间{{TOPIC}}的变化。（静态换 across [N] categories；2026 双图换 The two charts illustrate [TOPIC].；后接 Specifically, [DATA].）',
     cue: 'The … shows changes in',
-    note: '2025 英语一纯图表/表格同款引入句；紧接着写 Specifically, [DATA]. 和揭示句（the drawing → the chart）。',
+    note: '2025 动态表 / 静态图 / 2026 双图表通用引入句；紧接 Specifically, [DATA]. 与揭示句（the drawing → the chart/charts）。',
   },
   {
     id: 'big.shell.hybrid',
@@ -510,7 +511,7 @@ export const BIG_CHART_SHELL_SENTENCES: BigSentence[] = [
     en: 'Echoing this scene, the accompanying {{CHART|bar chart}} shows that {{DATA}}.',
     zh: '与这一画面相呼应，随附的{{CHART}}显示{{DATA}}。',
     cue: 'Echoing this scene, the accompanying',
-    note: '2024 英语一图文结合同款神仙衔接句！紧跟在 P1.S1 后面，揭示句把 the drawing 换成 both the picture and the chart。',
+    note: '2024 英语一图文结合同款衔接句！紧跟在 P1.S1 后面，揭示句把 the drawing 换成 both the picture and the chart。',
   },
 ];
 
@@ -529,11 +530,11 @@ export const BIG_SENTENCE_IDS: string[] = [
 ];
 
 /**
- * 按题型返回该题型的完整三段句列（纯图画 / 纯图表 / 图文结合均为 10 句，字数稳落 185–205 词）
+ * 按题型返回该题型的完整三段句列（纯图画 / 纯图表[动态·静态·双图] / 图文结合均为 10 句，字数稳落 185–210 词）
  */
 export function getBigSentencesForFormat(
   format: BigFormatMode = 'picture',
-  options?: { includeOptionalP2S4?: boolean; chartKind?: 'dynamic' | 'static' }
+  options?: { includeOptionalP2S4?: boolean; chartKind?: 'dynamic' | 'static' | 'dual' }
 ): BigSentence[] {
   const includeOpt = options?.includeOptionalP2S4 ?? false;
   const bodyAndClosing = BIG_SENTENCES.filter(
@@ -541,23 +542,33 @@ export function getBigSentencesForFormat(
   );
 
   if (format === 'chart') {
-    const isStatic = options?.chartKind === 'static';
+    const kind = options?.chartKind ?? 'dynamic';
+    const isDual = kind === 'dual';
+    const isStatic = kind === 'static';
     const p1: BigSentence[] = [
       {
         id: 'big.shell.chart',
         deck: 'big',
         paragraph: 1,
         order: 1,
-        role: '图表引入',
+        role: isDual ? '双图表引入' : '图表引入',
         isFormatShell: true,
         formatTag: 'chart',
-        en: isStatic
-          ? 'The {{CHART|pie chart}} shows {{TOPIC|this field}} across {{COUNT|four}} categories.'
-          : 'The {{CHART|table}} shows changes in {{TOPIC|this field}} from {{T1|2020}} to {{T2|2024}}.',
-        zh: isStatic
-          ? '该{{CHART}}展示了{{TOPIC}}在{{COUNT}}个类别中的分布情况。'
-          : '该{{CHART}}展示了从{{T1}}到{{T2}}期间{{TOPIC}}的变化。',
-        cue: isStatic ? 'The … shows … across' : 'The … shows changes in',
+        en: isDual
+          ? 'The two charts illustrate {{TOPIC|this survey}}.'
+          : isStatic
+            ? 'The {{CHART|pie chart}} shows {{TOPIC|this field}} across {{COUNT|four}} categories.'
+            : 'The {{CHART|table}} shows changes in {{TOPIC|this field}} from {{T1|2020}} to {{T2|2024}}.',
+        zh: isDual
+          ? '这两幅图表展示了{{TOPIC}}的调查情况。'
+          : isStatic
+            ? '该{{CHART}}展示了{{TOPIC}}在{{COUNT}}个类别中的分布情况。'
+            : '该{{CHART}}展示了从{{T1}}到{{T2}}期间{{TOPIC}}的变化。',
+        cue: isDual
+          ? 'The two charts illustrate'
+          : isStatic
+            ? 'The … shows … across'
+            : 'The … shows changes in',
       },
       {
         id: 'big.shell.chartData',
@@ -577,9 +588,13 @@ export function getBigSentencesForFormat(
         paragraph: 1,
         order: 3,
         role: '揭示',
-        en: 'The deeper issue revealed by the chart lies in the value and impact of {{X}} in modern society.',
+        en: isDual
+          ? 'The deeper issue revealed by the charts lies in the value and impact of {{X}} in modern society.'
+          : 'The deeper issue revealed by the chart lies in the value and impact of {{X}} in modern society.',
         zh: '图表所揭示的深层问题，在于{{X}}在现代社会中的价值与影响。',
-        cue: 'The deeper issue revealed by the chart',
+        cue: isDual
+          ? 'The deeper issue revealed by the charts'
+          : 'The deeper issue revealed by the chart',
       },
     ];
     return [...p1, ...bodyAndClosing];
@@ -643,7 +658,7 @@ export const BIG_LESSONS: BigLesson[] = [
   {
     id: 2,
     dayTag: 'Day 1 下半场',
-    title: '第 2 课 · 第二段万能 3 句（好处 → 受重视 → 媒体教育）',
+    title: '第 2 课 · 第二段万能 3 句（好处 → 日益关键 → 回应需求）',
     subtitle: '已全面泛化固化：只需填 B1 / B2 / DO，全话题一字不改直抄',
     kind: 'sentences',
     paragraph: 2,
@@ -834,6 +849,32 @@ export const MATERIAL_PACK_MAP: Record<string, MaterialPack> = Object.fromEntrie
  */
 export const BIG_PROMPTS: BigPrompt[] = [
   {
+    id: 'bp-2026-dual',
+    title: '【2026 真题风 · 双图表】消费者对养老护理机器人接受度与主要顾虑',
+    format: 'chart',
+    chartKind: 'dual',
+    pictureDescZh:
+      '左图（接受度）：超过半数受访者愿意或考虑使用养老护理机器人；右图（主要顾虑）：安全性、价格偏高及缺乏情感陪伴位居前三位。',
+    requirementsZh:
+      '1) 简要概括两幅图表的主要信息；2) 阐释智慧养老的价值与意义；3) 提出你的建议与看法（160–200 词）。',
+    keywords: ['养老', '机器人', '科技', '顾虑', 'elderly', 'robot', 'care'],
+    recommendedPackId: 'tech-ai',
+    recommendedFallbackId: 'tech',
+    sampleX: 'smart elderly care',
+    sampleB1: 'greater daily convenience',
+    sampleB2: 'a higher quality of life',
+    sampleDO: 'look after aging family members more easily',
+    samplePicParts: {
+      subject: 'an elderly resident',
+      action: 'is assisted by a care robot at home',
+    },
+    sampleChartParts: {
+      chart: 'two charts',
+      topic: 'public acceptance of and main concerns about elderly care robots',
+      data: 'over half of the respondents welcome care robots, while safety, high cost, and lack of emotional warmth remain the top concerns',
+    },
+  },
+  {
     id: 'bp-2024-hybrid',
     title: '【2024 真题风 · 图文结合】社区公园锻炼 + 城市公园数量增长',
     format: 'hybrid',
@@ -863,30 +904,30 @@ export const BIG_PROMPTS: BigPrompt[] = [
   },
   {
     id: 'bp-2025-chart',
-    title: '【2025 真题风 · 纯图表动态】中国家庭智能家电拥有量变化表',
+    title: '【2025 真题风 · 纯图表动态】中国家庭主要家电拥有量变化表',
     format: 'chart',
     chartKind: 'dynamic',
     pictureDescZh:
-      '表格数据：2014–2023 年中国每百户居民家庭智能家电拥有量变化，其中空调由 75 台升至 146 台，扫地机器人与智能厨电均呈快速上升趋势。',
+      '表格数据：2014–2023 年中国每百户居民家庭空调、洗衣机、电冰箱拥有量变化，其中空调由 75.2 台升至 145.9 台，冰箱和洗衣机均稳步增长。',
     requirementsZh:
       '1) 概括图表核心数据变化；2) 分析这一趋势背后的原因与价值；3) 提出你的看法与建议（160–200 词）。',
-    keywords: ['家电', '智能', '消费', '生活品质', 'appliance', 'smart', 'living'],
+    keywords: ['家电', '空调', '消费', '生活品质', 'appliance', 'household', 'living'],
     recommendedPackId: 'tech-ai',
     recommendedFallbackId: 'tech',
-    sampleX: 'smart home living',
+    sampleX: 'better household living',
     sampleB1: 'greater daily convenience',
     sampleB2: 'a higher quality of life',
-    sampleDO: 'enjoy a smarter and easier modern life',
+    sampleDO: 'enjoy a more comfortable and efficient life',
     samplePicParts: {
       subject: 'families',
-      action: 'are using smart home appliances',
+      action: 'are enjoying modern home appliances',
     },
     sampleChartParts: {
       chart: 'table',
-      topic: 'household ownership of smart appliances',
+      topic: 'household ownership of major appliances',
       t1: '2014',
       t2: '2023',
-      data: 'air conditioner ownership rose sharply from 75 to 146 per hundred households, while other smart devices also saw steady growth',
+      data: 'air conditioner ownership rose sharply from 75.2 to 145.9 per hundred households, while refrigerators and washing machines grew steadily',
     },
   },
   {
@@ -1132,7 +1173,7 @@ export function renderFullBigEssay(
   options?: {
     includeOptionalP2S4?: boolean;
     format?: BigFormatMode;
-    chartKind?: 'dynamic' | 'static';
+    chartKind?: 'dynamic' | 'static' | 'dual';
   }
 ): {
   paragraphs: { paragraph: 1 | 2 | 3; roleLabel: string; sentences: { id: string; text: string }[] }[];

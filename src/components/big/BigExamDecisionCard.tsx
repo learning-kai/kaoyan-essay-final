@@ -106,24 +106,33 @@ const FORMAT_META: {
   },
   {
     id: 'chart',
-    label: '纯图表（2025 同款）',
-    tag: '2025 英语一真题风 · 省去 P1.S3',
-    estWords: '约 188–198 词',
-    promptId: 'bp-2025-chart',
+    label: '纯图表（2025 / 2026）',
+    tag: '2025 动态表 · 2026 双图表 · 省去 P1.S3',
+    estWords: '约 190–204 词',
+    promptId: 'bp-2026-dual',
     sampleVars: {
-      X: 'smart home living',
+      X: 'better household living',
       CHART: 'table',
-      TOPIC: 'household ownership of smart appliances',
+      TOPIC: 'household ownership of major appliances',
       T1: '2014',
       T2: '2023',
       COUNT: 'four',
-      DATA: 'air conditioner ownership rose sharply from 75 to 146 per hundred households, while other smart devices grew steadily',
+      DATA: 'air conditioner ownership rose sharply from 75.2 to 145.9 per hundred households, while refrigerators and washing machines grew steadily',
       B1: 'greater daily convenience',
       B2: 'a higher quality of life',
-      DO: 'enjoy a smarter and easier modern life',
+      DO: 'enjoy a more comfortable and efficient life',
     },
   },
 ];
+
+const DUAL_CHART_SAMPLE_VARS: Record<string, string> = {
+  X: 'smart elderly care',
+  TOPIC: 'public acceptance of and main concerns about elderly care robots',
+  DATA: 'over half of the respondents welcome care robots, while safety, high cost, and lack of emotional warmth remain the top concerns',
+  B1: 'greater daily convenience',
+  B2: 'a higher quality of life',
+  DO: 'look after aging family members more easily',
+};
 
 function renderTemplatePills(
   en: string,
@@ -167,7 +176,7 @@ export function BigExamDecisionCard({ onNavigateTab }: BigExamDecisionCardProps)
   const bigExamRecords = useProgress((s) => s.bigExamRecords);
 
   const [format, setFormat] = useState<BigFormatMode>('picture');
-  const [chartKind, setChartKind] = useState<'dynamic' | 'static'>('dynamic');
+  const [chartKind, setChartKind] = useState<'dynamic' | 'static' | 'dual'>('dual');
   const [drawer, setDrawer] = useState<'preview' | 'fallback' | 'flip'>('preview');
   const [showSample, setShowSample] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -206,11 +215,15 @@ export function BigExamDecisionCard({ onNavigateTab }: BigExamDecisionCardProps)
             };
 
   const activeMeta = FORMAT_META.find((f) => f.id === format) ?? FORMAT_META[0];
+  const activeSampleVars =
+    format === 'chart' && chartKind === 'dual'
+      ? DUAL_CHART_SAMPLE_VARS
+      : activeMeta.sampleVars;
   const sentences = getBigSentencesForFormat(format, {
     includeOptionalP2S4: false,
     chartKind,
   });
-  const sampleStats = renderFullBigEssay(activeMeta.sampleVars, {
+  const sampleStats = renderFullBigEssay(activeSampleVars, {
     includeOptionalP2S4: false,
     format,
     chartKind,
@@ -465,13 +478,20 @@ export function BigExamDecisionCard({ onNavigateTab }: BigExamDecisionCardProps)
                 })}
 
                 {format === 'chart' && (
-                  <div style={{ display: 'inline-flex', gap: 6, marginLeft: 'auto' }}>
+                  <div style={{ display: 'inline-flex', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      className={`btn-secondary edc-mini-btn ${chartKind === 'dual' ? 'active' : ''}`}
+                      onClick={() => setChartKind('dual')}
+                    >
+                      双图表（2026 同款）
+                    </button>
                     <button
                       type="button"
                       className={`btn-secondary edc-mini-btn ${chartKind === 'dynamic' ? 'active' : ''}`}
                       onClick={() => setChartKind('dynamic')}
                     >
-                      动态趋势（如 2025）
+                      动态趋势（2025 同款）
                     </button>
                     <button
                       type="button"
@@ -517,11 +537,11 @@ export function BigExamDecisionCard({ onNavigateTab }: BigExamDecisionCardProps)
                               {isShellSentence ? (
                                 <span className="edc-purpose-highlight">
                                   {si === 0 && <span className="edc-swap-tag">仅换第一段壳</span>}
-                                  {renderTemplatePills(s.en, showSample, activeMeta.sampleVars)}
+                                  {renderTemplatePills(s.en, showSample, activeSampleVars)}
                                 </span>
                               ) : (
                                 <span>
-                                  {renderTemplatePills(s.en, showSample, activeMeta.sampleVars)}
+                                  {renderTemplatePills(s.en, showSample, activeSampleVars)}
                                 </span>
                               )}
                             </Fragment>
@@ -544,7 +564,18 @@ export function BigExamDecisionCard({ onNavigateTab }: BigExamDecisionCardProps)
                   <button
                     type="button"
                     className="btn-primary edc-mini-btn"
-                    onClick={() => onNavigateTab('plan', activeMeta.promptId)}
+                    onClick={() =>
+                      onNavigateTab(
+                        'plan',
+                        format === 'chart'
+                          ? chartKind === 'dual'
+                            ? 'bp-2026-dual'
+                            : chartKind === 'static'
+                              ? 'bp-static-chart'
+                              : 'bp-2025-chart'
+                          : activeMeta.promptId
+                      )
+                    }
                   >
                     <Play size={13} strokeWidth={2} />
                     用「{activeMeta.label}」练 60 秒填 5 空
